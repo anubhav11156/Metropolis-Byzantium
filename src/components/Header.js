@@ -1,8 +1,28 @@
-import React from 'react'
+import { useState, useEffect, React } from 'react'
 import styled from 'styled-components'
 import { ConnectKitButton } from "connectkit";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Header() {
+
+    const [flag, setFlag] = useState(0);
+    const [Connected, setConnected]= useState(false);
+
+    useEffect( () => {
+      if(Connected && flag==0){
+        toast.success("Logged In", {
+          position: toast.POSITION.TOP_CENTER
+        });
+        setFlag(1);
+      }else if(!Connected && flag==1 ){
+        toast.success("Logged Out", {
+          position: toast.POSITION.TOP_CENTER
+        });
+        setFlag(0);
+      }
+    });
+
     return (
         <Container>
           <LeftSection>
@@ -21,6 +41,13 @@ function Header() {
             <ConnectKitButton.Custom>
               {
                 ({ isConnected, show, ensName }) => {
+                  // console.log(isConnected);
+                  if(isConnected){
+                    setConnected(true);
+                  }else{
+                    setConnected(false);
+                  }
+
                   return (
                     <div  className="login" onClick={show}>
                       {isConnected ? ensName ?? "Logout" : "Login"}
@@ -31,6 +58,10 @@ function Header() {
               }
             </ConnectKitButton.Custom>
           </RightSection>
+          <ToastContainer
+            autoClose={1000}
+            hideProgressBar={true}
+          />
         </Container>
     )
 }
