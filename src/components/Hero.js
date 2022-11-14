@@ -1,7 +1,22 @@
 import React from 'react'
 import styled from 'styled-components'
+import {
+  Link,
+  Element,
+  Events,
+  animateScroll as scroll,
+  scroller,
+} from "react-scroll";
 
 function Hero() {
+
+  const exploreButtonHandle = () => {
+    scroller.scrollTo('market', {
+      duration: 500,
+      delay: 10,
+      smooth: true,
+    });
+  }
     return (
         <Container>
           <TextSection>
@@ -10,7 +25,7 @@ function Hero() {
               <p className="short">Buy, sell and discover rare digital item</p>
             </div>
             <div className="buttons">
-              <button className="explore-button">
+              <button className="explore-button" onClick={exploreButtonHandle}>
                 <p>Explore Store</p>
               </button>
             </div>
@@ -46,7 +61,7 @@ export default Hero
 const Container=styled.div`
   width: 100%;
   background: linear-gradient(180deg, #FFB7B7 0%, #727272 100%), radial-gradient(60.91% 100% at 50% 0%, #FFD1D1 0%, #260000 100%), linear-gradient(238.72deg, #FFDDDD 0%, #720066 100%), linear-gradient(127.43deg, #00FFFF 0%, #FF4444 100%), radial-gradient(100.22% 100% at 70.57% 0%, #FF0000 0%, #00FFE0 100%), linear-gradient(127.43deg, #B7D500 0%, #3300FF 100%);
-  background-blend-mode: screen, overlay, hard-light, color-burn, color-dodge, normal;;
+  background-blend-mode: screen, overlay, hard-light, color-burn, color-dodge, normal;
   height: 780px;
   display: flex;
   justify-content: center;
@@ -57,7 +72,7 @@ const Container=styled.div`
 const TextSection=styled.div`
   flex:1.3;
   height: 550px;
-  margin-left: 16rem;
+  margin-left: 15rem;
   margin-top: 150px;
 
   display: flex;
@@ -103,14 +118,21 @@ const TextSection=styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: opacity 0.25s;
 
+      &:hover {
+        opacity: 0.9;
+      }
+      &:active {
+        opacity: 0.6;
+      }
     }
   }
 
 `
 const SliderSection=styled.div`
   flex:1;
-  margin-right: 16rem;
+  margin-right: 15rem;
   margin-top: 30px;
   height: 740px;
 
@@ -169,7 +191,6 @@ const SliderSection=styled.div`
             margin-left: 10px;
             margin-top: 8px;
             font-size: 15px;
-            font-weight: 00;
             color: rgba(59, 127, 242, 0.82);
             opacity: 0.7;
         }

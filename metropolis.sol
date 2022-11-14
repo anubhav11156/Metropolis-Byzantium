@@ -25,7 +25,7 @@ contract Metropolis is ERC721URIStorage {
     bool sold;
   }
 
-  mapping(uinit256 => NFT) private idToNFT;
+  mapping(uinit256 => NFT) idToNFT;
 
   event nftCreated (
     uint256 indexed tokenId,
@@ -46,10 +46,10 @@ contract Metropolis is ERC721URIStorage {
 
     // user defined function
     createMarketItem(newItemId, price);
-    
+
     return newItemId;
-  } 
-  
+  }
+
   // will be called by creaeToken()
   function createMarketItem(
     uint256 tokenId,
@@ -64,7 +64,7 @@ contract Metropolis is ERC721URIStorage {
         price,
         false // flase because till now it is in market, not sold
     );
-    
+
     // transfer nft to marketplace form seller
     _transfer(msg.sender, address(this), tokenId);
     emit nftCreated(
@@ -75,7 +75,7 @@ contract Metropolis is ERC721URIStorage {
         false
     );
   }
-  
+
   // Some user is buying NFT, transfer ownership of Nft and price between parties
   function buyNft(
     uint tokenId
@@ -89,7 +89,7 @@ contract Metropolis is ERC721URIStorage {
     idToNft[tokenId].seller = payable(address(0));
 
     _itemsSold.increment();
-    
+
     // transfer ownership of the NFT
     _transfer(address(this), msg.sender, tokenId);
     // now transfer the NFT amount to the seller

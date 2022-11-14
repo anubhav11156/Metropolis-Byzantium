@@ -3,19 +3,76 @@ import styled from 'styled-components'
 import { ConnectKitButton } from "connectkit";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAccount, useBalance } from 'wagmi';
+import { Network, Alchemy } from "alchemy-sdk";
+
 
 function Header() {
 
-    const [flag, setFlag] = useState(0);
-    const [Connected, setConnected]= useState(false);
+
+  const navigate = useNavigate();
+  const { pathname } = useLocation(); // current pathname
+
+  const { address } = useAccount();
+
+  const [flag, setFlag] = useState(0);
+  const [Connected, setConnected] = useState(false);
+  const [userAddress, setUserAddress] = useState('');
+  const [userBalance, setUserBalance] = useState('');
+
+  const [scrolled, setScrolled] = useState(false);
+  const [pixelScrolled, setPixelScrolled] = useState(0);
+
+  const hexToDecimal = (hex) => {
+    return parseInt(hex, 16);
+  }
+
+  /*------------code to get account balance of the user------------*/
+    const settings = {
+      apiKey: "L5y5rMAxy2S29WmJJkgz8x4iCkLzSEoV",
+      network: Network.MATIC_MUMBAI,
+    };
+    const alchemy = new Alchemy(settings);
+
+    useEffect(()=>{
+      if(Connected){
+        alchemy.core.getBalance(`${userAddress}`, "latest")
+        .then(response => setUserBalance((hexToDecimal(response._hex)/10**18).toFixed(2)));
+      }else{
+        setUserBalance('');
+      }
+    });
+
+  /*---------------------------------------------------------------*/
+
+    // console.log('add : ', userAddress);
+    // console.log('bal : ', userBalance);
+
+    window.onscroll = function (e) {
+      setPixelScrolled(window.scrollY);
+    };
+
+    useEffect(()=> {
+      if(window.scrollY >= 781 ){
+        setScrolled(true);
+      }else{
+        setScrolled(false);
+      }
+    })
 
     useEffect( () => {
       if(Connected && flag==0){
+        setUserAddress(address);
         toast.success("Logged In", {
           position: toast.POSITION.TOP_CENTER
         });
         setFlag(1);
       }else if(!Connected && flag==1 ){
+        setUserAddress('');
+        if(pathname == '/dashboard'){
+          navigate('/');
+        }
         toast.success("Logged Out", {
           position: toast.POSITION.TOP_CENTER
         });
@@ -23,8 +80,16 @@ function Header() {
       }
     });
 
+    const dashboardHandle = () => {
+      toast.info("Login to proceed", {
+      position: toast.POSITION.TOP_CENTER
+      });
+    }
+
     return (
-        <Container>
+        <Container style={{
+           backgroundImage: scrolled ? 'radial-gradient( circle farthest-corner at 10% 20%,  rgba(255,94,247,0.2) 17.8%, rgba(2,245,255,0.25) 100.2% )' : '',
+        }}>
           <LeftSection>
             <div>
               <p>Metropolis</p>
@@ -32,16 +97,22 @@ function Header() {
           </LeftSection>
           <MiddleSection>
             <div className="dashboard-div">
-              <p>
-                Dashboard
-              </p>
+              { Connected ? <Link to="/dashboard" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' }) }>
+                 <p>
+                   Dashboard
+                 </p>
+                 </Link> :
+                 <p onClick={dashboardHandle}>
+                   Dashboard
+                 </p>
+              }
             </div>
           </MiddleSection>
           <RightSection>
             <ConnectKitButton.Custom>
               {
                 ({ isConnected, show, ensName }) => {
-                  // console.log(isConnected);
+                  // console.log("testing",isConnected);
                   if(isConnected){
                     setConnected(true);
                   }else{
@@ -49,7 +120,7 @@ function Header() {
                   }
 
                   return (
-                    <div  className="login" onClick={show}>
+                    <div className="login" onClick={show}>
                       {isConnected ? ensName ?? "Logout" : "Login"}
                       <div className="bar"></div>
                     </div>
@@ -80,7 +151,7 @@ const Container=styled.div`
 
 const LeftSection=styled.div`
   width: 150px;
-  margin-left: 16rem;
+  margin-left: 15rem;
   display: flex;
   align-items: center;
   color: #0D004D;
@@ -90,14 +161,14 @@ const LeftSection=styled.div`
       font-weight: 700;
     }
   }
-
 `
 
 const MiddleSection=styled.div`
-  width: 1063px;
+  width: 1094.5px;
   display: flex;
   justify-content: end;
   align-items: center;
+
 
   .dashboard-div {
     width: 100px;
@@ -106,15 +177,27 @@ const MiddleSection=styled.div`
     display: flex;
     justify-content: end;
     align-items: center;
-    p{
-      font-size: 16.5px;
-    }
+
+      p {
+        font-size: 16.5px;
+        margin: 0;
+        cursor: pointer;
+        position: relative;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+
+      a {
+        color: black;
+        text-decoration: none;
+      }
   }
 `
 
 const RightSection=styled.div`
   width: 120px;
-  margin-right: 16rem;
   display: flex;
   align-items: center;
   justify-content: end;
@@ -148,6 +231,6 @@ const RightSection=styled.div`
 
   .login:hover .bar {
     opacity: 1;
-   transform: scaleX(1);
+    transform: scaleX(1);
   }
 `
