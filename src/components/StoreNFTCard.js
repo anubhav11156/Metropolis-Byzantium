@@ -9,7 +9,6 @@ function StoreNFTCard(prop) {
   const [isHovering, setIsHovering] = useState(false);
 
   const onMouseOverHandle = () => {
-    console.log('hovering');
     setIsHovering(true);
   }
 

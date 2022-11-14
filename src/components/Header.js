@@ -4,21 +4,24 @@ import { ConnectKitButton } from "connectkit";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { Network, Alchemy } from "alchemy-sdk";
-
+import { useDispatch, useSelector } from 'react-redux';
+import { accountAdded, selectAccount } from '../features/AccountDetailSlice';
 
 function Header() {
 
+  const dispatch = useDispatch();
+  const getAccountDetail = useSelector(selectAccount);
 
   const navigate = useNavigate();
   const { pathname } = useLocation(); // current pathname
 
   const { address } = useAccount();
 
+
   const [flag, setFlag] = useState(0);
   const [Connected, setConnected] = useState(false);
-  const [userAddress, setUserAddress] = useState('');
   const [userBalance, setUserBalance] = useState('');
 
   const [scrolled, setScrolled] = useState(false);
@@ -37,17 +40,23 @@ function Header() {
 
     useEffect(()=>{
       if(Connected){
-        alchemy.core.getBalance(`${userAddress}`, "latest")
+        alchemy.core.getBalance(`${address}`, "latest")
         .then(response => setUserBalance((hexToDecimal(response._hex)/10**18).toFixed(2)));
-      }else{
-        setUserBalance('');
+        // console.log('balalance testing : ', userBalance);
+        // console.log('balalance testing : ', userBalance);
+        dispatch(
+          accountAdded(address, userBalance)
+        );
+      }else if(!Connected) {
+        dispatch(
+          accountAdded('', '')
+        );
       }
     });
-
   /*---------------------------------------------------------------*/
 
-    // console.log('add : ', userAddress);
-    // console.log('bal : ', userBalance);
+
+    console.log('account detail is: ', getAccountDetail);
 
     window.onscroll = function (e) {
       setPixelScrolled(window.scrollY);
@@ -63,13 +72,11 @@ function Header() {
 
     useEffect( () => {
       if(Connected && flag==0){
-        setUserAddress(address);
         toast.success("Logged In", {
           position: toast.POSITION.TOP_CENTER
         });
         setFlag(1);
       }else if(!Connected && flag==1 ){
-        setUserAddress('');
         if(pathname == '/dashboard'){
           navigate('/');
         }

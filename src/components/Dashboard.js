@@ -6,12 +6,17 @@ import * as style from '@dicebear/pixel-art';
 import { ConnectKitButton } from "connectkit";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useSelector } from 'react-redux';
+import { selectAccount } from '../features/AccountDetailSlice';
+
 
 function Dashboard() {
 
   const navigate = useNavigate();
-
   const [Connected, setConnected] = useState(true);
+
+  const getAccountDetail = useSelector(selectAccount);
+
 
   useEffect( ()=> {
     if(!Connected){
@@ -20,7 +25,7 @@ function Dashboard() {
   })
   const avatar = createAvatar( style, {
     dataUri: true,
-    seed: `0x22b6Dd4D6d818e2Ebce3D2E009A249F8FbF4e965[]`
+    seed: `metro-${getAccountDetail.address}`
   });
 
   const [isCreateClicked, setIsCreateClicked] = useState(true);
@@ -67,14 +72,14 @@ function Dashboard() {
                 </div>
                 <div className="account-deatail">
                   <div className="address">
-                    <p>0x22b6Dd4D6d818e2Ebce3D2E009A249F8FbF4e965</p>
+                    <p>{getAccountDetail.address}</p>
                   </div>
                   <div className="balance">
                     <div className="logo-div">
                       <img src="/images/polygon-purple.png"/>
                     </div>
                     <div className="amount">
-                      <p>45.78</p>
+                      <p>{getAccountDetail.balance}</p>
                     </div>
                   </div>
                 </div>
