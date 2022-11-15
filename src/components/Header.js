@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import { ConnectKitButton } from "connectkit";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { createAvatar } from '@dicebear/avatars';
+import * as style from '@dicebear/pixel-art';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { Network, Alchemy } from "alchemy-sdk";
@@ -12,13 +14,12 @@ import { accountAdded, selectAccount } from '../features/AccountDetailSlice';
 function Header() {
 
   const dispatch = useDispatch();
-  const getAccountDetail = useSelector(selectAccount);
+  const getAccountDetail = useSelector(selectAccount); // get detail from redux store
 
   const navigate = useNavigate();
   const { pathname } = useLocation(); // current pathname
 
   const { address } = useAccount();
-
 
   const [flag, setFlag] = useState(0);
   const [Connected, setConnected] = useState(false);
@@ -27,9 +28,9 @@ function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [pixelScrolled, setPixelScrolled] = useState(0);
 
-  const hexToDecimal = (hex) => {
-    return parseInt(hex, 16);
-  }
+  /*------Function to convert hex into decimal------*/
+  const hexToDecimal = (hex) => parseInt(hex, 16)
+  /*------------------------------------------------*/
 
   /*------------code to get account balance of the user------------*/
     const settings = {
@@ -47,16 +48,13 @@ function Header() {
         dispatch(
           accountAdded(address, userBalance)
         );
-      }else if(!Connected) {
+      }else if(!Connected) {  // dispatch account detail to redux store
         dispatch(
           accountAdded('', '')
         );
       }
     });
   /*---------------------------------------------------------------*/
-
-
-    console.log('account detail is: ', getAccountDetail);
 
     window.onscroll = function (e) {
       setPixelScrolled(window.scrollY);
@@ -93,6 +91,11 @@ function Header() {
       });
     }
 
+    const avatar = createAvatar( style, {
+      dataUri: true,
+      seed: `metro-${address}`
+    });
+
     return (
         <Container style={{
            backgroundImage: scrolled ? 'radial-gradient( circle farthest-corner at 10% 20%,  rgba(255,94,247,0.2) 17.8%, rgba(2,245,255,0.25) 100.2% )' : '',
@@ -114,6 +117,32 @@ function Header() {
                  </p>
               }
             </div>
+            {
+              Connected &&
+              <OnLogedIn>
+                <div className="balance-div">
+                  <div className="matic-logo">
+                    <img src="/images/polygon-purple.png"/>
+                  </div>
+                  <div className="balance-amount">
+                    <p>{getAccountDetail.balance}</p>
+                  </div>
+                </div>
+                <div className="address-div">
+                  <div className="profile-div">
+                    <div className="imgContainer">
+                      <img src={avatar}/>
+                    </div>
+                  </div>
+                  <div className="for-address">
+                    <div className="add">
+                      <p>{address}</p>
+                    </div>
+                  </div>
+                </div>
+              </OnLogedIn>
+            }
+
           </MiddleSection>
           <RightSection>
             <ConnectKitButton.Custom>
@@ -179,8 +208,8 @@ const MiddleSection=styled.div`
 
   .dashboard-div {
     width: 100px;
-    height: 1.rem;
-    margin-right: 28px;
+    height: 100%;
+    margin-right: 20px;
     display: flex;
     justify-content: end;
     align-items: center;
@@ -239,5 +268,111 @@ const RightSection=styled.div`
   .login:hover .bar {
     opacity: 1;
     transform: scaleX(1);
+  }
+`
+
+const OnLogedIn=styled.div`
+  width: 280px;
+  height: 100%;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  color: #0D004D;
+
+  .balance-div {
+    width: 105px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    height: 33px;
+    display: flex;
+    align-items: center;
+    background: rgba( 255, 255, 255, 0.5 );
+    backdrop-filter: blur( 4px );
+    -webkit-backdrop-filter: blur( 4px );
+    cursor: pointer;
+
+    .matic-logo {
+      width: 30px;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgb(255, 255, 255,0.8);
+
+      img {
+        width: 19px;
+        height: 19px;
+        opacity: 0.9;
+      }
+    }
+
+    .balance-amount {
+      flex:1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+
+      p {
+        margin: 0;
+        margin-left: 5px;
+        font-size: 15px;
+      }
+    }
+  }
+
+  .address-div {
+    flex: 1;
+    height: 33px;
+    margin-left: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    background: rgba( 255, 255, 255, 0.5 );
+    backdrop-filter: blur( 4px );
+    -webkit-backdrop-filter: blur( 4px );
+    cursor: pointer;
+
+
+    .profile-div {
+      width: 34px;
+      background-color: rgb(255, 255, 255,0.8);
+
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+
+      .imgContainer {
+        height: 20px;
+        width: 20px;
+      }
+    }
+
+    .for-address {
+      flex: 1;
+      height: 100%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .add {
+        height: 20px;
+        width: 110px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        p {
+          margin: 0;
+          font-size: 14px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          margin-left: 3px;
+          margin-right: 3px;
+        }
+      }
+    }
   }
 `
