@@ -11,7 +11,7 @@ contract Metropolis is ERC721URIStorage {
   Counters.Counter private _tokenIds;   // _tokenIds is how many no. of tokens are created
   Counters.Counter private _itemsSold;
 
-  address payable owner; // owner is platform owner
+  address payable owner; // owner is platform owner, me
 
   constructor() ERC721("Metaverse Tokens", "METT") {
     owner = payable(msg.sender);
@@ -25,7 +25,7 @@ contract Metropolis is ERC721URIStorage {
     bool sold;
   }
 
-  mapping(uinit256 => NFT) idToNFT;
+  mapping(uint256 => NFT) idToNFT;
 
   event nftCreated (
     uint256 indexed tokenId,
@@ -35,8 +35,8 @@ contract Metropolis is ERC721URIStorage {
     bool sold
   );
 
-  // this function will create a token and list it in the marketplace
-  function createToken(string memory tokenURI) public payable returns(uint){
+  // this function will create a token and list it in Metropolis market
+  function createToken(string memory tokenURI, uint256 price) public payable returns(uint){
 
     _tokenIds.increment();
     uint256 newItemId = _tokenIds.current();
@@ -57,7 +57,7 @@ contract Metropolis is ERC721URIStorage {
   ) private {
     require(price > 0,"Price can't be zero.");
 
-    idToNft[tokenId] = NFT(
+    idToNFT[tokenId] = NFT(
         tokenId,
         payable(msg.sender), // seller
         payable(address(this)),
@@ -65,12 +65,12 @@ contract Metropolis is ERC721URIStorage {
         false // flase because till now it is in market, not sold
     );
 
-    // transfer nft to marketplace form seller
+    // transfer nft to marketplace from seller
     _transfer(msg.sender, address(this), tokenId);
     emit nftCreated(
         tokenId,
-        msg.sender,
-        address(this),
+        payable(msg.sender),
+        payable(address(this)),
         price,
         false
     );
@@ -80,13 +80,13 @@ contract Metropolis is ERC721URIStorage {
   function buyNft(
     uint tokenId
   ) public payable {
-    uint price = idToNft[tokenId].price;
-    address seller = idToNft[tokenId].seller;
+    uint price = idToNFT[tokenId].price;
+    address seller = idToNFT[tokenId].seller;
     require(msg.value==price,"Submitted price not equal to NFT price.");
     // when someone buy nft for the first time, change it's owner from platform to him/her
-    idToNft[tokenId].owner = payable(msg.sender);
-    idToNft[tokenId].sold = true;
-    idToNft[tokenId].seller = payable(address(0));
+    idToNFT[tokenId].owner = payable(msg.sender);
+    idToNFT[tokenId].sold = true;
+    idToNFT[tokenId].seller = payable(address(0));
 
     _itemsSold.increment();
 
@@ -106,10 +106,10 @@ contract Metropolis is ERC721URIStorage {
     // dynamic array of size unsoldNftCount
     NFT[] memory allItems = new NFT[](unsoldNftCount);
 
-    for(uint i=0; i<itemCount; i++){
-        if(idToNft[i+1].owner == address(this)) {
+    for(uint i=0; i<nftCount; i++){
+        if(idToNFT[i+1].owner == address(this)) {
             uint currentId = i+1;
-            NFT storage currentNFT = idToNft[curentId];
+            NFT storage currentNFT = idToNFT[currentId];
             allItems[currentIndex] = currentNFT;
             currentIndex++;
         }
@@ -125,16 +125,16 @@ contract Metropolis is ERC721URIStorage {
 
     // first find total no. of nfts owned by the user
     for(uint i=0; i<totalNFTsCount; i++){
-        if(idToNft[i+1].owner==msg.sender){
+        if(idToNFT[i+1].owner==msg.sender){
             nftCount++;
         }
     }
 
-    NFT[] memory myNFTS = new NFT[](nftCount);
+    NFT[] memory myNFTs = new NFT[](nftCount);
     for(uint i=0; i<totalNFTsCount; i++){
-        if(idToNft[i+1].owner==msg.sender){
+        if(idToNFT[i+1].owner==msg.sender){
             uint currentId = i+1;
-            NFT storage currentNFT = idToNft[currentId];
+            NFT storage currentNFT = idToNFT[currentId];
             myNFTs[currentIndex] = currentNFT;
             currentIndex++;
         }
@@ -150,16 +150,16 @@ contract Metropolis is ERC721URIStorage {
 
     // first find total no. of nfts owned by the user
     for(uint i=0; i<totalNFTsCount; i++){
-        if(idToNft[i+1].seller==msg.sender){
+        if(idToNFT[i+1].seller==msg.sender){
             nftCount++;
         }
     }
 
     NFT[] memory myListings = new NFT[](nftCount);
     for(uint i=0; i<totalNFTsCount; i++){
-        if(idToNft[i+1].seller==msg.sender){
+        if(idToNFT[i+1].seller==msg.sender){
             uint currentId = i+1;
-            NFT storage currentNFT = idToNft[currentId];
+            NFT storage currentNFT = idToNFT[currentId];
             myListings[currentIndex] = currentNFT;
             currentIndex++;
         }
@@ -173,11 +173,11 @@ contract Metropolis is ERC721URIStorage {
     uint256 tokenId,
     uint256 price
   ) public payable {
-    require(idToNft[tokenId].owner==msg.sender,"You are not owner of this NFT");
-    idToNft[tokenId].owner=payable(address(this));
-    idToNft[tokenId].sold=false;
-    idToNft[tokenId].seller=payable(msg.sender);
-    idToNft[tokenId].price=price;
+    require(idToNFT[tokenId].owner==msg.sender,"You are not owner of this NFT");
+    idToNFT[tokenId].owner=payable(address(this));
+    idToNFT[tokenId].sold=false;
+    idToNFT[tokenId].seller=payable(msg.sender);
+    idToNFT[tokenId].price=price;
     _itemsSold.decrement();
 
     _transfer(msg.sender, address(this), tokenId);
