@@ -13,7 +13,7 @@ contract Metropolis is ERC721URIStorage {
 
   address payable owner; // owner is platform owner, me
 
-  constructor() ERC721("Metaverse Tokens", "METT") {
+  constructor() ERC721("Metropolis NFT", "METRO") {
     owner = payable(msg.sender);
   }
 
@@ -21,7 +21,9 @@ contract Metropolis is ERC721URIStorage {
     uint256 tokenId;
     address payable seller;
     address payable owner;
+    address payable artist;
     uint256 price;
+    uint256 royaltyFeeInBips;
     bool sold;
   }
 
@@ -31,12 +33,14 @@ contract Metropolis is ERC721URIStorage {
     uint256 indexed tokenId,
     address payable seller,
     address payable owner,
+    address payable artist,
     uint256 price,
+    uint256 royaltyFeeInBips,
     bool sold
   );
 
   // this function will create a token and list it in Metropolis market
-  function createToken(string memory tokenURI, uint256 price) public payable returns(uint){
+  function createToken(string memory tokenURI, uint256 price, uint256 royaltyFeeInBips) public payable returns(uint){
 
     _tokenIds.increment();
     uint256 newItemId = _tokenIds.current();
@@ -45,15 +49,26 @@ contract Metropolis is ERC721URIStorage {
     _setTokenURI(newItemId, tokenURI);
 
     // user defined function
-    createMarketItem(newItemId, price);
+    createMarketItem(newItemId, price, royaltyFeeInBips);
 
     return newItemId;
+  }
+
+  // function to calculate royalty fee
+  function getRoyaltyFee(uint256 _salePrice, uint256 royaltyFeeInBips) pure public returns(uint256) {
+    return (_salePrice/10000)*royaltyFeeInBips;
+  }
+
+  // fucntion to calculate commission fee
+  function getCommissionFee(uint256 _salePrice) pure public returns(uint256){
+    return (_salePrice/10000)*300; // 3% commission
   }
 
   // will be called by creaeToken()
   function createMarketItem(
     uint256 tokenId,
-    uint256 price
+    uint256 price,
+    uint256 royaltyFeeInBips
   ) private {
     require(price > 0,"Price can't be zero.");
 
@@ -61,7 +76,9 @@ contract Metropolis is ERC721URIStorage {
         tokenId,
         payable(msg.sender), // seller
         payable(address(this)),
+        payable(msg.sender), // seller is the artist
         price,
+        royaltyFeeInBips,
         false // flase because till now it is in market, not sold
     );
 
@@ -71,7 +88,9 @@ contract Metropolis is ERC721URIStorage {
         tokenId,
         payable(msg.sender),
         payable(address(this)),
+        payable(msg.sender),
         price,
+        royaltyFeeInBips,
         false
     );
   }
@@ -81,7 +100,9 @@ contract Metropolis is ERC721URIStorage {
     uint tokenId
   ) public payable {
     uint price = idToNFT[tokenId].price;
+    uint royaltyFee = idToNFT[tokenId].royaltyFeeInBips;
     address seller = idToNFT[tokenId].seller;
+    address artist = idToNFT[tokenId].artist;
     require(msg.value==price,"Submitted price not equal to NFT price.");
     // when someone buy nft for the first time, change it's owner from platform to him/her
     idToNFT[tokenId].owner = payable(msg.sender);
@@ -92,8 +113,34 @@ contract Metropolis is ERC721URIStorage {
 
     // transfer ownership of the NFT
     _transfer(address(this), msg.sender, tokenId);
-    // now transfer the NFT amount to the seller
-    payable(seller).transfer(msg.value);
+
+    // now transfer the NFT amount royalty if it is there and commission to the platform owner
+
+    if(idToNFT[tokenId].seller==idToNFT[tokenId].artist){
+      // means artist is the seller and it's the first sell of the NFT and artist don't charge royalty fee to himself
+      // only charge the commission fetches
+
+      uint256 commissionFee = getCommissionFee(price);
+      uint256 toSeller = (msg.value)-commissionFee;
+
+      // transfer commissionFee to the platform owner
+      owner.transfer(commissionFee);
+
+      // transfer rest amount to the seller
+      payable(seller).transfer(toSeller);
+    }else {
+      uint256 commissionFee = getCommissionFee(price);
+      uint256 _royaltyFee = getRoyaltyFee(price, royaltyFee);
+      uint256 toSeller = (msg.value)-(commissionFee + _royaltyFee);
+      // transfer royalty fee to the artist
+      payable(artist).transfer(_royaltyFee);
+
+      // transfer commissionFee to the platform
+      owner.transfer(commissionFee);
+
+      // transfer rest amount to the seller
+      payable(seller).transfer(toSeller);
+    }
   }
 
   // this function returns all the unsold NFTs
