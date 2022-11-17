@@ -5,16 +5,34 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-contract Metropolis is ERC721URIStorage {
+contract Metropolis is ERC721URIStorage, ChainlinkClient, ConfirmedOwner  {
+
+  address payable platformOwner; // owner is platform owner, me
+
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;   // _tokenIds is how many no. of tokens are created
   Counters.Counter private _itemsSold;
 
-  address payable owner; // owner is platform owner, me
+  using Chainlink for Chainlink.Request;
+  bytes32 private jobId;
+  uint256 private fee;
 
-  constructor() ERC721("Metropolis NFT", "METRO") {
-    owner = payable(msg.sender);
+  /*
+     * MUMBAI Testnet details:
+     * Link Token: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB
+     * Oracle: 0x40193c8518BB267228Fc409a613bDbD8eC5a97b3
+     * jobId: ca98366cc7314957b8c012c72f05aeeb
+  */
+
+  constructor() ERC721("Metropolis NFT", "METRO") ConfirmedOwner(msg.sender) {
+    platformOwner = payable(msg.sender);
+    setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
+    setChainlinkOracle(0x40193c8518BB267228Fc409a613bDbD8eC5a97b3);
+    jobId = 'ca98366cc7314957b8c012c72f05aeeb';
+    fee = 0.1 * 10**18;
   }
 
   struct NFT {
@@ -24,6 +42,7 @@ contract Metropolis is ERC721URIStorage {
     address payable artist;
     uint256 price;
     uint256 royaltyFeeInBips;
+    // uint256 usdValue; //  USD price of the NFT when minted
     bool sold;
   }
 
@@ -56,11 +75,13 @@ contract Metropolis is ERC721URIStorage {
 
   // function to calculate royalty fee
   function getRoyaltyFee(uint256 _salePrice, uint256 royaltyFeeInBips) pure public returns(uint256) {
+    require(_salePrice>100000000000000000,"Sale price is less than 0.1 MATIC");
     return (_salePrice/10000)*royaltyFeeInBips;
   }
 
   // fucntion to calculate commission fee
   function getCommissionFee(uint256 _salePrice) pure public returns(uint256){
+    require(_salePrice>100000000000000000,"Sale price is less than 0.1 MATIC");
     return (_salePrice/10000)*300; // 3% commission
   }
 
@@ -124,7 +145,7 @@ contract Metropolis is ERC721URIStorage {
       uint256 toSeller = (msg.value)-commissionFee;
 
       // transfer commissionFee to the platform owner
-      owner.transfer(commissionFee);
+      platformOwner.transfer(commissionFee);
 
       // transfer rest amount to the seller
       payable(seller).transfer(toSeller);
@@ -136,7 +157,7 @@ contract Metropolis is ERC721URIStorage {
       payable(artist).transfer(_royaltyFee);
 
       // transfer commissionFee to the platform
-      owner.transfer(commissionFee);
+      platformOwner.transfer(commissionFee);
 
       // transfer rest amount to the seller
       payable(seller).transfer(toSeller);

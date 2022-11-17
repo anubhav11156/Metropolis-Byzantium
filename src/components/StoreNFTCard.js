@@ -1,280 +1,295 @@
-import { useState, useEffect, React } from 'react'
-import styled from 'styled-components'
-import Fade from 'react-reveal/Fade';
+// SPDX-License-Identifier: MIT
 
+pragma solidity ^0.8.4;
 
-function StoreNFTCard(prop) {
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+// import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-  const [maticRate, setMaticRate] = useState('');
-  const [isHovering, setIsHovering] = useState(false);
+contract Metropolis is ERC721URIStorage, ChainlinkClient {
 
-  const onMouseOverHandle = () => {
-    setIsHovering(true);
+   struct NFT {
+    uint256 tokenId;
+    address payable seller;
+    address payable owner;
+    address payable artist;
+    uint256 price;
+    uint256 royaltyFeeInBips;
+    uint256 usdValue; //  USD price of the NFT when minted
+    bool sold;
   }
 
-  const onMouseOutHandle = () => {
-    setIsHovering(false);
+  mapping(uint256 => NFT) idToNFT;
+
+  address payable platformOwner; // platform owner, me
+
+  event nftCreated (
+    uint256 indexed tokenId,
+    address payable seller,
+    address payable owner,
+    address payable artist,
+    uint256 price,
+    uint256 royaltyFeeInBips,
+    bool sold
+  );
+
+  using Counters for Counters.Counter;
+  Counters.Counter private _tokenIds;   // _tokenIds is how many no. of tokens are created
+  Counters.Counter private _itemsSold;
+
+  using Chainlink for Chainlink.Request;
+  bytes32 private jobId;
+  uint256 private fee;
+  uint256 public maticUSDvalue;
+
+  /*
+     * MUMBAI Testnet details:
+     * Link Token: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB
+     * Oracle: 0x40193c8518BB267228Fc409a613bDbD8eC5a97b3
+     * jobId: ca98366cc7314957b8c012c72f05aeeb
+  */
+
+  constructor() ERC721("Metropolis NFT", "METRO") {
+    platformOwner = payable(msg.sender);
+    setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
+    setChainlinkOracle(0x40193c8518BB267228Fc409a613bDbD8eC5a97b3);
+    jobId = 'ca98366cc7314957b8c012c72f05aeeb';
+    fee = 0.1 * 10**18;
   }
 
-  const buyHandle = () => {
-    console.log('clicke buy');
+  /*-----chainlink Any API cal to get current usd value of matic token-----*/
+
+  function getMATICvalue() public payable returns(bytes32){
+    Chainlink.Request memory req = buildChainlinkRequest(
+            jobId,
+            address(this),
+            this.fulfill.selector
+        );
+    req.add(
+           "get",
+           "https://min-api.cryptocompare.com/data/price?fsym=MATIC&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}"
+       );
+
+    req.add("path", "USD");
+
+    int256 timesAmount = 10 ** 18;
+    req.addInt("times", timesAmount);
+
+    return sendChainlinkRequest(req, fee);
   }
 
-  const getMaticMarketRate = async() => {
-    const rate = await fetch('https://min-api.cryptocompare.com/data/price?fsym=MATIC&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}')
-    .then(response => response.json())
-    .then(result => setMaticRate((result.USD))?.toFixed(2))
+  function fulfill( bytes32 _requestId, uint256 data) public recordChainlinkFulfillment(_requestId) {
+    maticUSDvalue=data;
   }
 
-  useEffect(()=> {
-    getMaticMarketRate();
-  },[]);
-  // a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918  crypto-compare api key
+  function getLINKtokenBalance() view public returns(uint256) {
+    return address(this).balance;
+  }
 
-  const cryptoPrice = 10;
-  let dollarValue = (maticRate*cryptoPrice).toFixed(2);
+  /*----------------------------------------------------------------------*/
 
-    return (
-        <Container onMouseOver={onMouseOverHandle} onMouseOut={onMouseOutHandle}>
-          <Card>
-            <div className="background-image">
-                <img src=""/>
-            </div>
-            <div className="image-div">
-              <img src={prop.bg}/>
-              {
-                isHovering && (
-                  <Fade bottom duration={350}>
-                    <div className="buy-div" onClick={buyHandle}><p>Buy now</p></div>
-                  </Fade>
-                )
-              }
-            </div>
-              <div className="detail-div">
-                <div className="detail-div-wrapper">
-                  <div className="id-div">
-                    #123
-                  </div>
-                  <div className="price-div">
-                    <div className="logo-div">
-                      <img src="/images/polygon-purple.png"/>
-                    </div>
-                    <div className="crypto-price">
-                      {cryptoPrice}
-                    </div>
-                    <div className="market-price">
-                      {`$${dollarValue}`}
-                    </div>
-                  </div>
-                  <div className="name-div">
-                    <p>Test Name</p>
-                  </div>
-                </div>
-                <div className="icon-div">
-                  <div>
-                    <img src="/images/pattern1.png"/>
-                  </div>
-                </div>
-              </div>
-          </Card>
-        </Container>
-    )
+  // this function will create a token and list it in Metropolis market
+  function createToken(string memory tokenURI, uint256 price, uint256 royaltyFeeInBips) public payable returns(uint){
+
+    _tokenIds.increment();
+    uint256 newItemId = _tokenIds.current();
+
+    _mint(msg.sender, newItemId);
+    _setTokenURI(newItemId, tokenURI);
+
+    // user defined function
+    createMarketItem(newItemId, price, royaltyFeeInBips, maticUSDvalue);
+
+    return newItemId;
+  }
+
+  // function to calculate royalty fee
+  function getRoyaltyFee(uint256 _salePrice, uint256 royaltyFeeInBips) pure public returns(uint256) {
+    require(_salePrice>100000000000000000,"Sale price is less than 0.1 MATIC");
+    return (_salePrice/10000)*royaltyFeeInBips;
+  }
+
+  // fucntion to calculate commission fee
+  function getCommissionFee(uint256 _salePrice) pure public returns(uint256){
+    require(_salePrice>100000000000000000,"Sale price is less than 0.1 MATIC");
+    return (_salePrice/10000)*300; // 3% commission
+  }
+
+  // will be called by createToken()
+  function createMarketItem(
+    uint256 tokenId,
+    uint256 price,
+    uint256 royaltyFeeInBips,
+    uint256 usdValue
+  ) private {
+    require(price > 0,"Price can't be zero.");
+
+    // idToNFT[tokenId] = NFT(
+    //     tokenId,
+    //     payable(msg.sender), // seller
+    //     payable(address(this)),
+    //     payable(msg.sender), // seller is the artist
+    //     price,
+    //     royaltyFeeInBips,
+    //     false // flase becausek till now it is in market, not sold
+    // );
+    getMATICvalue();
+
+    idToNFT[tokenId].tokenId = tokenId;
+    idToNFT[tokenId].price = price;
+    idToNFT[tokenId].royaltyFeeInBips = royaltyFeeInBips;
+    idToNFT[tokenId].usdValue = (price*usdValue)/10**18;
+    idToNFT[tokenId].seller = payable(msg.sender);
+    idToNFT[tokenId].owner = payable(address(this));
+    idToNFT[tokenId].artist = payable(msg.sender);
+
+    // transfer nft to marketplace from seller
+    _transfer(msg.sender, address(this), tokenId);
+    emit nftCreated(
+        tokenId,
+        payable(msg.sender),
+        payable(address(this)),
+        payable(msg.sender),
+        price,
+        royaltyFeeInBips,
+        false
+    );
+  }
+
+  // Some user is buying NFT, transfer ownership of Nft and price between parties
+  function buyNft(
+    uint tokenId
+  ) public payable {
+    uint price = idToNFT[tokenId].price;
+    uint royaltyFee = idToNFT[tokenId].royaltyFeeInBips;
+    address seller = idToNFT[tokenId].seller;
+    address artist = idToNFT[tokenId].artist;
+    require(msg.value==price,"Submitted price not equal to NFT price.");
+    // when someone buy nft for the first time, change it's owner from platform to him/her
+    idToNFT[tokenId].owner = payable(msg.sender);
+    idToNFT[tokenId].sold = true;
+    idToNFT[tokenId].seller = payable(address(0));
+
+    _itemsSold.increment();
+
+    // transfer ownership of the NFT
+    _transfer(address(this), msg.sender, tokenId);
+
+    // now transfer the NFT amount royalty if it is there and commission to the platform owner
+
+    if(idToNFT[tokenId].seller==idToNFT[tokenId].artist){
+      // means artist is the seller and it's the first sell of the NFT and artist don't charge royalty fee to himself
+      // only charge the commission fetches
+
+      uint256 commissionFee = getCommissionFee(price);
+      uint256 toSeller = (msg.value)-commissionFee;
+
+      // transfer commissionFee to the platform owner
+      platformOwner.transfer(commissionFee);
+
+      // transfer rest amount to the seller
+      payable(seller).transfer(toSeller);
+    }else {
+      uint256 commissionFee = getCommissionFee(price);
+      uint256 _royaltyFee = getRoyaltyFee(price, royaltyFee);
+      uint256 toSeller = (msg.value)-(commissionFee + _royaltyFee);
+      // transfer royalty fee to the artist
+      payable(artist).transfer(_royaltyFee);
+
+      // transfer commissionFee to the platform
+      platformOwner.transfer(commissionFee);
+
+      // transfer rest amount to the seller
+      payable(seller).transfer(toSeller);
+    }
+  }
+
+  // this function returns all the unsold NFTs
+  // if sold then don't list in the market
+  function fetchMarket() public view returns(NFT[] memory) {
+    uint256 nftCount = _tokenIds.current();
+    uint256 unsoldNftCount = _tokenIds.current() - _itemsSold.current();
+    uint currentIndex = 0; // for looping
+
+    // dynamic array of size unsoldNftCount
+    NFT[] memory allItems = new NFT[](unsoldNftCount);
+
+    for(uint i=0; i<nftCount; i++){
+        if(idToNFT[i+1].owner == address(this)) {
+            uint currentId = i+1;
+            NFT storage currentNFT = idToNFT[currentId];
+            allItems[currentIndex] = currentNFT;
+            currentIndex++;
+        }
+    }
+    return allItems;
+  }
+
+  // this fucntion fetches NFTs bought by you
+  function fetchMyNFTs() public view returns(NFT[] memory) {
+    uint256 totalNFTsCount = _tokenIds.current();
+    uint256 nftCount = 0;
+    uint256 currentIndex = 0;
+
+    // first find total no. of nfts owned by the user
+    for(uint i=0; i<totalNFTsCount; i++){
+        if(idToNFT[i+1].owner==msg.sender){
+            nftCount++;
+        }
+    }
+
+    NFT[] memory myNFTs = new NFT[](nftCount);
+    for(uint i=0; i<totalNFTsCount; i++){
+        if(idToNFT[i+1].owner==msg.sender){
+            uint currentId = i+1;
+            NFT storage currentNFT = idToNFT[currentId];
+            myNFTs[currentIndex] = currentNFT;
+            currentIndex++;
+        }
+    }
+    return myNFTs;
+  }
+
+  // this function returns NFTs created by the user
+  function fetchMyListings() public view returns(NFT[] memory){
+     uint256 totalNFTsCount = _tokenIds.current();
+    uint256 nftCount = 0;
+    uint256 currentIndex = 0;
+
+    // first find total no. of nfts owned by the user
+    for(uint i=0; i<totalNFTsCount; i++){
+        if(idToNFT[i+1].seller==msg.sender){
+            nftCount++;
+        }
+    }
+
+    NFT[] memory myListings = new NFT[](nftCount);
+    for(uint i=0; i<totalNFTsCount; i++){
+        if(idToNFT[i+1].seller==msg.sender){
+            uint currentId = i+1;
+            NFT storage currentNFT = idToNFT[currentId];
+            myListings[currentIndex] = currentNFT;
+            currentIndex++;
+        }
+    }
+    return myListings;
+  }
+
+
+  // this function resell the nfts owned by the owner
+  function resellNFTs(
+    uint256 tokenId,
+    uint256 price
+  ) public payable {
+    require(idToNFT[tokenId].owner==msg.sender,"You are not owner of this NFT");
+    idToNFT[tokenId].owner=payable(address(this));
+    idToNFT[tokenId].sold=false;
+    idToNFT[tokenId].seller=payable(msg.sender);
+    idToNFT[tokenId].price=price;
+    _itemsSold.decrement();
+
+    _transfer(msg.sender, address(this), tokenId);
+  }
 }
-
-export default StoreNFTCard
-
-const Container=styled.div`
-  height: 410px;
-  width: 315px;
-  display: inline-block;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 6px 6px 10px rgba(186, 186, 186, 0.77);
-  border-width: 2px;
-  border-color: rgba(255, 255, 255, 0.53);
-  border-style: solid;
-  box-sizing: border-box;
-  transition: box-shadow 0.2s;
-  &:hover {
-      box-shadow: 10px 8px 12px rgba(186, 186, 186, 0.77);
-  }
-  .background-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(140.54deg, #608D00 0%, #D30000 72.37%), linear-gradient(58.72deg, #0029FF 0%, #8FFF00 100%), radial-gradient(100% 164.72% at 100% 100%, #6100FF 0%, #00FF57 100%), radial-gradient(100% 148.07% at 0% 0%, #FFF500 0%, #51D500 100%);
-    background-blend-mode: color-dodge, overlay, difference, normal;
-    opacity: 0.2;
-    z-index: -1;
-  }
-`
-
-const Card=styled.div`
-  border-radius: 2px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  font-size: 15px;
-  cursor: pointer;
-  border-radius: 2px;
-  opacity: 1;
-
-  .image-div {
-    margin-top: 8px;
-    width: 295px;
-    height: 295px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;transform
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    position: relative;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .buy-div {
-      width: 85px;
-      height: 35px;
-      position: absolute;
-      bottom: 25px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      background-image: linear-gradient( 109.6deg,  rgba(128,144,233,0.85) 17.4%, rgba(171,88,238,0.85) 52.4%, rgba(255,129,246,0.85) 91% );
-      box-shadow: 2px 4px 15px 0 rgba( 31, 38, 135, 0.37 );
-      border-radius: 1px;
-      border: 1px solid rgba( 255, 255, 255, 0.8 );
-      color: rgba(255, 255, 255, 0.89);
-
-      transition: box-shadow 0.25s;
-
-      &:hover {
-        box-shadow: 2px 8px 22px 0 rgba( 31, 38, 135, 0.37 );
-      }
-
-      &:active {
-        background-image: linear-gradient( 109.6deg,  rgba(128,144,233,0.77) 17.4%, rgba(171,88,238,0.77) 52.4%, rgba(255,129,246,0.77) 91% );
-      }
-    }
-  }
-
-  .detail-div {
-    flex: 1;
-    width: 295px;
-    margin-bottom: 8px;
-    margin-top: 8px;
-    display: flex;
-
-    .detail-div-wrapper {
-      width: 240px;
-      display: flex;
-      flex-direction: column;
-
-      .id-div {
-        width: 100%;
-        width: 240px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        color: rgba(59, 127, 242, 0.82);
-        font-size: 16px;
-        opacity: 0.8;
-
-      }
-
-      .price-div {
-        width: 240px;
-        max-height: 25px;
-        margin-top: 5px;
-
-        display: flex;
-
-        .logo-div{
-          width: 20px;
-
-          display: flex;
-          align-items: center;
-          overflow: hidden;
-
-          img {
-            margin-top: 3px;
-            width: 17.8px;
-            height: 17.8px;
-          }
-
-        }
-
-        .crypto-price {
-          flex:1;
-          height: 24px;
-          width: 50px;
-          margin-top: 1px;
-          margin-left: 7px;
-          font-size: 18px;
-          font-weight: 500;
-          display:flex;
-          align-items: center;
-          color: rgba(0, 0, 0, 0.73);
-        }
-
-        .market-price {
-          width: 170px;
-          color: rgba(252, 252, 252, 1);
-          font-size: 15.5px;
-          display:flex;
-          align-items: center;
-          margin-top: 2px;
-        }
-      }
-
-      .name-div {
-        width: 240px;
-
-        flex:1;
-        display: flex;
-        align-items: end;
-        p {
-          margin: 0;
-          margin-bottom: -6px;
-          font-family: Poppins;
-          font-size: 25px;
-          font-weight: 600;
-          background: -webkit-radial-gradient(rgba(67, 69, 82, 1), rgba(24, 24, 26, 0.72));
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent
-        }
-      }
-    }
-
-    .icon-div {
-      flex: 1;
-
-      display: flex;
-      justify-content: end;
-      align-items: end;
-
-      div {
-        height: 35px;
-        width: 35px;
-        opacity: 0.7;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        img {
-          width: 100%;
-        }
-      }
-    }
-  }
-
-`
