@@ -1,5 +1,8 @@
 import { useState, useEffect, React } from 'react'
 import styled from 'styled-components';
+// import { Web3Storage, File } from 'web3.storage/dist/bundle.esm.min.js';
+import { Web3Storage } from 'web3.storage'
+import { ToastContainer, toast } from 'react-toastify';
 
 function Create() {
 
@@ -7,10 +10,74 @@ function Create() {
    name:"",
    price:"",
    royalty:"",
-   contentURI:null,
+   contentURI:null
   });
 
+  /*-----------------------------code for uploading data to filecoin-----------------------------*/
+
+  function getAccessToken () {
+    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGQ4NzhFNjQ1NkUwYzUyYzE2RDI5ODI0MWUzNzA1MWY0NDgyM2Q1MTUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2Njg3MTUzMDg1NjcsIm5hbWUiOiJNZXRyb3BvbGlzIn0.yJ72HP_FAmmOUtOe6E_Tgw9SqX5TKWm6HspjJ2_OdUM'
+  }
+
+  function makeStorageClient () {
+    return new Web3Storage({ token: getAccessToken() })
+  }
+
+  /* using two flags below, 0 for coverHandle and 1 for contentHandle--- why? so that toast get fired only
+  when we upload cover image an content*/
+  const contentHandle = async () => {
+    console.log('clicked content handle');
+    const fileInput = document.getElementById('content');
+    // console.log(fileInput.files[0]);
+    const filePath = fileInput.files[0].name;
+    // setIsLoadingBarOfContentActive(true);
+    const contentCID = await storeFiles(fileInput.files);
+    console.log('contentCID', contentCID);
+
+    setFormInput({
+      ...formInput,
+      contentURI: `https://ipfs.io/ipfs/${contentCID}/${filePath}`
+    })
+  }
+  //
+  // const uploadToIPFS = async (files) => {
+  //   console.log('in ipfs', files);
+  //   const client = makeStorageClient()
+  //   const cid = await client.put(files)
+  //   // setIsLoadingBarOfContentActive(false);
+  //
+  //   toast.success("Uploaded to IPFS", {
+  //       position: toast.POSITION.TOP_CENTER
+  //     });
+  //   return cid
+  // }
+  async function storeFiles (files) {
+  const client = makeStorageClient()
+  const cid = await client.put(files)
+  console.log('stored files with cid:', cid)
+  return cid
+}
+
+  const metadata = async () => {
+    const {name, price, royalty, contentURI} = formInput;
+    // if (!name || !price || !royalty || !contentURI) return;
+    const data = JSON.stringify({ name, contentURI });
+    console.log('testing', data);
+    const files = [
+      new File([data], 'data.json')
+    ]
+    const metaCID = await storeFiles(files);
+    return `https://ipfs.io/ipfs/${metaCID}/data.json`
+  }
+
   console.log(formInput);
+
+  const mintToken = async () => {
+    console.log('mint token clicked');
+    const uri = await metadata();
+    console.log('uri is : ', uri);
+  }
+  /*-----------------------------------------------------------------------*/
     return (
         <Container>
           <Background></Background>
@@ -76,7 +143,7 @@ function Create() {
             </PriceRoyalty>
             <ChooseFile>
               <div className="top">
-                 <input className="uploadContent" type="file" id="content"/>
+                 <input className="uploadContent" type="file" id="content" onChange={contentHandle}/>
               </div>
               <div className="bottom">
 
@@ -84,7 +151,7 @@ function Create() {
             </ChooseFile>
             <Gap></Gap>
             <Mint>
-              <div className="mint-button">
+              <div className="mint-button" onClick={mintToken}>
                 <p>Mint Token</p>
               </div>
             </Mint>
