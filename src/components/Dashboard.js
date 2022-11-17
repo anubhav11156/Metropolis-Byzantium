@@ -8,6 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from 'react-redux';
 import { selectAccount } from '../features/AccountDetailSlice';
+import Create from './Create';
 
 
 function Dashboard() {
@@ -136,7 +137,7 @@ function Dashboard() {
             </div>
           </SideBar>
           <MainSection>
-            this is main main section
+            <Create />
           </MainSection>
           <ToastContainer
             autoClose={1000}
@@ -459,5 +460,7 @@ const MainSection=styled.div`
   left: 18.75rem;
   bottom: 0;
   right: 0;
-
+  padding-top: 40px;
+  padding-left: 50px;
+  display: flex;
 `

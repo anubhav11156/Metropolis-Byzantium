@@ -6,47 +6,24 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
-import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
+// import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-contract Metropolis is ERC721URIStorage, ChainlinkClient, ConfirmedOwner  {
+contract Metropolis is ERC721URIStorage, ChainlinkClient {
 
-  address payable platformOwner; // owner is platform owner, me
-
-  using Counters for Counters.Counter;
-  Counters.Counter private _tokenIds;   // _tokenIds is how many no. of tokens are created
-  Counters.Counter private _itemsSold;
-
-  using Chainlink for Chainlink.Request;
-  bytes32 private jobId;
-  uint256 private fee;
-
-  /*
-     * MUMBAI Testnet details:
-     * Link Token: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB
-     * Oracle: 0x40193c8518BB267228Fc409a613bDbD8eC5a97b3
-     * jobId: ca98366cc7314957b8c012c72f05aeeb
-  */
-
-  constructor() ERC721("Metropolis NFT", "METRO") ConfirmedOwner(msg.sender) {
-    platformOwner = payable(msg.sender);
-    setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
-    setChainlinkOracle(0x40193c8518BB267228Fc409a613bDbD8eC5a97b3);
-    jobId = 'ca98366cc7314957b8c012c72f05aeeb';
-    fee = 0.1 * 10**18;
-  }
-
-  struct NFT {
+   struct NFT {
     uint256 tokenId;
     address payable seller;
     address payable owner;
     address payable artist;
     uint256 price;
     uint256 royaltyFeeInBips;
-    // uint256 usdValue; //  USD price of the NFT when minted
+    uint256 usdValue; //  USD price of the NFT when minted
     bool sold;
   }
 
   mapping(uint256 => NFT) idToNFT;
+
+  address payable platformOwner; // platform owner, me
 
   event nftCreated (
     uint256 indexed tokenId,
@@ -58,6 +35,61 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ConfirmedOwner  {
     bool sold
   );
 
+  using Counters for Counters.Counter;
+  Counters.Counter private _tokenIds;   // _tokenIds is how many no. of tokens are created
+  Counters.Counter private _itemsSold;
+
+  using Chainlink for Chainlink.Request;
+  bytes32 private jobId;
+  uint256 private fee;
+  uint256 public maticUSDvalue;
+
+  /*
+     * MUMBAI Testnet details:
+     * Link Token: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB
+     * Oracle: 0x40193c8518BB267228Fc409a613bDbD8eC5a97b3
+     * jobId: ca98366cc7314957b8c012c72f05aeeb
+  */
+
+  constructor() ERC721("Metropolis NFT", "METRO") {
+    platformOwner = payable(msg.sender);
+    setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
+    setChainlinkOracle(0x40193c8518BB267228Fc409a613bDbD8eC5a97b3);
+    jobId = 'ca98366cc7314957b8c012c72f05aeeb';
+    fee = 0.1 * 10**18;
+  }
+
+  /*-----chainlink Any API cal to get current usd value of matic token-----*/
+
+  function getMATICvalue() public payable returns(bytes32){
+    Chainlink.Request memory req = buildChainlinkRequest(
+            jobId,
+            address(this),
+            this.fulfill.selector
+        );
+    req.add(
+           "get",
+           "https://min-api.cryptocompare.com/data/price?fsym=MATIC&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}"
+       );
+
+    req.add("path", "USD");
+
+    int256 timesAmount = 10 ** 18;
+    req.addInt("times", timesAmount);
+
+    return sendChainlinkRequest(req, fee);
+  }
+
+  function fulfill( bytes32 _requestId, uint256 data) public recordChainlinkFulfillment(_requestId) {
+    maticUSDvalue=data;
+  }
+
+  function getLINKtokenBalance() view public returns(uint256) {
+    return address(this).balance;
+  }
+
+  /*----------------------------------------------------------------------*/
+
   // this function will create a token and list it in Metropolis market
   function createToken(string memory tokenURI, uint256 price, uint256 royaltyFeeInBips) public payable returns(uint){
 
@@ -68,7 +100,7 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ConfirmedOwner  {
     _setTokenURI(newItemId, tokenURI);
 
     // user defined function
-    createMarketItem(newItemId, price, royaltyFeeInBips);
+    createMarketItem(newItemId, price, royaltyFeeInBips, maticUSDvalue);
 
     return newItemId;
   }
@@ -85,23 +117,33 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ConfirmedOwner  {
     return (_salePrice/10000)*300; // 3% commission
   }
 
-  // will be called by creaeToken()
+  // will be called by createToken()
   function createMarketItem(
     uint256 tokenId,
     uint256 price,
-    uint256 royaltyFeeInBips
+    uint256 royaltyFeeInBips,
+    uint256 usdValue
   ) private {
     require(price > 0,"Price can't be zero.");
 
-    idToNFT[tokenId] = NFT(
-        tokenId,
-        payable(msg.sender), // seller
-        payable(address(this)),
-        payable(msg.sender), // seller is the artist
-        price,
-        royaltyFeeInBips,
-        false // flase because till now it is in market, not sold
-    );
+    // idToNFT[tokenId] = NFT(
+    //     tokenId,
+    //     payable(msg.sender), // seller
+    //     payable(address(this)),
+    //     payable(msg.sender), // seller is the artist
+    //     price,
+    //     royaltyFeeInBips,
+    //     false // flase becausek till now it is in market, not sold
+    // );
+    getMATICvalue();
+
+    idToNFT[tokenId].tokenId = tokenId;
+    idToNFT[tokenId].price = price;
+    idToNFT[tokenId].royaltyFeeInBips = royaltyFeeInBips;
+    idToNFT[tokenId].usdValue = (price*usdValue)/10**18;
+    idToNFT[tokenId].seller = payable(msg.sender);
+    idToNFT[tokenId].owner = payable(address(this));
+    idToNFT[tokenId].artist = payable(msg.sender);
 
     // transfer nft to marketplace from seller
     _transfer(msg.sender, address(this), tokenId);
