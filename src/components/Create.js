@@ -1,7 +1,16 @@
-import React from 'react'
+import { useState, useEffect, React } from 'react'
 import styled from 'styled-components';
 
 function Create() {
+
+  const [formInput, setFormInput] = useState({
+   name:"",
+   price:"",
+   royalty:"",
+   contentURI:null,
+  });
+
+  console.log(formInput);
     return (
         <Container>
           <Background></Background>
@@ -19,7 +28,12 @@ function Create() {
                 <p>Name</p>
               </div>
               <div className="name-input">
-                <input name="name" placeholder="Name of the product" required/>
+                <input name="name" onChange={
+                  (prop) => setFormInput({
+                    ...formInput,
+                    name: prop.target.value
+                  })
+                } placeholder="Name of NFT" required/>
               </div>
             </Name>
             <PriceRoyalty>
@@ -32,7 +46,12 @@ function Create() {
                     <img src="/images/polygon-purple.png"/>
                   </div>
                   <div className="price-input">
-                    <input name="price" placeholder="2 MATIC" required/>
+                    <input name="price" onChange={
+                      (prop) => setFormInput({
+                        ...formInput,
+                        price: prop.target.value
+                      })
+                    } placeholder="2 MATIC" required/>
                   </div>
                 </div>
               </div>
@@ -45,17 +64,29 @@ function Create() {
                     <img src="/images/pct.png"/>
                   </div>
                   <div className="royalty-input">
-                    <input name="royalty" placeholder="Maximum 20%" required/>
+                    <input name="royalty" onChange={
+                      (prop) => setFormInput({
+                        ...formInput,
+                        royalty: (prop.target.value)*100
+                      })
+                    } placeholder="Maximum 20%" required/>
                   </div>
                 </div>
               </div>
             </PriceRoyalty>
             <ChooseFile>
+              <div className="top">
+                 <input className="uploadContent" type="file" id="content"/>
+              </div>
+              <div className="bottom">
 
+              </div>
             </ChooseFile>
             <Gap></Gap>
             <Mint>
-
+              <div className="mint-button">
+                <p>Mint Token</p>
+              </div>
             </Mint>
           </MainForm>
         </Container>
@@ -338,22 +369,106 @@ const PriceRoyalty=styled.div`
 `
 
 const ChooseFile=styled.div`
-  margin-top: 10px;
+  margin-top: 25px;
   flex: 1;
-  background-color: red;
   margin-left: 30px;
   margin-right: 30px;
+  background: rgba( 255, 255, 255, 0.3 );
+  backdrop-filter: blur( 4px );
+  -webkit-backdrop-filter: blur( 4px );
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='2' ry='2' stroke='white' stroke-width='4' stroke-dasharray='9' stroke-dashoffset='3' stroke-linecap='square'/%3e%3c/svg%3e");
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .top {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+
+    .uploadContent {
+      width: 240px;
+      height: 35px;
+      border-radius: 2px;
+      color: #0D004D;
+      opacity: 0.8;
+      font-size: 15px;
+      border: 1px solid white;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .uploadContent::-webkit-file-upload-button {
+      width: 100px;
+      height: 38px;
+      background: rgba( 255, 255, 255, 0.8 );
+      backdrop-filter: blur( 4px );
+      -webkit-backdrop-filter: blur( 4px );
+      border: 1px solid white;
+      border-radius: 2px;
+      cursor: pointer;
+      margin-right: 10px;
+
+      color: #0D004D;
+      opacity: 0.9;
+      transition: background 0.15s;
+      font-size: 16px;
+
+      &:hover {
+        background: rgba( 255, 255, 255, 0.6 );
+      }
+
+      &:active {
+        background: rgba( 255, 255, 255, 0.4);
+      }
+    }
+  }
+
+  .bottom {
+    flex: 0.6;
+
+  }
 `
 const Gap=styled.div`
-  height: 150px;
+  height: 130px;
 
   margin-left: 30px;
   margin-right: 30px;
 `
 const Mint=styled.div`
-  height: 80px;
-  background-color:gray;
+  height: 65px;
   margin-left: 30px;
   margin-right: 30px;
-  margin-bottom: 20px;
+  margin-bottom: 35px;
+  display: flex;
+  align-items: end;
+
+  .mint-button {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    background-image: linear-gradient( 68.2deg,  rgba(255,202,88,0.7) 0%, rgba(139,73,255,0.8) 100.2% );
+    cursor: pointer;
+    border-radius: 2px;
+    transition: opacity 0.15s;
+    p {
+      margin: 0;
+      color: #0D004D;
+      opacity: 0.9;
+    }
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &:active {
+      opacity: 0.7;
+    }
+  }
 `
