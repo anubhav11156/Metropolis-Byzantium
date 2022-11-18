@@ -2,10 +2,12 @@ import { useState, useEffect, React } from 'react'
 import styled from 'styled-components'
 import Fade from 'react-reveal/Fade';
 
-function ListingCard(prop) {
+function ListingCard(props) {
 
   const [maticRate, setMaticRate] = useState('');
   const [isHovering, setIsHovering] = useState(false);
+
+  const price = props.price;
 
   const getMaticMarketRate = async() => {
     const rate = await fetch('https://min-api.cryptocompare.com/data/price?fsym=MATIC&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}')
@@ -28,27 +30,27 @@ function ListingCard(prop) {
                 <img src=""/>
             </div>
             <div className="image-div">
-              <img src={prop.bg}/>
+              <img src={props.image}/>
 
             </div>
               <div className="detail-div">
                 <div className="detail-div-wrapper">
                   <div className="id-div">
-                    #123
+                    {`# ${props.id}`}
                   </div>
                   <div className="price-div">
                     <div className="logo-div">
                       <img src="/images/polygon-purple.png"/>
                     </div>
                     <div className="crypto-price">
-                      {cryptoPrice}
+                      {price}
                     </div>
                     <div className="market-price">
                       {`$${dollarValue}`}
                     </div>
                   </div>
                   <div className="name-div">
-                    <p>Test Name</p>
+                    <p>{props.name}</p>
                   </div>
                 </div>
                 <div className="icon-div">
