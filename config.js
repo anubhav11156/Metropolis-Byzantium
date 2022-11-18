@@ -1,4 +1,6 @@
-{
+export const contractAddress = '0xc5ae844dAB26dE141ebba285BDf1a8F11Eb3975e'
+
+export const contractAbi = {
   "_format": "hh-sol-artifact-1",
   "contractName": "Metropolis",
   "sourceName": "contracts/metropolis.sol",

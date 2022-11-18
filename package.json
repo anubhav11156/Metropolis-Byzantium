@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/runtime": "^7.20.1",
+    "@chainlink/contracts": "^0.5.1",
     "@dicebear/avatars": "^4.10.5",
     "@dicebear/pixel-art": "^4.10.5",
     "@openzeppelin/contracts": "^4.8.0",
