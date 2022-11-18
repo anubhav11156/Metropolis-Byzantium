@@ -1,8 +1,9 @@
 import { useState, useEffect, React } from 'react'
 import styled from 'styled-components';
 // import { Web3Storage, File } from 'web3.storage/dist/bundle.esm.min.js';
-import { Web3Storage } from 'web3.storage'
 import { ToastContainer, toast } from 'react-toastify';
+import { NFTStorage, File } from 'nft.storage'
+
 
 function Create() {
 
@@ -13,70 +14,58 @@ function Create() {
    contentURI:null
   });
 
+
   /*-----------------------------code for uploading data to filecoin-----------------------------*/
 
-  function getAccessToken () {
-    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGQ4NzhFNjQ1NkUwYzUyYzE2RDI5ODI0MWUzNzA1MWY0NDgyM2Q1MTUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2Njg3MTUzMDg1NjcsIm5hbWUiOiJNZXRyb3BvbGlzIn0.yJ72HP_FAmmOUtOe6E_Tgw9SqX5TKWm6HspjJ2_OdUM'
-  }
+  // const API_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDE5RmY2NmNlYTUxMzlmMDY4YjQxNDIwMGFjRmRhN0JDQzRjNTZFM0EiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2ODcyNzA5Nzc0NywibmFtZSI6Ik1ldHJvcG9saXMifQ.XpfgbPMc6zK28Le28GNi44zKWEabZC4N2b37ihDKppY';
 
-  function makeStorageClient () {
-    return new Web3Storage({ token: getAccessToken() })
-  }
+  const client = new NFTStorage({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDE5RmY2NmNlYTUxMzlmMDY4YjQxNDIwMGFjRmRhN0JDQzRjNTZFM0EiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2ODcyNzA5Nzc0NywibmFtZSI6Ik1ldHJvcG9saXMifQ.XpfgbPMc6zK28Le28GNi44zKWEabZC4N2b37ihDKppY' })
 
-  /* using two flags below, 0 for coverHandle and 1 for contentHandle--- why? so that toast get fired only
-  when we upload cover image an content*/
   const contentHandle = async () => {
-    console.log('clicked content handle');
-    const fileInput = document.getElementById('content');
-    // console.log(fileInput.files[0]);
-    const filePath = fileInput.files[0].name;
-    // setIsLoadingBarOfContentActive(true);
-    const contentCID = await storeFiles(fileInput.files);
-    console.log('contentCID', contentCID);
 
-    setFormInput({
-      ...formInput,
-      contentURI: `https://ipfs.io/ipfs/${contentCID}/${filePath}`
-    })
-  }
-  //
-  // const uploadToIPFS = async (files) => {
-  //   console.log('in ipfs', files);
-  //   const client = makeStorageClient()
-  //   const cid = await client.put(files)
-  //   // setIsLoadingBarOfContentActive(false);
-  //
-  //   toast.success("Uploaded to IPFS", {
-  //       position: toast.POSITION.TOP_CENTER
-  //     });
-  //   return cid
-  // }
-  async function storeFiles (files) {
-  const client = makeStorageClient()
-  const cid = await client.put(files)
-  console.log('stored files with cid:', cid)
-  return cid
+  const { name, price, royalty, contentURI } = formInput;
+
+  console.log('clicked content handle');
+  const fileInput = document.getElementById('content');
+  // const filePath = e.target.files[0].name;
+  console.log('file is : ', fileInput.files[0]);
+  const filePath = fileInput.files[0].name;
+  const fileType = fileInput.files[0].type;
+
+  const metadata = await client.store({
+    name: `${name}`,
+    description: `${royalty}`,
+    image: new File(
+      [
+        fileInput.files[0]
+      ],
+      `${filePath}`,
+      { type: `${fileType}` }
+    ),
+  })
+
+  console.log('metadat : ',metadata.url)
+  // setFormInput({
+  //   ...formInput,
+  //   contentURI: `https://ipfs.io/ipfs/${contentCID}/${filePath}`
+  // })
 }
 
-  const metadata = async () => {
-    const {name, price, royalty, contentURI} = formInput;
-    // if (!name || !price || !royalty || !contentURI) return;
-    const data = JSON.stringify({ name, contentURI });
-    console.log('testing', data);
-    const files = [
-      new File([data], 'data.json')
-    ]
-    const metaCID = await storeFiles(files);
-    return `https://ipfs.io/ipfs/${metaCID}/data.json`
-  }
+// async function storeNFT(imagePath, name, description) {
+//     // load the file from disk
+//     const image = await fileFromPath(imagePath)
+//
+//     // create a new NFTStorage client using our API key
+//     const nftstorage = new NFTStorage({ token: NFT_STORAGE_KEY })
+//
+//     // call client.store, passing in the image & metadata
+//     return nftstorage.store({
+//         image,
+//         name,
+//         description,
+//     })
+// }
 
-  console.log(formInput);
-
-  const mintToken = async () => {
-    console.log('mint token clicked');
-    const uri = await metadata();
-    console.log('uri is : ', uri);
-  }
   /*-----------------------------------------------------------------------*/
     return (
         <Container>
@@ -151,7 +140,7 @@ function Create() {
             </ChooseFile>
             <Gap></Gap>
             <Mint>
-              <div className="mint-button" onClick={mintToken}>
+              <div className="mint-button">
                 <p>Mint Token</p>
               </div>
             </Mint>
