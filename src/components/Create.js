@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import { ToastContainer, toast } from 'react-toastify';
 import { NFTStorage, File } from 'nft.storage'
 import BarLoader from "react-spinners/BarLoader";
-
-
-
+import PropagateLoader from "react-spinners/PropagateLoader";
+import web3modal from "web3modal";
+import { ethers } from "ethers";
+import { contractAbi, contractAddress } from "../config";
 function Create() {
 
   const [isLoadingBarActive, setIsLoadingBarActive] = useState(false);
@@ -15,6 +16,8 @@ function Create() {
    royalty:""
   });
 
+  const [uri, setUri] = useState('');
+  const [isMinting, setIsMinting] = useState(false);
 
   /*-----------------------------code for uploading data to filecoin using NFT.Storage-----------------------------*/
 
@@ -50,7 +53,45 @@ function Create() {
         position: toast.POSITION.TOP_CENTER
   });
 
-  console.log('metadata : ',metadata.url)
+  setUri(metadata.url);
+}
+/*-----------------------------------------------------------------------*/
+
+console.log('uri is : ', uri);
+/*-----------------code for minting the NFT------------------------------*/
+
+const mintToken = async () => {
+
+  setIsMinting(true);
+
+  const modal = new web3modal({
+     network: "mumbai",
+     cacheProvider: true,
+  });
+ const connection = await modal.connect();
+ const provider = new ethers.providers.Web3Provider(connection);
+ const signer = provider.getSigner();
+ const contract = new ethers.Contract(
+     contractAddress,
+     contractAbi.abi,
+     signer
+ );
+ const price = ethers.utils.parseEther(formInput.price);
+ const publish = await contract.createToken(uri, price, formInput.royalty, {
+     gasLimit: 1000000,
+ });
+ await publish.wait()
+    .then( () => {
+      toast.success("Token Minted Successfully.", {
+      position: toast.POSITION.TOP_CENTER
+      });
+      setIsMinting(false);
+    }).catch( () => {
+      toast.error("Failed to mint token.", {
+        position: toast.POSITION.TOP_CENTER
+      });
+       setIsMinting(false);
+    })
 }
 
 /*-----------------------------------------------------------------------*/
@@ -132,8 +173,13 @@ function Create() {
             </ChooseFile>
             <Gap></Gap>
             <Mint>
-              <div className="mint-button">
-                <p>Mint Token</p>
+              <div className="mint-button" onClick={mintToken}>
+                {
+                 isMinting ? <PropagateLoader
+                 color="rgb(255, 255, 255, 0.7)"
+                 size={12}
+               /> : <p>Mint Token</p>
+              }
               </div>
             </Mint>
           </MainForm>
@@ -508,8 +554,10 @@ const Mint=styled.div`
     cursor: pointer;
     border-radius: 2px;
     transition: opacity 0.15s;
+
     p {
       margin: 0;
+      margin-top: -1px;
       color: #0D004D;
       opacity: 0.9;
     }

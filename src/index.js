@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals';
 import { WagmiConfig, createClient, chain, configureChains } from 'wagmi'
 import { ConnectKitProvider, ConnectKitButton, getDefaultClient } from "connectkit";
 import { getDefaultProvider } from 'ethers'
+import { MoralisProvider } from "react-moralis";
 import './index.css';
 
 const container = document.getElementById('root');
@@ -32,13 +33,13 @@ const client = createClient(
 
 root.render(
   <React.StrictMode>
-  <WagmiConfig client={client}>
-    <Provider store={store}>
-    <ConnectKitProvider>
-      <App />
-    </ConnectKitProvider>
-    </Provider>
-  </WagmiConfig>
+    <WagmiConfig client={client}>
+        <Provider store={store}>
+          <ConnectKitProvider>
+              <App />
+          </ConnectKitProvider>
+        </Provider>
+    </WagmiConfig>
   </React.StrictMode>
 );
 
