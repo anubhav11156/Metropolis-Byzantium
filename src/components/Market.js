@@ -19,6 +19,7 @@ function Market() {
   const [loaded, setLoaded] = useState(false);
   const [nfts, setNfts] = useState([]);
 
+/*-----------------Code to Fetch NFT from contract----------------*/
   useEffect( ()=> {
     fetchNFTs();
   },[])
@@ -53,7 +54,6 @@ function Market() {
     setLoaded(true);
   }
 
-  console.log('nft are : ',nfts);
   const cards = nfts.map( card => {
     return (
       <StoreNFTCard
@@ -65,6 +65,8 @@ function Market() {
       />
     )
   })
+
+/*-------------------------------------------------------------------*/
 
     return (
         <Container>
