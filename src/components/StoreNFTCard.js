@@ -15,6 +15,8 @@ function StoreNFTCard(props) {
 
   const price = props.price;
   const tokenId = props.id;
+  const royalty = ((props.royalty)*(10**18))/100;
+  // console.log('royalty is : ',royalty);
 
   const onMouseOverHandle = () => {
     setIsHovering(true);
@@ -116,6 +118,9 @@ function StoreNFTCard(props) {
                     </div>
                     <div className="market-price">
                       {`$${dollarValue}`}
+                    </div>
+                    <div className="royalty">
+                      <span>RI</span><p>{`${royalty} %`}</p>
                     </div>
                   </div>
                   <div className="name-div">
@@ -247,7 +252,6 @@ const Card=styled.div`
         width: 240px;
         max-height: 25px;
         margin-top: 5px;
-
         display: flex;
 
         .logo-div{
@@ -266,7 +270,7 @@ const Card=styled.div`
         }
 
         .crypto-price {
-          flex:1;
+          flex:0.9;
           height: 24px;
           width: 50px;
           margin-top: 1px;
@@ -279,12 +283,30 @@ const Card=styled.div`
         }
 
         .market-price {
-          width: 170px;
-          color: rgba(252, 252, 252, 1);
+          width: 70px;
+          color: rgba(0, 0, 0, 0.73);
           font-size: 15.5px;
           display:flex;
           align-items: center;
           margin-top: 2px;
+        }
+
+        .royalty {
+          flex: 1;
+
+          font-size: 15.5px;
+          display:flex;
+          align-items: center;
+          margin-top: 2px;
+
+          span {
+            color: rgba(59, 127, 242, 0.82);
+            font-size: 17px;
+          }
+          p {
+            margin-left: 10px;
+            color: rgba(0, 0, 0, 0.73);            
+          }
         }
       }
 

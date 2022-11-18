@@ -8,6 +8,8 @@ function ListingCard(props) {
   const [isHovering, setIsHovering] = useState(false);
 
   const price = props.price;
+  const royalty = ((props.royalty)*(10**18))/100;
+
 
   const getMaticMarketRate = async() => {
     const rate = await fetch('https://min-api.cryptocompare.com/data/price?fsym=MATIC&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}')
@@ -20,8 +22,7 @@ function ListingCard(props) {
   },[]);
   // a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918  crypto-compare api key
 
-  const cryptoPrice = 10;
-  let dollarValue = (maticRate*cryptoPrice).toFixed(2);
+  let dollarValue = (maticRate*price).toFixed(2);
 
     return (
         <Container>
@@ -47,6 +48,9 @@ function ListingCard(props) {
                     </div>
                     <div className="market-price">
                       {`$${dollarValue}`}
+                    </div>
+                    <div className="royalty">
+                      <span>RI</span><p>{`${royalty} %`}</p>
                     </div>
                   </div>
                   <div className="name-div">
@@ -197,7 +201,7 @@ const Card=styled.div`
         }
 
         .crypto-price {
-          flex:1;
+          flex:0.9;
           height: 24px;
           width: 50px;
           margin-top: 1px;
@@ -210,12 +214,30 @@ const Card=styled.div`
         }
 
         .market-price {
-          width: 170px;
-          color: rgba(252, 252, 252, 1);
+          width: 70px;
+          color: rgba(0, 0, 0, 0.73);
           font-size: 15.5px;
           display:flex;
           align-items: center;
           margin-top: 2px;
+        }
+
+        .royalty {
+          flex: 1;
+
+          font-size: 15.5px;
+          display:flex;
+          align-items: center;
+          margin-top: 2px;
+
+          span {
+            color: rgba(59, 127, 242, 0.82);
+            font-size: 17px;
+          }
+          p {
+            margin-left: 10px;
+            color: rgba(0, 0, 0, 0.73);
+          }
         }
       }
 
