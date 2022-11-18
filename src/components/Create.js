@@ -1,21 +1,22 @@
 import { useState, useEffect, React } from 'react'
 import styled from 'styled-components';
-// import { Web3Storage, File } from 'web3.storage/dist/bundle.esm.min.js';
 import { ToastContainer, toast } from 'react-toastify';
 import { NFTStorage, File } from 'nft.storage'
+import BarLoader from "react-spinners/BarLoader";
+
 
 
 function Create() {
 
+  const [isLoadingBarActive, setIsLoadingBarActive] = useState(false);
   const [formInput, setFormInput] = useState({
    name:"",
    price:"",
-   royalty:"",
-   contentURI:null
+   royalty:""
   });
 
 
-  /*-----------------------------code for uploading data to filecoin-----------------------------*/
+  /*-----------------------------code for uploading data to filecoin using NFT.Storage-----------------------------*/
 
   // const API_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDE5RmY2NmNlYTUxMzlmMDY4YjQxNDIwMGFjRmRhN0JDQzRjNTZFM0EiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2ODcyNzA5Nzc0NywibmFtZSI6Ik1ldHJvcG9saXMifQ.XpfgbPMc6zK28Le28GNi44zKWEabZC4N2b37ihDKppY';
 
@@ -23,14 +24,13 @@ function Create() {
 
   const contentHandle = async () => {
 
-  const { name, price, royalty, contentURI } = formInput;
+  const { name, price, royalty } = formInput;
 
-  console.log('clicked content handle');
   const fileInput = document.getElementById('content');
-  // const filePath = e.target.files[0].name;
-  console.log('file is : ', fileInput.files[0]);
   const filePath = fileInput.files[0].name;
   const fileType = fileInput.files[0].type;
+
+  setIsLoadingBarActive(true);
 
   const metadata = await client.store({
     name: `${name}`,
@@ -42,31 +42,18 @@ function Create() {
       `${filePath}`,
       { type: `${fileType}` }
     ),
-  })
+  });
 
-  console.log('metadat : ',metadata.url)
-  // setFormInput({
-  //   ...formInput,
-  //   contentURI: `https://ipfs.io/ipfs/${contentCID}/${filePath}`
-  // })
+  setIsLoadingBarActive(false);
+
+  toast.success("Uploaded to IPFS", {
+        position: toast.POSITION.TOP_CENTER
+  });
+
+  console.log('metadata : ',metadata.url)
 }
 
-// async function storeNFT(imagePath, name, description) {
-//     // load the file from disk
-//     const image = await fileFromPath(imagePath)
-//
-//     // create a new NFTStorage client using our API key
-//     const nftstorage = new NFTStorage({ token: NFT_STORAGE_KEY })
-//
-//     // call client.store, passing in the image & metadata
-//     return nftstorage.store({
-//         image,
-//         name,
-//         description,
-//     })
-// }
-
-  /*-----------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------*/
     return (
         <Container>
           <Background></Background>
@@ -135,7 +122,12 @@ function Create() {
                  <input className="uploadContent" type="file" id="content" onChange={contentHandle}/>
               </div>
               <div className="bottom">
-
+                {
+                  isLoadingBarActive &&
+                  <BarLoader color="rgb(255, 255, 255)"
+                    size={15}
+                  />
+                }
               </div>
             </ChooseFile>
             <Gap></Gap>
@@ -484,7 +476,10 @@ const ChooseFile=styled.div`
   }
 
   .bottom {
-    flex: 0.6;
+    flex: 0.75;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
   }
 `
