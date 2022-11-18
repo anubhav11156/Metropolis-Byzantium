@@ -32,9 +32,11 @@ function Inventory() {
         const meta = await axios.get(finalUri);
         let price = ethers.utils.formatEther(i.price);
         let royalty = ethers.utils.formatEther(i.royaltyFeeInBips);
+        let usdValue = ethers.utils.formatEther(i.usdValue);
         let item = {
             price,
             royalty,
+            usdValue,
             name: meta.data.name,
             tokenId: i.tokenId.toNumber(),
             image: `https://ipfs.io/ipfs/${(meta.data.image).substring(7)}`,
@@ -51,6 +53,7 @@ function Inventory() {
         id={card.tokenId}
         name={card.name}
         price={card.price}
+        usdValue={card.usdValue}
         royalty={card.royalty}
         image={card.image}
       />

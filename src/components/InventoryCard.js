@@ -12,6 +12,7 @@ function InventoryCard(props) {
   const [maticRate, setMaticRate] = useState('');
   const [isHovering, setIsHovering] = useState(false);
   const [isBuyClicked, setIsBuyClicked] = useState(false);
+  const [isPositive,setIsPositive] = useState(true);
 
   const price = props.price;
   const tokenId = props.id;
@@ -73,7 +74,19 @@ function InventoryCard(props) {
   },[]);
   // a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918  crypto-compare api key
 
-  let dollarValue = (maticRate*price).toFixed(2);
+  /*-------Calculating the percentage change--------*/
+  let currentUsdValue = (maticRate*price).toFixed(3);
+  let orignalUsdValue = (props.usdValue);
+
+  let pctChange = (((currentUsdValue - orignalUsdValue)/orignalUsdValue)*100).toFixed(2);
+
+  useEffect(()=> {
+    if(pctChange){
+      setIsPositive(false);
+    }
+  })
+
+  /*------------------------------------------------*/
 
     return (
         <Container onMouseOver={onMouseOverHandle} onMouseOut={onMouseOutHandle}>
@@ -111,7 +124,32 @@ function InventoryCard(props) {
                       {price}
                     </div>
                     <div className="market-price">
-                      {`$${dollarValue}`}
+                      {`$${currentUsdValue}`}
+                    </div>
+                    <div className="status">
+                      {
+                        isPositive &&
+                        <div className="pst">
+                          <div className="logo-container">
+                            <img src="/images/up.png"/>
+                          </div>
+                          <div className="decimal">
+                            <p>{pctChange} %</p>
+                          </div>
+                        </div>
+                      }
+                      {
+                        !isPositive &&
+                        <div className="ngt">
+                          <div className="logo-container">
+                            <img src="/images/down.png"/>
+                          </div>
+                          <div className="decimal">
+                            <p>{pctChange} %</p>
+                          </div>
+                        </div>
+                      }
+
                     </div>
                   </div>
                   <div className="name-div">
@@ -262,7 +300,7 @@ const Card=styled.div`
         }
 
         .crypto-price {
-          flex:1;
+          flex:0.9;
           height: 24px;
           width: 50px;
           margin-top: 1px;
@@ -275,12 +313,85 @@ const Card=styled.div`
         }
 
         .market-price {
-          width: 170px;
-          color: rgba(252, 252, 252, 1);
+          width: 70px;
+          color: rgba(255, 255, 255, 0.8);
           font-size: 15.5px;
           display:flex;
           align-items: center;
           margin-top: 2px;
+        }
+
+        .status {
+          flex: 1;
+          .pst,
+          .ngt {
+            height: 100%;
+            width: 100%;
+
+            display: flex;
+
+            .logo-container {
+              height: 100%;
+              width: 20px;
+
+              display: flex;
+              justify-content: center;
+              align-items: center;
+
+              img {
+                transform: rotate(180deg);
+                width: 70%;
+              }
+            }
+
+            .decimal {
+              flex:1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              p {
+                margin: 0;
+                margin-top: 1px;
+                font-size: 14px;
+                color: rgb(218, 0,0);
+              }
+            }
+
+          }
+
+          .pst {
+            height: 100%;
+            width: 100%;
+
+            display: flex;
+
+            .logo-container {
+              height: 100%;
+              width: 20px;
+
+              display: flex;
+              justify-content: center;
+              align-items: center;
+
+              img {
+                transform: rotate(0deg);
+                width: 70%;
+              }
+            }
+
+            .decimal {
+              flex:1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              p {
+                margin: 0;
+                margin-top: 1px;
+                font-size: 14px;
+                color: rgb(1,213,39);
+              }
+            }
+          }
         }
       }
 
