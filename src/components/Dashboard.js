@@ -9,6 +9,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from 'react-redux';
 import { selectAccount } from '../features/AccountDetailSlice';
 import Create from './Create';
+import Listing from './Listing';
+import Inventory from './Inventory';
 
 
 function Dashboard() {
@@ -34,18 +36,27 @@ function Dashboard() {
   const [isInventoryClicked, setIsInventoryClicked] = useState(false);
 
   const createHandle = () => {
+    setIsCreateClicked(true);
     setIsListingClicked(false);
     setIsInventoryClicked(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
   }
 
   const listingHandle = () => {
+    setIsListingClicked(true);
     setIsCreateClicked(false);
     setIsInventoryClicked(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
   }
 
   const inventoryHandle = () => {
+    setIsInventoryClicked(true);
     setIsCreateClicked(false);
     setIsListingClicked(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
   }
     return (
         <Container>
@@ -87,7 +98,11 @@ function Dashboard() {
               </div>
             </div>
             <div className="buttons">
-              <div className="create-button" onClick={createHandle}>
+              <div className="create-button" onClick={createHandle}
+                style={{
+                  color: isCreateClicked ? 'rgba(255, 255, 255, 0.7)' : 'rgba(13, 0, 77, 0.65)'
+                }}
+              >
                 <div className="buttons-logo">
                   <img src="/images/create.png"/>
                 </div>
@@ -95,7 +110,11 @@ function Dashboard() {
                   <p>Create</p>
                 </div>
               </div>
-              <div className="listing-button" onClick={listingHandle}>
+              <div className="listing-button" onClick={listingHandle}
+                style={{
+                  color: isListingClicked ? 'rgb(255, 255, 255,0.7)' : 'rgba(13, 0, 77, 0.65)'
+                }}
+              >
                 <div className="buttons-logo">
                   <img src="/images/listing.png"/>
                 </div>
@@ -103,7 +122,11 @@ function Dashboard() {
                   <p>Listing</p>
                 </div>
               </div>
-              <div className="inventory-button" onClick={inventoryHandle}>
+              <div className="inventory-button" onClick={inventoryHandle}
+                style={{
+                  color: isInventoryClicked ? 'rgb(255, 255, 255,0.7)' : 'rgba(13, 0, 77, 0.65)'
+                }}
+              >
                 <div className="buttons-logo">
                   <img src="/images/inventory.png"/>
                 </div>
@@ -137,7 +160,17 @@ function Dashboard() {
             </div>
           </SideBar>
           <MainSection>
-            <Create />
+            { isCreateClicked &&
+              <Create />
+            }
+            {
+              isListingClicked &&
+              <Listing />
+            }
+            {
+              isInventoryClicked &&
+              <Inventory />
+            }
           </MainSection>
           <ToastContainer
             autoClose={1000}
@@ -372,7 +405,6 @@ const SideBar=styled.div`
 
         p {
           margin: 0;
-          color: rgba(13, 0, 77, 0.65);
           font-size: 17px;
           font-weight: 500;
         }
