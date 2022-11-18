@@ -1,23 +1,65 @@
 import { useState, useEffect, React } from 'react'
 import styled from 'styled-components'
 import Fade from 'react-reveal/Fade';
+import { ToastContainer, toast } from 'react-toastify';
+import ClipLoader from "react-spinners/ClipLoader";
+import web3modal from "web3modal"
+import { ethers } from "ethers"
+import { contractAbi, contractAddress } from "../config";
 
-
-function InventoryCard(prop) {
+function InventoryCard(props) {
 
   const [maticRate, setMaticRate] = useState('');
   const [isHovering, setIsHovering] = useState(false);
+  const [isBuyClicked, setIsBuyClicked] = useState(false);
+
+  const price = props.price;
+  const tokenId = props.id;
 
   const onMouseOverHandle = () => {
     setIsHovering(true);
   }
 
   const onMouseOutHandle = () => {
-    setIsHovering(false);
+    if(isBuyClicked) {
+      setIsHovering(true);
+    }else {
+      setIsHovering(false);
+    }
   }
 
-  const resellHandle = () => {
-    console.log('clicke buy');
+  const resellHandle = async () => {
+    setIsBuyClicked(true);
+
+     const modal = new web3modal({
+         network: "mumbai",
+         cacheProvider: true,
+     });
+     const connection = await modal.connect();
+     const provider = new ethers.providers.Web3Provider(connection);
+     const signer = provider.getSigner();
+     const contract = new ethers.Contract(
+         contractAddress,
+         contractAbi.abi,
+         signer
+     );
+     const nftPrice = ethers.utils.parseUnits(price.toString(), "ether");
+     const transaction = await contract.resellNFTs(tokenId, {
+         value: nftPrice,
+         gasLimit: 1000000,
+     });
+     await transaction.wait()
+     .then( () => {
+       toast.success("Transaction successful.", {
+       position: toast.POSITION.TOP_CENTER
+       });
+       setIsBuyClicked(false);
+     }).catch( () => {
+       toast.error("Transaction failed.", {
+         position: toast.POSITION.TOP_CENTER
+       });
+        setIsBuyClicked(false);
+     })
   }
 
   const getMaticMarketRate = async() => {
@@ -31,8 +73,7 @@ function InventoryCard(prop) {
   },[]);
   // a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918  crypto-compare api key
 
-  const cryptoPrice = 10;
-  let dollarValue = (maticRate*cryptoPrice).toFixed(2);
+  let dollarValue = (maticRate*price).toFixed(2);
 
     return (
         <Container onMouseOver={onMouseOverHandle} onMouseOut={onMouseOutHandle}>
@@ -41,11 +82,18 @@ function InventoryCard(prop) {
                 <img src=""/>
             </div>
             <div className="image-div">
-              <img src={prop.bg}/>
+              <img src={props.image}/>
               {
                 isHovering && (
                   <Fade bottom duration={350}>
-                    <div className="buy-div" onClick={resellHandle}><p>Resell</p></div>
+                    <div className="buy-div" onClick={resellHandle}>
+                      {
+                        isBuyClicked ? <ClipLoader
+                        color="rgba(255, 255, 255, 0.93)"
+                        size={14}
+                        /> : <p>Resell</p>
+                      }
+                    </div>
                   </Fade>
                 )
               }
@@ -53,21 +101,21 @@ function InventoryCard(prop) {
               <div className="detail-div">
                 <div className="detail-div-wrapper">
                   <div className="id-div">
-                    #123
+                    {`# ${props.id}`}
                   </div>
                   <div className="price-div">
                     <div className="logo-div">
                       <img src="/images/polygon-purple.png"/>
                     </div>
                     <div className="crypto-price">
-                      {cryptoPrice}
+                      {price}
                     </div>
                     <div className="market-price">
                       {`$${dollarValue}`}
                     </div>
                   </div>
                   <div className="name-div">
-                    <p>Test Name</p>
+                    <p>{props.name}</p>
                   </div>
                 </div>
                 <div className="icon-div">
