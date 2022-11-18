@@ -3,10 +3,12 @@ import styled from 'styled-components'
 import Fade from 'react-reveal/Fade';
 
 
-function StoreNFTCard(prop) {
+function StoreNFTCard(props) {
 
   const [maticRate, setMaticRate] = useState('');
   const [isHovering, setIsHovering] = useState(false);
+
+  const price = props.price;
 
   const onMouseOverHandle = () => {
     setIsHovering(true);
@@ -30,9 +32,7 @@ function StoreNFTCard(prop) {
     getMaticMarketRate();
   },[]);
   // a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918  crypto-compare api key
-
-  const cryptoPrice = 10;
-  let dollarValue = (maticRate*cryptoPrice).toFixed(2);
+  let dollarValue = (maticRate*price).toFixed(2);
 
     return (
         <Container onMouseOver={onMouseOverHandle} onMouseOut={onMouseOutHandle}>
@@ -41,7 +41,7 @@ function StoreNFTCard(prop) {
                 <img src=""/>
             </div>
             <div className="image-div">
-              <img src={prop.bg}/>
+              <img src={props.image}/>
               {
                 isHovering && (
                   <Fade bottom duration={350}>
@@ -53,21 +53,21 @@ function StoreNFTCard(prop) {
               <div className="detail-div">
                 <div className="detail-div-wrapper">
                   <div className="id-div">
-                    #123
+                    {`# ${props.id}`}
                   </div>
                   <div className="price-div">
                     <div className="logo-div">
                       <img src="/images/polygon-purple.png"/>
                     </div>
                     <div className="crypto-price">
-                      {cryptoPrice}
+                      {price}
                     </div>
                     <div className="market-price">
                       {`$${dollarValue}`}
                     </div>
                   </div>
                   <div className="name-div">
-                    <p>Test Name</p>
+                    <p>{props.name}</p>
                   </div>
                 </div>
                 <div className="icon-div">

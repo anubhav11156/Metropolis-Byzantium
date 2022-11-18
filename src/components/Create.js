@@ -57,7 +57,8 @@ function Create() {
 }
 /*-----------------------------------------------------------------------*/
 
-console.log('uri is : ', uri);
+// console.log('uri is : ', uri);
+
 /*-----------------code for minting the NFT------------------------------*/
 
 const mintToken = async () => {
