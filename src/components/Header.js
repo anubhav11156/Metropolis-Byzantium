@@ -14,9 +14,26 @@ import { accountAdded, selectAccount } from '../features/AccountDetailSlice';
 function Header() {
 
   const dispatch = useDispatch();
-  const getAccountDetail = useSelector(selectAccount); // get detail from redux store
-
   const navigate = useNavigate();
+
+  const getAccountDetail = useSelector(selectAccount); // get detail from redux store
+  const [scrolled, setScrolled] = useState(false);
+  const [pixelScrolled, setPixelScrolled] = useState(0);
+
+  /*------Function to convert hex into decimal------*/
+  const hexToDecimal = (hex) => parseInt(hex, 16);
+  /*------------------------------------------------*/
+
+
+  /*-------------------Handles------------------*/
+
+
+  const dashboardHandle = () => {
+    toast.info("Login to proceed", {
+    position: toast.POSITION.TOP_CENTER
+    });
+  }
+
   const { pathname } = useLocation(); // current pathname
 
   const { address } = useAccount();
@@ -25,12 +42,10 @@ function Header() {
   const [Connected, setConnected] = useState(false);
   const [userBalance, setUserBalance] = useState('');
 
-  const [scrolled, setScrolled] = useState(false);
-  const [pixelScrolled, setPixelScrolled] = useState(0);
-
-  /*------Function to convert hex into decimal------*/
-  const hexToDecimal = (hex) => parseInt(hex, 16)
-  /*------------------------------------------------*/
+  const avatar = createAvatar( style, {
+    dataUri: true,
+    seed: `metro-${address}`
+  });
 
   /*------------code to get account balance of the user------------*/
     const settings = {
@@ -56,6 +71,7 @@ function Header() {
     });
   /*---------------------------------------------------------------*/
 
+  /*----------Scroll-code----------*/
     window.onscroll = function (e) {
       setPixelScrolled(window.scrollY);
     };
@@ -67,6 +83,8 @@ function Header() {
         setScrolled(false);
       }
     })
+
+  /*------------------------------*/
 
     useEffect( () => {
       if(Connected && flag==0){
@@ -83,17 +101,6 @@ function Header() {
         });
         setFlag(0);
       }
-    });
-
-    const dashboardHandle = () => {
-      toast.info("Login to proceed", {
-      position: toast.POSITION.TOP_CENTER
-      });
-    }
-
-    const avatar = createAvatar( style, {
-      dataUri: true,
-      seed: `metro-${address}`
     });
 
     return (
@@ -117,7 +124,7 @@ function Header() {
                  </p>
               }
             </div>
-            {
+           {
               Connected &&
               <OnLogedIn>
                 <div className="balance-div">
@@ -142,28 +149,27 @@ function Header() {
                 </div>
               </OnLogedIn>
             }
-
           </MiddleSection>
           <RightSection>
-            <ConnectKitButton.Custom>
-              {
-                ({ isConnected, show, ensName }) => {
-                  // console.log("testing",isConnected);
-                  if(isConnected){
-                    setConnected(true);
-                  }else{
-                    setConnected(false);
-                  }
-
-                  return (
-                    <div className="login" onClick={show}>
-                      {isConnected ? ensName ?? "Logout" : "Login"}
-                      <div className="bar"></div>
-                    </div>
-                  );
-                }
+          <ConnectKitButton.Custom>
+          {
+            ({ isConnected, show, ensName }) => {
+              // console.log("testing",isConnected);
+              if(isConnected){
+                setConnected(true);
+              }else{
+                setConnected(false);
               }
-            </ConnectKitButton.Custom>
+
+              return (
+                <div className="login" onClick={show}>
+                  {isConnected ? ensName ?? "Logout" : "Login"}
+                  <div className="bar"></div>
+                </div>
+              );
+            }
+          }
+        </ConnectKitButton.Custom>
           </RightSection>
           <ToastContainer
             autoClose={1000}
