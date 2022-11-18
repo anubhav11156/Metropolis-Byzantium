@@ -24,10 +24,6 @@ function Header() {
   const hexToDecimal = (hex) => parseInt(hex, 16);
   /*------------------------------------------------*/
 
-
-  /*-------------------Handles------------------*/
-
-
   const dashboardHandle = () => {
     toast.info("Login to proceed", {
     position: toast.POSITION.TOP_CENTER
