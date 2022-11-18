@@ -31,6 +31,7 @@ function InventoryCard(props) {
 
   const resellHandle = async () => {
     setIsBuyClicked(true);
+    const newPrice = window.prompt("Enter new price");
 
      const modal = new web3modal({
          network: "mumbai",
@@ -44,9 +45,12 @@ function InventoryCard(props) {
          contractAbi.abi,
          signer
      );
-     const nftPrice = ethers.utils.parseUnits(price.toString(), "ether");
+     // const nftPrice = ethers.utils.parseUnits(newPrice.toString(), "ether");
+     // const nftPrice = ethers.utils.parseUnits(price.toString(), "ether");
+     const nftPrice = ethers.utils.parseEther(parseInt(newPrice, 16));
+     console.log(nftPrice);
      const transaction = await contract.resellNFTs(tokenId, {
-         value: nftPrice,
+         nftPrice,
          gasLimit: 1000000,
      });
      await transaction.wait()

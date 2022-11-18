@@ -305,7 +305,7 @@ const Card=styled.div`
           }
           p {
             margin-left: 10px;
-            color: rgba(0, 0, 0, 0.73);            
+            color: rgba(0, 0, 0, 0.73);
           }
         }
       }
