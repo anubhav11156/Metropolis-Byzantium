@@ -7,6 +7,7 @@ import PropagateLoader from "react-spinners/PropagateLoader";
 import web3modal from "web3modal";
 import { ethers } from "ethers";
 import { contractAbi, contractAddress } from "../config";
+
 function Create() {
 
   const [isLoadingBarActive, setIsLoadingBarActive] = useState(false);

@@ -15,7 +15,7 @@ function StoreNFTCard(props) {
 
   const price = props.price;
   const tokenId = props.id;
-  const royalty = ((props.royalty)*(10**18))/100;
+  const royalty = (((props.royalty)*(10**18))/100).toFixed(0);
   // console.log('royalty is : ',royalty);
 
   const onMouseOverHandle = () => {

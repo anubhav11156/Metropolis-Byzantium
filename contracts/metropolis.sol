@@ -6,9 +6,13 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
-// import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
+// import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
+import "@opengsn/contracts/src/ERC2771Recipient.sol";
 
-contract Metropolis is ERC721URIStorage, ChainlinkClient {
+
+contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
+
+  // address trustedForwarder;
 
    struct NFT {
     uint256 tokenId;
@@ -52,12 +56,25 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient {
   */
 
   constructor() ERC721("Metropolis NFT", "METRO") {
-    platformOwner = payable(msg.sender);
+    _setTrustedForwarder(0x84a0856b038eaAd1cC7E297cF34A7e72685A8693);
+    platformOwner = payable(_msgSender() );
     setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
     setChainlinkOracle(0x40193c8518BB267228Fc409a613bDbD8eC5a97b3);
     jobId = 'ca98366cc7314957b8c012c72f05aeeb';
     fee = 0.1 * 10**18;
   }
+
+  string public versionRecipient = "2.2.0";
+
+ function _msgSender() internal view override(Context, ERC2771Recipient)
+     returns (address sender) {
+     sender = ERC2771Recipient._msgSender();
+ }
+
+ function _msgData() internal view override(Context, ERC2771Recipient)
+     returns (bytes calldata) {
+     return ERC2771Recipient._msgData();
+ }
 
   /*-----chainlink Any API cal to get current usd value of matic token-----*/
 
@@ -96,7 +113,7 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient {
     _tokenIds.increment();
     uint256 newItemId = _tokenIds.current();
 
-    _mint(msg.sender, newItemId);
+    _mint(_msgSender() , newItemId);
     _setTokenURI(newItemId, tokenURI);
 
     // user defined function
@@ -141,17 +158,17 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient {
     idToNFT[tokenId].price = price;
     idToNFT[tokenId].royaltyFeeInBips = royaltyFeeInBips;
     idToNFT[tokenId].usdValue = (price*usdValue)/10**18;
-    idToNFT[tokenId].seller = payable(msg.sender);
+    idToNFT[tokenId].seller = payable(_msgSender() );
     idToNFT[tokenId].owner = payable(address(this));
-    idToNFT[tokenId].artist = payable(msg.sender);
+    idToNFT[tokenId].artist = payable(_msgSender() );
 
     // transfer nft to marketplace from seller
-    _transfer(msg.sender, address(this), tokenId);
+    _transfer(_msgSender() , address(this), tokenId);
     emit nftCreated(
         tokenId,
-        payable(msg.sender),
+        payable(_msgSender()),
         payable(address(this)),
-        payable(msg.sender),
+        payable(_msgSender()),
         price,
         royaltyFeeInBips,
         false
@@ -168,14 +185,14 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient {
     address artist = idToNFT[tokenId].artist;
     require(msg.value==price,"Submitted price not equal to NFT price.");
     // when someone buy nft for the first time, change it's owner from platform to him/her
-    idToNFT[tokenId].owner = payable(msg.sender);
+    idToNFT[tokenId].owner = payable(_msgSender() );
     idToNFT[tokenId].sold = true;
     idToNFT[tokenId].seller = payable(address(0));
 
     _itemsSold.increment();
 
     // transfer ownership of the NFT
-    _transfer(address(this), msg.sender, tokenId);
+    _transfer(address(this), _msgSender(), tokenId);
 
     // now transfer the NFT amount royalty if it is there and commission to the platform owner
 
@@ -235,14 +252,14 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient {
 
     // first find total no. of nfts owned by the user
     for(uint i=0; i<totalNFTsCount; i++){
-        if(idToNFT[i+1].owner==msg.sender){
+        if(idToNFT[i+1].owner==_msgSender()){
             nftCount++;
         }
     }
 
     NFT[] memory myNFTs = new NFT[](nftCount);
     for(uint i=0; i<totalNFTsCount; i++){
-        if(idToNFT[i+1].owner==msg.sender){
+        if(idToNFT[i+1].owner==_msgSender()){
             uint currentId = i+1;
             NFT storage currentNFT = idToNFT[currentId];
             myNFTs[currentIndex] = currentNFT;
@@ -260,14 +277,14 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient {
 
     // first find total no. of nfts owned by the user
     for(uint i=0; i<totalNFTsCount; i++){
-        if(idToNFT[i+1].seller==msg.sender){
+        if(idToNFT[i+1].seller==_msgSender()){
             nftCount++;
         }
     }
 
     NFT[] memory myListings = new NFT[](nftCount);
     for(uint i=0; i<totalNFTsCount; i++){
-        if(idToNFT[i+1].seller==msg.sender){
+        if(idToNFT[i+1].seller==_msgSender()){
             uint currentId = i+1;
             NFT storage currentNFT = idToNFT[currentId];
             myListings[currentIndex] = currentNFT;
@@ -283,13 +300,13 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient {
     uint256 tokenId,
     uint256 price
   ) public payable {
-    require(idToNFT[tokenId].owner==msg.sender,"You are not owner of this NFT");
+    require(idToNFT[tokenId].owner==_msgSender(),"You are not owner of this NFT");
     idToNFT[tokenId].owner=payable(address(this));
     idToNFT[tokenId].sold=false;
-    idToNFT[tokenId].seller=payable(msg.sender);
+    idToNFT[tokenId].seller=payable(_msgSender());
     idToNFT[tokenId].price=price;
     _itemsSold.decrement();
 
-    _transfer(msg.sender, address(this), tokenId);
+    _transfer(_msgSender(), address(this), tokenId);
   }
 }

@@ -8,7 +8,7 @@ function ListingCard(props) {
   const [isHovering, setIsHovering] = useState(false);
 
   const price = props.price;
-  const royalty = ((props.royalty)*(10**18))/100;
+  const royalty = (((props.royalty)*(10**18))/100).toFixed(0);
 
 
   const getMaticMarketRate = async() => {

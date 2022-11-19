@@ -29,6 +29,8 @@ function InventoryCard(props) {
     }
   }
 
+const decimalPlaces = 18;
+
   const resellHandle = async () => {
     setIsBuyClicked(true);
     const newPrice = window.prompt("Enter new price");
@@ -45,12 +47,11 @@ function InventoryCard(props) {
          contractAbi.abi,
          signer
      );
-     // const nftPrice = ethers.utils.parseUnits(newPrice.toString(), "ether");
-     // const nftPrice = ethers.utils.parseUnits(price.toString(), "ether");
-     const nftPrice = ethers.utils.parseEther(parseInt(newPrice, 16));
+
+     const nftPrice = ethers.utils.parseUnits(price.toString(), "ether");
      console.log(nftPrice);
      const transaction = await contract.resellNFTs(tokenId, {
-         nftPrice,
+         value: newPrice,
          gasLimit: 1000000,
      });
      await transaction.wait()
