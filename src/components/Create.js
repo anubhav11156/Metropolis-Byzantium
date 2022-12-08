@@ -28,6 +28,10 @@ function Create() {
   const contentHandle = async () => {
 
   const { name, price, royalty } = formInput;
+  console.log('this is test');
+  // console.log('type of price : ', typeof(price)); string
+  // console.log('type of price forum inout: ', typeof(formInput.price)); string
+
 
   const fileInput = document.getElementById('content');
   const filePath = fileInput.files[0].name;

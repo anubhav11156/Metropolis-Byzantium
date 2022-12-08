@@ -34,11 +34,11 @@ const decimalPlaces = 18;
   const resellHandle = async () => {
     setIsBuyClicked(true);
     const newPrice = window.prompt("Enter new price");
-
      const modal = new web3modal({
          network: "mumbai",
          cacheProvider: true,
      });
+
      const connection = await modal.connect();
      const provider = new ethers.providers.Web3Provider(connection);
      const signer = provider.getSigner();
@@ -48,10 +48,10 @@ const decimalPlaces = 18;
          signer
      );
 
-     const nftPrice = ethers.utils.parseUnits(price.toString(), "ether");
-     console.log(nftPrice);
-     const transaction = await contract.resellNFTs(tokenId, {
-         value: newPrice,
+     // const nftPrice = ethers.utils.parseUnits(price.toString(), "ether");
+     const nftPrice = ethers.utils.parseEther(newPrice);
+     const transaction = await contract.resellNFTs(tokenId, nftPrice, {
+         // value: newPrice,
          gasLimit: 1000000,
      });
      await transaction.wait()

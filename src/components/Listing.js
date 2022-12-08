@@ -21,7 +21,6 @@ function Listing() {
     const connection = await modal.connect()
     const provider = new ethers.providers.Web3Provider(connection)
     const signer = provider.getSigner();
-    console.log('signer in listing : ', signer);
     const contract = new ethers.Contract(contractAddress, contractAbi.abi, signer)
     const data = await contract.fetchMyListings();
     const items = await Promise.all(
