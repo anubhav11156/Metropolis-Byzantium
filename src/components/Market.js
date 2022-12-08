@@ -161,8 +161,8 @@ const StoreSection=styled.div`
     padding-bottom: 95px;
     display: grid;
     grid-template-columns: 300px 300px 300px 300px;
-    grid-column-gap: 50px;
-    grid-row-gap: 38px;
+    grid-column-gap: 69.5px;
+    grid-row-gap: 46px;
   }
 
 `
