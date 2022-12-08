@@ -24,16 +24,20 @@ function Market() {
     fetchNFTs();
   },[])
 
+  const alchemyId = process.env.REACT_APP_ALCHEMY_API_KEY;
+
   const fetchNFTs = async () => {
-    const modal = new web3modal();
-    const connection = await modal.connect()
-    const provider = new ethers.providers.Web3Provider(connection)
-    const signer = provider.getSigner()
-    const contract = new ethers.Contract(contractAddress, contractAbi.abi, signer)
+
+    const provider = new ethers.providers.AlchemyProvider("maticmum", alchemyId);
+    const contract = new ethers.Contract(
+      contractAddress,
+      contractAbi.abi,
+      provider
+    );
     const data = await contract.fetchMarket();
     const items = await Promise.all(
       data.map(async (i) => {
-        //when the array of promises is resolved then map over each promise
+        //when the array of promises is resolved then map over each promisemui   S 8YUIOP[] C
         const tokenUri = await contract.tokenURI(i.tokenId.toString());
         const trimmedTokenUri = tokenUri.substring(7);
         const finalUri = `https://ipfs.io/ipfs/${trimmedTokenUri}`;
@@ -54,6 +58,7 @@ function Market() {
     setLoaded(true);
   }
 
+  console.log('nfts are : ', nfts);
   const cards = nfts.map( card => {
     return (
       <StoreNFTCard

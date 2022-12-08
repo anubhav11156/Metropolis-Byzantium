@@ -22,9 +22,8 @@ function Create() {
 
   /*-----------------------------code for uploading data to filecoin using NFT.Storage-----------------------------*/
 
-  // const API_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDE5RmY2NmNlYTUxMzlmMDY4YjQxNDIwMGFjRmRhN0JDQzRjNTZFM0EiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2ODcyNzA5Nzc0NywibmFtZSI6Ik1ldHJvcG9saXMifQ.XpfgbPMc6zK28Le28GNi44zKWEabZC4N2b37ihDKppY';
-
-  const client = new NFTStorage({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDE5RmY2NmNlYTUxMzlmMDY4YjQxNDIwMGFjRmRhN0JDQzRjNTZFM0EiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2ODcyNzA5Nzc0NywibmFtZSI6Ik1ldHJvcG9saXMifQ.XpfgbPMc6zK28Le28GNi44zKWEabZC4N2b37ihDKppY' })
+  const API_TOKEN = process.env.REACT_APP_NFTSTORAGE_API_KEY;
+  const client = new NFTStorage({ token: `${API_TOKEN}` })
 
   const contentHandle = async () => {
 

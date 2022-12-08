@@ -10,6 +10,7 @@ import { getDefaultProvider } from 'ethers'
 import { MoralisProvider } from "react-moralis";
 import './index.css';
 
+
 const container = document.getElementById('root');
 const root = createRoot(container);
 
@@ -21,7 +22,7 @@ const root = createRoot(container);
 // const chains = [chain.mainnet, chain.polygon, chain.polygonMumbai];
 const chains = [chain.polygonMumbai];
 
-const alchemyId = "L5y5rMAxy2S29WmJJkgz8x4iCkLzSEoV";
+const alchemyId = process.env.REACT_APP_ALCHEMY_API_KEY;
 
 const client = createClient(
   getDefaultClient({

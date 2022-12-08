@@ -193,6 +193,7 @@ const LeftSection=styled.div`
   display: flex;
   align-items: center;
   color: #0D004D;
+
   div {
     p {
       font-size: 25px;
@@ -202,7 +203,7 @@ const LeftSection=styled.div`
 `
 
 const MiddleSection=styled.div`
-  width: 1094.5px;
+  flex:1;
   display: flex;
   justify-content: end;
   align-items: center;
@@ -235,6 +236,7 @@ const MiddleSection=styled.div`
 `
 
 const RightSection=styled.div`
+  margin-right: 15rem;
   width: 120px;
   display: flex;
   align-items: center;
