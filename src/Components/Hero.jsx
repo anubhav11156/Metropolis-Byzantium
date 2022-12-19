@@ -61,7 +61,7 @@ const UpperContainer = styled.div`
   align-items: center;
 
   .div-1 {
-    height: 200px;
+    height: 320px;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -71,23 +71,21 @@ const UpperContainer = styled.div`
       margin: 0;
       margin-top: 30px;
       font-size: 70px;
-      font-weight: 600;
+      font-weight: 700;
     }
   }
 
   .div-2 {
     height:150px;
     width: 100%;
-
     display: flex;
     justify-content: center;
     align-items: start;
 
     .text {
-
+      margin-top: 20px;
       width: 700px;
       height: 100%;
-      margin: 0;
       text-align: center;
   }
 `
@@ -99,7 +97,7 @@ const Button=styled.div`
   justify-content: center;
 
   .get-started {
-    margin-top: 30px;
+    margin-top: 40px;
     height: 43px;
     width: 140px;
     color: white;
@@ -107,19 +105,18 @@ const Button=styled.div`
     background-color: black;
     border-radius: 30px;
     overflow: hidden;
-
-
+    transition: background-color 0.2s, opacity 0.2s;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
 
     &:hover {
-      opacity: 0.85;
+      background-color: #8247e5;
     }
 
     &:active {
-      opacity: 0.8;
+      opacity: 0.9;
     }
 
     p {
@@ -165,6 +162,7 @@ const Trail = styled.div`
   height: 160px;
   width: 100%;
   background-color: white;
-  border-top: 1px solid rgba(212, 211, 212, 0.5);
-  border-bottom: 1px solid rgba(212, 211, 212, 0.5);
+  border-top: 1px solid rgba(130, 71, 230, 0.4);
+  border-bottom: 1px solid rgba(130, 71, 230, 0.4);
+  box-shadow: 0px 2px 10px rgba(111, 108, 108, 0.15);
 `

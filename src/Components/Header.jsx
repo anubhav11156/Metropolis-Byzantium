@@ -62,7 +62,7 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  border-bottom: 1px solid rgba(255, 255, 255);
+  border-bottom: 1px solid rgba(130, 71, 230, 0.4);
   box-shadow: 0 0 0 1px rgb(0 0 0 / 8%);
   background-color: white;
   z-index: 1000;
@@ -71,6 +71,7 @@ const Container = styled.div`
 const InsideContatiner=styled.div`
   height: 100%;
   width: 70%;
+  min-width: 1333.5px;
 
   display: flex;
   justify-content: center;
@@ -96,12 +97,12 @@ const InsideContatiner=styled.div`
 
 const Menu=styled.div`
   flex: 1;
-
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding-left: 120px;
+
 
   div {
     margin-right: 50px;
@@ -112,6 +113,7 @@ const Menu=styled.div`
 `
 
 const LoginSection=styled.div`
+
   width: 300px;
   display: flex;
   height: 100%;
@@ -143,21 +145,20 @@ const LoginSection=styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid black;
     width: 95px;
     height: 40px;
     border-radius: 100px;
     color: white;
     background-color: black;
     cursor: pointer;
-    transition: opacity 0.15s;
+    transition: background-color 0.2s, opacity 0.2s;
 
     &:hover {
-      opacity: 0.85;
+      background-color: #8247e5;
     }
 
     &:active {
-      opacity: 0.8;
+      opacity: 0.9;
     }
   }
 `
