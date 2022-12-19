@@ -57,17 +57,19 @@ function Header() {
 export default Header
 
 const Container = styled.div`
-  height: 6.8rem;
+  position: fixed;
+  height: 6.5rem;
   width: 100%;
-
   display: flex;
   justify-content: center;
-  border-bottom: 1px solid gray;
+  border-bottom: 1px solid rgba(255, 255, 255);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 8%);
+  background-color: white;
 `
 
 const InsideContatiner=styled.div`
   height: 100%;
-  width: 75%;
+  width: 70%;
 
   display: flex;
   justify-content: center;
@@ -98,6 +100,7 @@ const Menu=styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-left: 120px;
 
   div {
     margin-right: 50px;
