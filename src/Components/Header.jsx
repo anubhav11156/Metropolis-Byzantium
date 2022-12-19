@@ -65,6 +65,7 @@ const Container = styled.div`
   border-bottom: 1px solid rgba(255, 255, 255);
   box-shadow: 0 0 0 1px rgb(0 0 0 / 8%);
   background-color: white;
+  z-index: 1000;
 `
 
 const InsideContatiner=styled.div`

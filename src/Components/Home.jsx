@@ -17,7 +17,6 @@ const Container=styled.div`
   background-color: white;
   height: 2000px;
   position: relative;
-  z-index: -10;
 `
 
 const BgGradiance=styled.div`
@@ -28,7 +27,5 @@ const BgGradiance=styled.div`
   height: calc( 100vh - 6.5rem );
   background: linear-gradient(180deg, rgba(189, 179, 249, 0.72) 0%, rgba(255, 255, 255, 0) 103.8%);
   width: 100%;
-  z-index: -1;
-  border-bottom: 1px solid grey;
-
+  
 `
