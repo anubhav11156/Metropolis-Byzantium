@@ -181,7 +181,7 @@ const UpperContainer = styled.div`
     p {
       margin: 0;
       margin-top: 30px;
-      font-size: 70px;
+      font-size: 72px;
       font-weight: 700;
     }
   }
