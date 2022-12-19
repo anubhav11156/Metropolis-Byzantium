@@ -23,13 +23,12 @@ function Hero() {
   }
     return (
         <Container>
-
           <UpperContainer>
             <div className="div-1">
               <p>Make use of your NFT</p>
             </div>
             <div className="div-2">
-              <p className="text">sdlhkgajg;jlrjfsj;;nvlsdnkvfknjdkfljow5840358kjbgklshkfshdfahf; fslhfadsljfldsf salfsa fsjflsajflshfkshf sfhsaf askfhskfh</p>
+              <p className="text">Monetize your NFT with Byzantium Protocol. Trasform NFTs into loan instantly. Borrow private loan using <span className="span-class"><a href="https://polygon.technology/solutions/polygon-nightfall" target="_blank">Polyogn NightFall</a></span> Optimistic-Zero Knowledge technology.</p>
             </div>
           </UpperContainer>
           <Button>
@@ -195,10 +194,18 @@ const UpperContainer = styled.div`
     align-items: start;
 
     .text {
-      margin-top: 20px;
+      margin-top: 30px;
       width: 700px;
       height: 100%;
       text-align: center;
+      color: rgba(0, 0, 0, 0.94);
+      font-size: 16px;
+      .span-class {
+        a {
+          color: #8247e5;
+          cursor: pointer;
+        }
+      }
   }
 `
 
@@ -209,7 +216,7 @@ const Button=styled.div`
   justify-content: center;
 
   .get-started {
-    margin-top: 40px;
+    margin-top: 50px;
     height: 43px;
     width: 140px;
     color: white;
