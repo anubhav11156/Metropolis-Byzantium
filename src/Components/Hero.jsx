@@ -1,7 +1,22 @@
 import React from 'react'
 import styled from 'styled-components'
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function Hero() {
+
+  let settings = {
+      dots: false,
+      infinite: true,
+      slidesToShow: 12,
+      slidesToScroll: 1,
+      autoplay: true,
+      speed: 2000,
+      autoplaySpeed: 2000,
+      cssEase: "linear",
+      pauseOnHover: false
+  }
 
   const getStartedHandle = () => {
     console.log('fuck you, puprle border');
@@ -28,8 +43,105 @@ function Hero() {
             </div>
           </Button>
           <SliderContainer>
-            <Trail>
-              Here the nfts will move
+            <Trail {...settings}>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/1.png"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/2.png"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/3.png"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/4.png"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/5.png"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/11.png"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/7.png"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/8.gif"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/6.png"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/15.png"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/10.webp"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/9.png"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/12.jpg"/>
+                  </div>
+                </div>
+              </div>
+              <div className="nft-container">
+                <div className="wrapper">
+                  <div className="img-div">
+                    <img src="images/13.jpg"/>
+                  </div>
+                </div>
+              </div>
             </Trail>
           </SliderContainer>
         </Container>
@@ -157,7 +269,7 @@ const SliderContainer = styled.div`
   align-items: start;
 `
 
-const Trail = styled.div`
+const Trail = styled(Slider)`
   margin-top: 50px;
   height: 160px;
   width: 100%;
@@ -165,4 +277,35 @@ const Trail = styled.div`
   border-top: 1px solid rgba(130, 71, 230, 0.4);
   border-bottom: 1px solid rgba(130, 71, 230, 0.4);
   box-shadow: 0px 2px 10px rgba(111, 108, 108, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  .nft-container {
+    height: 140px;
+
+
+    .wrapper {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .img-div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100px;
+        border-radius: 10px;
+        border: 1px solid rgba(130, 71, 230, 0.4);
+        box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+
+        img {
+          width: 100%;
+        }
+      }
+    }
+  }
 `
