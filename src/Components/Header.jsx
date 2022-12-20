@@ -15,9 +15,24 @@ function Header() {
               <p>Byzantium</p>
             </div>
             <Menu>
-              <div className="loan">Loan</div>
-              {/*<div className="insusrance">P2P Insusrance</div> */}
-              <div className="metropolis">Metropolis</div>
+              <div className="metropolis">
+                <a href="https://metropolis-694d1.web.app/" target="_blank">Metropolis</a>
+                  <div className="logo-container">
+                    <img src="/images/right-arrow-black.png"/>
+                  </div>
+              </div>
+              <div className="loan">
+                <p>Loan</p>
+                <div className="logo-container">
+                  <img src="/images/right-arrow-black.png"/>
+                </div>
+              </div>
+              <div className="insusrance">
+                <p>P2P Insusrance</p>
+                <div className="logo-container">
+                  <img src="/images/right-arrow-black.png"/>
+                </div>
+              </div>
             </Menu>
             <LoginSection>
 
@@ -101,14 +116,52 @@ const Menu=styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-left: 120px;
+  padding-left: 250px;
 
 
   div {
-    margin-right: 50px;
+
+    margin-right: 30px;
     font-weight: 400;
     font-size: 16px;
     cursor: pointer;
+    transition: color 0.15s;
+
+
+
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      color: #8247e5;
+    }
+
+    a {
+      color: black;
+      text-underline-offset: 3px;
+      &:hover {
+        &:hover {
+          color: #8247e5;
+        }
+      }
+    }
+
+    .logo-container {
+      width: 12px;
+      height: 14px;
+      margin-left: 5px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      img {
+        margin-top: 2.5px;
+        width: 95%;
+        opacity: 0.8;
+      }
+    }
+
   }
 `
 
@@ -122,7 +175,7 @@ const LoginSection=styled.div`
 
   .address-div {
     flex: 1;
-    background-color: rgba(152, 152, 152, 0.07);
+    background-color: rgba(130, 71, 230, 0.2);
     margin-left: 5px;
     margin-right: 25px;
     display: flex;
