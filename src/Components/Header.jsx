@@ -8,6 +8,20 @@ function Header() {
   const [Connected, setConnected] = useState(false);
   const { address } = useAccount();
 
+  const metropolisHandle = () => {
+    window.scroll({
+      top: 636,
+      behavior: 'smooth'
+    });
+  }
+
+  const loanHadle = () => {
+    window.scroll({
+      top: 1085,
+      behavior: 'smooth'
+    });
+  }
+
     return (
         <Container>
           <InsideContatiner>
@@ -15,13 +29,14 @@ function Header() {
               <p>Byzantium</p>
             </div>
             <Menu>
-              <div className="metropolis">
-                <a href="https://metropolis-694d1.web.app/" target="_blank">Metropolis</a>
+              <div className="metropolis" onClick={metropolisHandle}>
+                {/* <a href="https://metropolis-694d1.web.app/" target="_blank">Metropolis</a> */}
+                <p>Metropolis</p>
                   <div className="logo-container">
                     <img src="/images/right-arrow-black.png"/>
                   </div>
               </div>
-              <div className="loan">
+              <div className="loan" onClick={loanHadle}>
                 <p>Loan</p>
                 <div className="logo-container">
                   <img src="/images/right-arrow-black.png"/>

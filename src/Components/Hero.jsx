@@ -34,6 +34,7 @@ const [isScrolled, setIsScrolled] = useState(false);
 
 
   window.onscroll = function (e) {
+
     // setPixelScrolled(window.scrollY);
     setScrollValue(window.scrollY);
     if(scrollValue>=636){
@@ -41,7 +42,6 @@ const [isScrolled, setIsScrolled] = useState(false);
     }else{
       setIsScrolled(false);
     }
-
   }
 
 
