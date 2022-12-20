@@ -10,7 +10,7 @@ function App() {
 
   return (
     <div className="App">
-        <ScrollToTop className="scrollToTop" smooth color="black" />
+      <ScrollToTop className="scrollToTop" smooth color="black" />
       <Header />
       <Home />
       <Footer />

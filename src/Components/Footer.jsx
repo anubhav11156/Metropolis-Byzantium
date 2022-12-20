@@ -14,8 +14,9 @@ export default Footer
 
 const Container=styled.div`
   height: 400px;
-  background-color: lightblue;
+  background-color: lightpink;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 20px;
 `
