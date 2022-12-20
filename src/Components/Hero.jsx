@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Fade from 'react-reveal/Fade';
+import config from 'react-reveal/globals';
 import {
   Link,
   Element,
@@ -10,6 +12,8 @@ import {
   animateScroll as scroll,
   scroller,
 } from "react-scroll";
+
+config({ ssrFadeout: true });
 
 function Hero() {
 
@@ -32,7 +36,6 @@ const [isScrolled, setIsScrolled] = useState(false);
   window.onscroll = function (e) {
     // setPixelScrolled(window.scrollY);
     setScrollValue(window.scrollY);
-    console.log('scroll value', scrollValue);
     if(scrollValue>=636){
       setIsScrolled(true);
     }else{
@@ -57,18 +60,21 @@ const [isScrolled, setIsScrolled] = useState(false);
               <p>Make use of your NFT</p>
             </div>
             <div className="div-2">
-              <p className="text">Monetize your NFT with Byzantium Protocol. Trasform NFTs into loan instantly. Borrow private loan using <span className="span-class"><a href="https://polygon.technology/solutions/polygon-nightfall" target="_blank">Polyogn NightFall</a></span> Optimistic-Zero Knowledge technology.</p>
+              <p className="text">Monetize your NFT with Byzantium Protocol. Trasform NFTs into loan instantly. Borrow private loan using <span className="span-class"><a href="https://polygon.technology/solutions/polygon-nightfall" target="_blank">Polygon NightFall</a></span> Optimistic-Zero Knowledge technology.</p>
             </div>
           </UpperContainer>
           <Button>
-            <div className="get-started" onClick={getStartedHandle}>
-              <div className="text-div">
-                <p>Get Started</p>
+            <Fade bottom>
+              <div className="get-started" onClick={getStartedHandle}>
+                <div className="text-div">
+                  <p>Get Started</p>
+                </div>
+                <div className="arrow-div">
+                  <img src="/images/right-arrow.png"/>
+                </div>
               </div>
-              <div className="arrow-div">
-                <img src="/images/right-arrow.png"/>
-              </div>
-            </div>
+            </Fade>
+
           </Button>
             <SliderContainer>
               <Trail {...settings} style={{
@@ -241,6 +247,7 @@ const UpperContainer = styled.div`
 `
 
 const Button=styled.div`
+
   height: 300px;
   width: 70%;
   display: flex;
@@ -333,11 +340,12 @@ const Trail = styled(Slider)`
 
       .img-div {
         display: flex;
+        background-color: rgba(130, 71, 230, 0.4);
         justify-content: center;
         align-items: center;
         width: 100px;
         border-radius: 10px;
-        border: 1px solid rgba(130, 71, 230, 0.4);
+        border: 1px solid rgba(130, 71, 230, 0.1);
         box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.08);
         overflow: hidden;
 
