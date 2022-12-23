@@ -116,6 +116,21 @@ const SliderContainer=styled(Slider)`
   display: flex;
   justify-content: center;
 
+  ul li button {
+    &:before {
+      font-size: 10px;
+      color: rgb(224, 224, 224);
+    }
+  }
+
+  li.slick-active button:before {
+    color: white;
+  }
+
+
+
+
+
 `
 const Wrapper=styled.div`
   flex:1;
@@ -135,10 +150,17 @@ const Slide1=styled.div`
   border-top-right-radius: 4px;
   border-bottom-left-radius: 1px;
   border-bottom-right-radius: 1px;
-
+  transition: transform 0.25s;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  box-shadow: 2px 6px 11px rgba(54, 56, 56, 0.56);
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.04);
+  }
 
   .tittle {
     padding-top: 5px;
