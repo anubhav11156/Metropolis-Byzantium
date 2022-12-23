@@ -24,7 +24,20 @@ function MainSection() {
         <Container>
           <Metropolis>
             <div className="left-div">
+              <div className="heading">
+                <p>Explore Byzantium's NFT marketplace, Metropolis</p>
+              </div>
+              <div className="button-div">
+                <a href="https://metropolis-694d1.web.app/" target="_blank">
+                  <div className="visit-metropolis">
+                    <p>Visit Metropolis</p>
+                      <div className="logo-div">
+                        <img src="public/images/long-white.png"/>
+                      </div>
+                  </div>
+                </a>
 
+              </div>
             </div>
             <div className="right-div">
             <SliderContainer {...settings}>
@@ -49,6 +62,18 @@ function MainSection() {
                   </div>
                   <div className="image-container">
                     <img src="/public/images/bz-2.png"/>
+                  </div>
+                </Slide1>
+              </Wrapper>
+              <Wrapper>
+                <Slide1>
+                  <div className="tittle">
+                    <div className="red"></div>
+                    <div className="orange"></div>
+                    <div className="green"></div>
+                  </div>
+                  <div className="image-container">
+                    <img src="/public/images/bz-3.png"/>
                   </div>
                 </Slide1>
               </Wrapper>
@@ -94,7 +119,83 @@ const Metropolis=styled.div`
   .left-div {
     flex:1;
     height: 100%;
+    display: flex;
+    flex-direction: column;
 
+
+    .heading {
+      flex:1;
+
+      display: flex;
+      justify-content: start;
+      margin-top: 50px;
+      margin-left: 50px;
+
+
+      p {
+        width: 490px;
+        margin: 0;
+        font-size: 42px;
+        font-weight: 600;
+        color: rgb(107, 35, 227);
+      }
+    }
+
+
+
+    .button-div {
+
+      a {
+        text-decoration: none;
+      }
+
+      flex:1;
+      margin-left: 50px;
+      margin-top: 5px;
+
+      .visit-metropolis {
+        margin-top: 35px;
+        width: 220px;
+        height: 45px;
+        border-radius: 100px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: rgb(107, 35, 227);
+        cursor: pointer;
+        transition: opacity 0.15s;
+        box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.39);
+
+        &:hover {
+          opacity: 0.92;
+        }
+
+        &:active {
+          opacity: 0.9;
+        }
+        p {
+          margin-left: 12px;
+          margin-right: 2px;
+          font-weight: 500;
+          color: white;
+        }
+
+        .logo-div {
+          width: 51px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          img {
+            margin-top: 2px;
+            width: 100%;
+          }
+        }
+      }
+
+    }
   }
 
   .right-div {
