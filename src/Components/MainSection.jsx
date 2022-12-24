@@ -3,8 +3,6 @@ import styled from 'styled-components'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-// import UAuth from '@uauth/js';
-
 
 function MainSection() {
 
@@ -28,10 +26,6 @@ function MainSection() {
   //     .loginWithPopup()
   //     .then(setAuthorization)
   // }
-
-  const loginHandler = () => {
-    console.log('Login clicked');
-  }
 
 
   const settings = {
@@ -104,7 +98,7 @@ function MainSection() {
         </div>
       </Metropolis>
       <Loan>
-        <button onClick={loginHandler}>Login</button>
+        
       </Loan>
     </Container>
   )
@@ -346,13 +340,4 @@ const Loan = styled.div`
   border: 1px solid rgba(130, 71, 230, 0.4);
   box-shadow: 0px 2px 10px rgba(111, 108, 108, 0.15);
   overflow: hidden;
-  
-  display: flex;
-  justify-content:center;
-  align-items: center;
-
-  button {
-    cursor: pointer;
-  }
- 
 `

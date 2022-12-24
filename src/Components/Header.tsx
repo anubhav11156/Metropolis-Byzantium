@@ -1,16 +1,88 @@
-import { React, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
+import Onboard from '@web3-onboard/core';
+import injectedModule from '@web3-onboard/injected-wallets';
+import uauthModule from '@web3-onboard/uauth';
+
 // import { ConnectKitButton } from "connectkit";
 // import { useAccount } from 'wagmi';
+
 
 function Header() {
 
   // const [Connected, setConnected] = useState(false);
   // const { address } = useAccount();
 
-  const loginHandler = () => {
-    console.log('You clicked login button.');
+  const [userAddress, setUserAddress] = useState('');
+  const [connected, setConnected] = useState(false);
+  const [label, setLabel] = useState('');
+
+
+  const uauth = uauthModule({
+    clientID: 'b1f0dbb6-2efd-4c6d-899a-63bb303d88b7',
+    redirectUri: 'http://localhost:3000',
+    scope: 'openid wallet email profile:optional social:optional',
+    shouldLoginWithRedirect: false,
+    qrcodeModalOptions: {
+      mobileLinks: ['rainbow', 'metamask', 'argent', 'trust', 'imtoken', 'pillar']
+    },
+    connectFirstChainId: true
+  });
+
+
+  const goerliUrl = 'https://eth-goerli.g.alchemy.com/v2/brR22a-IB4ZeKTD5Y8PaZ7AH8DL_nDDd';
+
+  const injected = injectedModule();
+
+  const onboard = Onboard({
+    wallets: [
+      uauth,
+      injected
+    ],
+    chains: [
+      {
+        id: '0x5',
+        token: 'ETH',
+        label: 'Goerli Testnet',
+        rpcUrl: goerliUrl
+      }
+    ]
+  })
+
+
+  const loginHandler = async () => {
+    console.log('Login Handler Clicked!');
+    const wallets = await onboard.connectWallet()
+      .then(response => {
+        setUserAddress(response[0].accounts[0].address);
+        setLabel(response[0].label);
+      });
+      // .then(response => console.log(response[0].provider));
+      // .then(response => setUserAddress(response[0].accounts[0].address));
+
+      // setConnected(true);
+      console.log("address : ", userAddress);
+      console.log("label : ", label);
+      
   }
+
+
+  const logoutHandler = async () => {
+    // uauth.logout(); // this is for UNS login not for normal wallets 
+    
+    if (label === 'Unstoppable') {
+      uauth.logout()
+    }
+    const logout = await onboard.disconnectWallet({label: label})
+    .then(response => console.log(response));
+    // console.log('logout : ',logout);
+    
+    setUserAddress('');
+    console.log('logged out');
+  }
+
+
+
   const metropolisHandle = () => {
     window.scroll({
       top: 636,
@@ -25,39 +97,43 @@ function Header() {
     });
   }
 
-    return (
-        <Container>
-          <InsideContatiner>
-            <div className="name">
-              <p>Byzantium</p>
-            </div>
-            <Menu>
-              <div className="metropolis" onClick={metropolisHandle}>
-                {/* <a href="https://metropolis-694d1.web.app/" target="_blank">Metropolis</a> */}
-                <p>Metropolis</p>
-                  <div className="logo-container">
-                    <img src="/images/right-arrow-black.png"/>
-                  </div>
-              </div>
-              <div className="loan" onClick={loanHadle}>
-                <p>Loan</p>
-                <div className="logo-container">
-                  <img src="/images/right-arrow-black.png"/>
-                </div>
-              </div>
-              <div className="insusrance">
-                <p>P2P Insusrance</p>
-                <div className="logo-container">
-                  <img src="/images/right-arrow-black.png"/>
-                </div>
-              </div>
-            </Menu>
-            <LoginSection>
 
-              <div className='login' onClick={loginHandler}>
-                Login
-              </div>
-              {/* {  Connected &&
+  return (
+    <Container>
+      <InsideContatiner>
+        <div className="name">
+          <p>Byzantium</p>
+        </div>
+        <Menu>
+          <div className="metropolis" onClick={metropolisHandle}>
+            {/* <a href="https://metropolis-694d1.web.app/" target="_blank">Metropolis</a> */}
+            <p>Metropolis</p>
+            <div className="logo-container">
+              <img src="/images/right-arrow-black.png" />
+            </div>
+          </div>
+          <div className="loan" onClick={loanHadle}>
+            <p>Loan</p>
+            <div className="logo-container">
+              <img src="/images/right-arrow-black.png" />
+            </div>
+          </div>
+          <div className="insusrance">
+            <p>P2P Insusrance</p>
+            <div className="logo-container">
+              <img src="/images/right-arrow-black.png" />
+            </div>
+          </div>
+        </Menu>
+        <LoginSection>
+
+          <div className='login' onClick={loginHandler}>
+            Login
+          </div>
+          <div className='login' onClick={logoutHandler}>
+            Logout
+          </div>
+          {/* {  Connected &&
                 <div className="address-div">
                   <p>
                     {address}
@@ -84,10 +160,10 @@ function Header() {
                 }
               }
             </ConnectKitButton.Custom> */}
-            </LoginSection>
-          </InsideContatiner>
-        </Container>
-    )
+        </LoginSection>
+      </InsideContatiner>
+    </Container>
+  )
 }
 
 export default Header
@@ -104,7 +180,7 @@ const Container = styled.div`
   z-index: 1000;
 `
 
-const InsideContatiner=styled.div`
+const InsideContatiner = styled.div`
   height: 100%;
   width: 70%;
   min-width: 1333.5px;
@@ -131,7 +207,7 @@ const InsideContatiner=styled.div`
   }
 `
 
-const Menu=styled.div`
+const Menu = styled.div`
   flex: 1;
   height: 100%;
   display: flex;
@@ -186,7 +262,7 @@ const Menu=styled.div`
   }
 `
 
-const LoginSection=styled.div`
+const LoginSection = styled.div`
 
   width: 300px;
   display: flex;
