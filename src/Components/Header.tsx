@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
@@ -50,39 +50,40 @@ function Header() {
   })
 
 
+  // login handler
   const loginHandler = async () => {
-    console.log('Login Handler Clicked!');
+ 
     const wallets = await onboard.connectWallet()
       .then(response => {
         setUserAddress(response[0].accounts[0].address);
         setLabel(response[0].label);
+        if(response[0].accounts[0].address.length !=0 ){
+          setConnected(true);
+        }
       });
-      // .then(response => console.log(response[0].provider));
-      // .then(response => setUserAddress(response[0].accounts[0].address));
-
-      // setConnected(true);
-      console.log("address : ", userAddress);
-      console.log("label : ", label);
-      
   }
 
 
+  //logout handler
   const logoutHandler = async () => {
     // uauth.logout(); // this is for UNS login not for normal wallets 
-    
+
     if (label === 'Unstoppable') {
       uauth.logout()
     }
-    const logout = await onboard.disconnectWallet({label: label})
-    .then(response => console.log(response));
-    // console.log('logout : ',logout);
-    
+
+    await onboard.disconnectWallet({ label: label })
     setUserAddress('');
-    console.log('logged out');
+    setLabel('');
+    setConnected(false);
   }
 
 
-
+  // console.log('address : ', userAddress);
+  // console.log(('label : ', label));
+  console.log('address length : ',userAddress.length);
+  
+  
   const metropolisHandle = () => {
     window.scroll({
       top: 636,
@@ -96,7 +97,6 @@ function Header() {
       behavior: 'smooth'
     });
   }
-
 
   return (
     <Container>
@@ -127,39 +127,23 @@ function Header() {
         </Menu>
         <LoginSection>
 
-          <div className='login' onClick={loginHandler}>
-            Login
-          </div>
-          <div className='login' onClick={logoutHandler}>
-            Logout
-          </div>
-          {/* {  Connected &&
-                <div className="address-div">
-                  <p>
-                    {address}
-                  </p>
-                </div>
-              }
+          {!connected &&
+            <>
+              <div className='login' onClick={loginHandler}>Login</div>
+            </>
 
-              <ConnectKitButton.Custom>
-              {
-                ({ isConnected, show, ensName }) => {
+          }
 
-                  if(isConnected){
-                    setConnected(true);
-                  }else{
-                    setConnected(false);
-                  }
-
-                  return (
-                    <div className="login" onClick={show}>
-                      {isConnected ? ensName ?? "Logout" : "Login"}
-                      <div className="bar"></div>
-                    </div>
-                  );
-                }
-              }
-            </ConnectKitButton.Custom> */}
+          {connected &&
+            <>
+              <div className="address-div">
+                <p>
+                  {userAddress}
+                </p>
+              </div>
+              <div className='login' onClick={logoutHandler}>Logout</div>
+            </>
+          }
         </LoginSection>
       </InsideContatiner>
     </Container>
