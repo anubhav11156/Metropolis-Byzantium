@@ -3,7 +3,7 @@ import Header from './Components/Header'
 import Home from './Components/Home'
 import Footer from './Components/Footer'
 import ScrollToTop from "react-scroll-to-top";
-import connectors from './connectors'
+
 
 function App() {
 

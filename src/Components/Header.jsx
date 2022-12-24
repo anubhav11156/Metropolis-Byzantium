@@ -1,13 +1,16 @@
 import { React, useState } from 'react'
 import styled from 'styled-components'
-import { ConnectKitButton } from "connectkit";
-import { useAccount } from 'wagmi';
+// import { ConnectKitButton } from "connectkit";
+// import { useAccount } from 'wagmi';
 
 function Header() {
 
-  const [Connected, setConnected] = useState(false);
-  const { address } = useAccount();
+  // const [Connected, setConnected] = useState(false);
+  // const { address } = useAccount();
 
+  const loginHandler = () => {
+    console.log('You clicked login button.');
+  }
   const metropolisHandle = () => {
     window.scroll({
       top: 636,
@@ -51,7 +54,10 @@ function Header() {
             </Menu>
             <LoginSection>
 
-              {  Connected &&
+              <div className='login' onClick={loginHandler}>
+                Login
+              </div>
+              {/* {  Connected &&
                 <div className="address-div">
                   <p>
                     {address}
@@ -77,7 +83,7 @@ function Header() {
                   );
                 }
               }
-            </ConnectKitButton.Custom>
+            </ConnectKitButton.Custom> */}
             </LoginSection>
           </InsideContatiner>
         </Container>
