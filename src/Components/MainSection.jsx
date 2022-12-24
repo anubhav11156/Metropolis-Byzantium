@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+// import UAuth from '@uauth/js';
+
 
 function MainSection() {
 
@@ -10,6 +12,27 @@ function MainSection() {
   //   // setPixelScrolled(window.scrollY);
   //   console.log(window.scrollY);
   // }
+  
+
+  // Coinbase connector
+// 
+
+  // useEffect(()=>{
+    
+  // })
+
+  // this doesn't have option to login with wallets, only unstopable domain login is there
+  // const loginHandler = () => {
+  //   console.log('login handler clicked');
+  //   uauth
+  //     .loginWithPopup()
+  //     .then(setAuthorization)
+  // }
+
+  const loginHandler = () => {
+    console.log('Login clicked');
+  }
+
 
   const settings = {
     dots: true,
@@ -20,75 +43,76 @@ function MainSection() {
     autoplay: true,
   };
 
-    return (
-        <Container>
-          <Metropolis>
-            <div className="left-div">
-              <div className="heading">
-                <p>Explore Byzantium's NFT marketplace, Metropolis</p>
+  return (
+    <Container>
+      <Metropolis>
+        <div className="left-div">
+          <div className="heading">
+            <p>Explore Byzantium's NFT marketplace, Metropolis</p>
+          </div>
+          <div className="button-div">
+            <a href="https://metropolis-694d1.web.app/" target="_blank">
+              <div className="visit-metropolis">
+                <p>Visit Metropolis</p>
+                <div className="logo-div">
+                  <img src="public/images/long-white.png" />
+                </div>
               </div>
-              <div className="button-div">
-                <a href="https://metropolis-694d1.web.app/" target="_blank">
-                  <div className="visit-metropolis">
-                    <p>Visit Metropolis</p>
-                      <div className="logo-div">
-                        <img src="public/images/long-white.png"/>
-                      </div>
-                  </div>
-                </a>
+            </a>
 
-              </div>
-            </div>
-            <div className="right-div">
-            <SliderContainer {...settings}>
-              <Wrapper>
-                <Slide1>
-                  <div className="tittle">
-                    <div className="red"></div>
-                    <div className="orange"></div>
-                    <div className="green"></div>
-                  </div>
-                  <div className="image-container">
-                    <img src="/public/images/bz-1.png"/>
-                  </div>
-                </Slide1>
-              </Wrapper>
-              <Wrapper>
-                <Slide1>
-                  <div className="tittle">
-                    <div className="red"></div>
-                    <div className="orange"></div>
-                    <div className="green"></div>
-                  </div>
-                  <div className="image-container">
-                    <img src="/public/images/bz-2.png"/>
-                  </div>
-                </Slide1>
-              </Wrapper>
-              <Wrapper>
-                <Slide1>
-                  <div className="tittle">
-                    <div className="red"></div>
-                    <div className="orange"></div>
-                    <div className="green"></div>
-                  </div>
-                  <div className="image-container">
-                    <img src="/public/images/bz-3.png"/>
-                  </div>
-                </Slide1>
-              </Wrapper>
-            </SliderContainer>
-            </div>
-          </Metropolis>
-          <Loan>
-          </Loan>
-        </Container>
-    )
+          </div>
+        </div>
+        <div className="right-div">
+          <SliderContainer {...settings}>
+            <Wrapper>
+              <Slide1>
+                <div className="tittle">
+                  <div className="red"></div>
+                  <div className="orange"></div>
+                  <div className="green"></div>
+                </div>
+                <div className="image-container">
+                  <img src="/public/images/bz-1.png" />
+                </div>
+              </Slide1>
+            </Wrapper>
+            <Wrapper>
+              <Slide1>
+                <div className="tittle">
+                  <div className="red"></div>
+                  <div className="orange"></div>
+                  <div className="green"></div>
+                </div>
+                <div className="image-container">
+                  <img src="/public/images/bz-2.png" />
+                </div>
+              </Slide1>
+            </Wrapper>
+            <Wrapper>
+              <Slide1>
+                <div className="tittle">
+                  <div className="red"></div>
+                  <div className="orange"></div>
+                  <div className="green"></div>
+                </div>
+                <div className="image-container">
+                  <img src="/public/images/bz-3.png" />
+                </div>
+              </Slide1>
+            </Wrapper>
+          </SliderContainer>
+        </div>
+      </Metropolis>
+      <Loan>
+        <button onClick={loginHandler}>Login</button>
+      </Loan>
+    </Container>
+  )
 }
 
 export default MainSection
 
-const Container=styled.div`
+const Container = styled.div`
   margin-top: 3.1rem;
   position: absolute;
   top: calc(102vh - 6.5rem);
@@ -101,7 +125,7 @@ const Container=styled.div`
   gap: 40px;
 `
 
-const Metropolis=styled.div`
+const Metropolis = styled.div`
   margin-top: -1.4rem;
   width: 70%;
   height: 400px;
@@ -110,6 +134,7 @@ const Metropolis=styled.div`
   box-shadow: 0px 2px 10px rgba(111, 108, 108, 0.15);
   border: 1px solid rgba(130, 71, 230, 0.4);
   box-sizing: border-box;
+  
 
   display: flex;
   justify-content: center;
@@ -121,7 +146,7 @@ const Metropolis=styled.div`
     height: 100%;
     display: flex;
     flex-direction: column;
-
+    
 
     .heading {
       flex:1;
@@ -209,7 +234,7 @@ const Metropolis=styled.div`
   }
 `
 
-const SliderContainer=styled(Slider)`
+const SliderContainer = styled(Slider)`
   width: 480px;
   height: 250px;
 
@@ -233,7 +258,7 @@ const SliderContainer=styled(Slider)`
 
 
 `
-const Wrapper=styled.div`
+const Wrapper = styled.div`
   flex:1;
   height: 250px;
 
@@ -242,7 +267,7 @@ const Wrapper=styled.div`
   align-items: center;
 
 `
-const Slide1=styled.div`
+const Slide1 = styled.div`
   margin-left: 45px;
   margin-top: 10px;
   width: 392px;
@@ -313,12 +338,21 @@ const Slide1=styled.div`
   }
 `
 
-const Loan=styled.div`
+const Loan = styled.div`
   margin-top: 0.6rem;
   width: 70%;
   flex:1;
   border-radius: 20px;
   border: 1px solid rgba(130, 71, 230, 0.4);
   box-shadow: 0px 2px 10px rgba(111, 108, 108, 0.15);
+  overflow: hidden;
+  
+  display: flex;
+  justify-content:center;
+  align-items: center;
 
+  button {
+    cursor: pointer;
+  }
+ 
 `
