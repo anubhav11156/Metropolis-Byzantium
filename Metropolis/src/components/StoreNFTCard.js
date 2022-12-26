@@ -33,7 +33,7 @@ function StoreNFTCard(props) {
 
 
   const getMaticMarketRate = async() => {
-    const rate = await fetch('https://min-api.cryptocompare.com/data/price?fsym=MATIC&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}')
+    const rate = await fetch('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}')
     .then(response => response.json())
     .then(result => setMaticRate((result.USD))?.toFixed(2))
   }
@@ -111,7 +111,7 @@ function StoreNFTCard(props) {
                   </div>
                   <div className="price-div">
                     <div className="logo-div">
-                      <img src="/images/polygon-purple.png"/>
+                      <img src="/images/ethereum-1.svg"/>
                     </div>
                     <div className="crypto-price">
                       {price}
@@ -270,9 +270,8 @@ const Card=styled.div`
         }
 
         .crypto-price {
-          flex:0.9;
+          flex:1;
           height: 24px;
-          width: 50px;
           margin-top: 1px;
           margin-left: 7px;
           font-size: 18px;
@@ -283,7 +282,7 @@ const Card=styled.div`
         }
 
         .market-price {
-          width: 70px;
+          width: 100px;
           color: rgba(0, 0, 0, 0.73);
           font-size: 15.5px;
           display:flex;
@@ -296,6 +295,7 @@ const Card=styled.div`
 
           font-size: 15.5px;
           display:flex;
+          justify-content: end;
           align-items: center;
           margin-top: 2px;
 

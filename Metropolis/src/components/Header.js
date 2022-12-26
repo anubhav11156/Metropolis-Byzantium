@@ -125,7 +125,7 @@ function Header() {
               <OnLogedIn>
                 <div className="balance-div">
                   <div className="matic-logo">
-                    <img src="/images/polygon-purple.png"/>
+                    <img src="/images/ethereum-1.svg"/>
                   </div>
                   <div className="balance-amount">
                     <p>{getAccountDetail.balance}</p>

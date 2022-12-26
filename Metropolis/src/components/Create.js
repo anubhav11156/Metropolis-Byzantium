@@ -132,7 +132,7 @@ const mintToken = async () => {
                 </div>
                 <div className="price-container">
                   <div className="logo-div">
-                    <img src="/images/polygon-purple.png"/>
+                    <img src="/images/ethereum-1.svg"/>
                   </div>
                   <div className="price-input">
                     <input name="price" onChange={
@@ -140,7 +140,7 @@ const mintToken = async () => {
                         ...formInput,
                         price: prop.target.value
                       })
-                    } placeholder="2 MATIC" required/>
+                    } placeholder="ETH" required/>
                   </div>
                 </div>
               </div>

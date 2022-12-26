@@ -88,7 +88,7 @@ function Dashboard() {
                   </div>
                   <div className="balance">
                     <div className="logo-div">
-                      <img src="/images/polygon-purple.png"/>
+                      <img src="/images/ethereum-1.svg"/>
                     </div>
                     <div className="amount">
                       <p>{getAccountDetail.balance}</p>
@@ -343,6 +343,7 @@ const SideBar=styled.div`
 
             img {
               width: 20px;
+              height: 20px;
               opacity: 0.8;
             }
           }
