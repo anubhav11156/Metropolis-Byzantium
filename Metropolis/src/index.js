@@ -7,7 +7,6 @@ import reportWebVitals from './reportWebVitals';
 import { WagmiConfig, createClient, chain, configureChains } from 'wagmi'
 import { ConnectKitProvider, ConnectKitButton, getDefaultClient } from "connectkit";
 import { getDefaultProvider } from 'ethers'
-import { MoralisProvider } from "react-moralis";
 import './index.css';
 
 
@@ -20,7 +19,7 @@ const root = createRoot(container);
 // })
 
 // const chains = [chain.mainnet, chain.polygon, chain.polygonMumbai];
-const chains = [chain.polygonMumbai];
+const chains = [chain.goerli];
 
 const alchemyId = process.env.REACT_APP_ALCHEMY_API_KEY;
 

@@ -45,8 +45,8 @@ function Header() {
 
   /*------------code to get account balance of the user------------*/
     const settings = {
-      apiKey: "L5y5rMAxy2S29WmJJkgz8x4iCkLzSEoV",
-      network: Network.MATIC_MUMBAI,
+      apiKey: `${process.env.REACT_APP_ALCHEMY_API_KEY}`,
+      network: Network.ETH_GOERLI,
     };
     const alchemy = new Alchemy(settings);
 
