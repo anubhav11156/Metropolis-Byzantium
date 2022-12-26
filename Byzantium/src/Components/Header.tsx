@@ -1,23 +1,17 @@
-import { useState, useEffect, useLayoutEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
-import uauthModule from '@web3-onboard/uauth';
 import uauthBNCModule from '@uauth/web3-onboard'
 import UAuth from '@uauth/js'
 
-
-
-
-// console.log('process dotenv : ', process.env)
-// import { ConnectKitButton } from "connectkit";
-// import { useAccount } from 'wagmi';
 
 
 function Header() {
 
   const [userAddress, setUserAddress] = useState('');
   const [connected, setConnected] = useState(false);
+  const [userDomain, setUserDomain] = useState('');
   const [label, setLabel] = useState('');
 
   const unstoppableClientID = import.meta.env.VITE_UNSTOPPABLE_DOMAIN_CLIENT_ID;
@@ -74,22 +68,38 @@ function Header() {
 
     if (label === 'Unstoppable') {
       uauth.logout()
-      // uauth.logout()
+        // uauth.logout()
         .then(() => {
           setUserAddress('');
           setLabel('');
           setConnected(false);
+          setUserDomain('');
         });
     }
 
     await onboard.disconnectWallet({ label: label })
-    setUserAddress('');
-    setLabel('');
-    setConnected(false);
+      .then(() => { 
+        setUserAddress('');
+        setLabel('');
+        setConnected(false);        
+      })
+
   }
 
 
   console.log('address length : ', userAddress.length);
+  console.log('domain : ', userDomain);
+  console.log('lable : ',label);
+  
+  
+
+  // to get the domain name when user login with his/her UNS domain.
+  useEffect(()=> {
+    uauth.user()
+    .then( (user) => {
+      setUserDomain(user.sub);
+    })
+  },[userAddress]);
 
 
   const metropolisHandle = () => {
