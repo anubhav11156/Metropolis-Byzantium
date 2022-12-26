@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
-// import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "@opengsn/contracts/src/ERC2771Recipient.sol";
 
 
@@ -46,7 +45,7 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
   using Chainlink for Chainlink.Request;
   bytes32 private jobId;
   uint256 private fee;
-  uint256 public maticUSDvalue;
+  uint256 public ethUSDvalue;
 
   /*
      * MUMBAI Testnet details:
@@ -55,11 +54,18 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
      * jobId: ca98366cc7314957b8c012c72f05aeeb
   */
 
+  /*
+     * Goerli Testnet details:
+     * Link Token: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB
+     * Oracle: 0xCC79157eb46F5624204f47AB42b3906cAA40eaB7
+     * jobId: ca98366cc7314957b8c012c72f05aeeb
+  */
+
   constructor() ERC721("Metropolis NFT", "METRO") {
     _setTrustedForwarder(0x84a0856b038eaAd1cC7E297cF34A7e72685A8693);
     platformOwner = payable(_msgSender() );
     setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
-    setChainlinkOracle(0x40193c8518BB267228Fc409a613bDbD8eC5a97b3);
+    setChainlinkOracle(0xCC79157eb46F5624204f47AB42b3906cAA40eaB7);
     jobId = 'ca98366cc7314957b8c012c72f05aeeb';
     fee = 0.1 * 10**18;
   }
@@ -76,7 +82,7 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
      return ERC2771Recipient._msgData();
  }
 
-  /*-----chainlink Any API cal to get current usd value of matic token-----*/
+  /*-----chainlink Any API call to get current usd value of ETH-----*/
 
   function getMATICvalue() public payable returns(bytes32){
     Chainlink.Request memory req = buildChainlinkRequest(
@@ -86,7 +92,7 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
         );
     req.add(
            "get",
-           "https://min-api.cryptocompare.com/data/price?fsym=MATIC&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}"
+           "https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}"
        );
 
     req.add("path", "USD");
@@ -98,7 +104,7 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
   }
 
   function fulfill( bytes32 _requestId, uint256 data) public recordChainlinkFulfillment(_requestId) {
-    maticUSDvalue=data;
+    ethUSDvalue=data;
   }
 
   function getLINKtokenBalance() view public returns(uint256) {
@@ -117,20 +123,20 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
     _setTokenURI(newItemId, tokenURI);
 
     // user defined function
-    createMarketItem(newItemId, price, royaltyFeeInBips, maticUSDvalue);
+    createMarketItem(newItemId, price, royaltyFeeInBips, ethUSDvalue);
 
     return newItemId;
   }
 
   // function to calculate royalty fee
   function getRoyaltyFee(uint256 _salePrice, uint256 royaltyFeeInBips) pure public returns(uint256) {
-    require(_salePrice>100000000000000000,"Sale price is less than 0.1 MATIC");
+    // require(_salePrice>100000000000000000,"Sale price is less than 0.1 MATIC");
     return (_salePrice/10000)*royaltyFeeInBips;
   }
 
   // fucntion to calculate commission fee
   function getCommissionFee(uint256 _salePrice) pure public returns(uint256){
-    require(_salePrice>100000000000000000,"Sale price is less than 0.1 MATIC");
+    // require(_salePrice>100000000000000000,"Sale price is less than 0.1 MATIC");
     return (_salePrice/10000)*300; // 3% commission
   }
 
@@ -143,15 +149,6 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
   ) private {
     require(price > 0,"Price can't be zero.");
 
-    // idToNFT[tokenId] = NFT(
-    //     tokenId,
-    //     payable(msg.sender), // seller
-    //     payable(address(this)),
-    //     payable(msg.sender), // seller is the artist
-    //     price,
-    //     royaltyFeeInBips,
-    //     false // flase becausek till now it is in market, not sold
-    // );
     getMATICvalue();
 
     idToNFT[tokenId].tokenId = tokenId;
