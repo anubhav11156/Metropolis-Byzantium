@@ -12,12 +12,14 @@ import web3modal from "web3modal"
 import { ethers } from "ethers"
 import { contractAbi, contractAddress } from "../config";
 import axios from "axios";
+import { LogDescription } from 'ethers/lib/utils';
 // import {testing} from './Testing'
 
 function Market() {
 
   const [loaded, setLoaded] = useState(false);
   const [nfts, setNfts] = useState([]);
+
 
 /*-----------------Code to Fetch NFT from contract----------------*/
   useEffect( ()=> {
