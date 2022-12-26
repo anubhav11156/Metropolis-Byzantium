@@ -1,14 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import styled from 'styled-components'
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import uauthModule from '@web3-onboard/uauth';
 
+
+
+
+
+// console.log('process dotenv : ', process.env)
 // import { ConnectKitButton } from "connectkit";
 // import { useAccount } from 'wagmi';
 
 
 function Header() {
+
+  const unstoppableClientID = import.meta.env.VITE_UNSTOPPABLE_DOMAIN_CLIENT_ID;
+
+  
+  // console.log('UNS client id sdf: ',unstoppableClientID);
 
   // const [Connected, setConnected] = useState(false);
   // const { address } = useAccount();
@@ -19,8 +29,8 @@ function Header() {
 
 
   const uauth = uauthModule({
-    clientID: 'b1f0dbb6-2efd-4c6d-899a-63bb303d88b7',
-    redirectUri: 'http://localhost:3000',
+    clientID: `${unstoppableClientID}`,
+    redirectUri: 'http://localhost:5173',
     scope: 'openid wallet email profile:optional social:optional',
     shouldLoginWithRedirect: false,
     qrcodeModalOptions: {
@@ -52,12 +62,12 @@ function Header() {
 
   // login handler
   const loginHandler = async () => {
- 
+
     const wallets = await onboard.connectWallet()
       .then(response => {
         setUserAddress(response[0].accounts[0].address);
         setLabel(response[0].label);
-        if(response[0].accounts[0].address.length !=0 ){
+        if (response[0].accounts[0].address.length != 0) {
           setConnected(true);
         }
       });
@@ -81,9 +91,9 @@ function Header() {
 
   // console.log('address : ', userAddress);
   // console.log(('label : ', label));
-  console.log('address length : ',userAddress.length);
-  
-  
+  console.log('address length : ', userAddress.length);
+
+
   const metropolisHandle = () => {
     window.scroll({
       top: 636,
