@@ -12,6 +12,7 @@ function Header() {
   const [userAddress, setUserAddress] = useState('');
   const [connected, setConnected] = useState(false);
   const [userDomain, setUserDomain] = useState('');
+  const [isUNSLogin, setUNSLogin] = useState(false);
   const [label, setLabel] = useState('');
 
   const unstoppableClientID = import.meta.env.VITE_UNSTOPPABLE_DOMAIN_CLIENT_ID;
@@ -44,7 +45,7 @@ function Header() {
         token: 'ETH',
         label: 'Goerli Testnet',
         rpcUrl: goerliUrl
-      },
+      }
     ],
   })
 
@@ -74,32 +75,39 @@ function Header() {
           setLabel('');
           setConnected(false);
           setUserDomain('');
+          setUNSLogin(false);
         });
     }
 
     await onboard.disconnectWallet({ label: label })
-      .then(() => { 
+      .then(() => {
         setUserAddress('');
         setLabel('');
-        setConnected(false);        
+        setConnected(false);
+        setUserDomain('');
       })
 
   }
 
 
-  console.log('address length : ', userAddress.length);
-  console.log('domain : ', userDomain);
-  console.log('lable : ',label);
-  
-  
+  // console.log('address length : ', userAddress.length);
+  // console.log('domain : ', userDomain);
+  // console.log('lable : ',label);
+  // console.log('uns login : ', isUNSLogin);
+
+
+
 
   // to get the domain name when user login with his/her UNS domain.
-  useEffect(()=> {
+  useEffect(() => {
     uauth.user()
-    .then( (user) => {
-      setUserDomain(user.sub);
-    })
-  },[userAddress]);
+      .then((user) => {
+        setUserDomain(user.sub);
+        if (user.sub.length != 0) {
+          setUNSLogin(true);
+        }
+      })
+  }, [userAddress]);
 
 
   const metropolisHandle = () => {
@@ -152,7 +160,31 @@ function Header() {
 
           }
 
-          {connected &&
+          {(connected && isUNSLogin) &&
+            <>
+              <div className='address-uns-div'>
+
+                <div className='domain-div'>
+                  <div className='logo-div'>
+                    <img src="/images/uns.png" />
+                  </div>
+                  <p className='domain-name'>
+                    {userDomain}
+                  </p>
+                </div>
+
+                <div className='userAddress'>
+                  <p>
+                    {userAddress}
+                  </p>
+                </div>
+
+              </div>
+              <div className='login' onClick={logoutHandler}>Logout</div>
+            </>
+          }
+
+          {(connected && !isUNSLogin) &&
             <>
               <div className="address-div">
                 <p>
@@ -162,6 +194,7 @@ function Header() {
               <div className='login' onClick={logoutHandler}>Logout</div>
             </>
           }
+
         </LoginSection>
       </InsideContatiner>
     </Container>
@@ -275,22 +308,115 @@ const LoginSection = styled.div`
   .address-div {
     flex: 1;
     background-color: rgba(130, 71, 230, 0.2);
-    margin-left: 5px;
+    margin-left: 10px;
     margin-right: 25px;
+
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 20px;
     height: 29px;
 
+    .logo-div {
+      margin-left: 5px;
+      margin-right: -5px;
+      width: 15px;
+      height: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        border-radius: 3px;
+        width: 100%;
+      }
+    }
+
     p {
-        width: 140px;
-        font-size: 14px;
+        width: 145px;
+        font-size: 12px;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
+        text-align: center;
     }
 
+  }
+
+  .address-uns-div {
+    flex: 1;
+    background-color: rgba(129, 71, 230, 0.119);
+    border: 1px solid rgba(130, 71, 230, 0.4);
+
+    margin-left: 10px;
+    margin-right: 25px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    
+
+    border-radius: 10px;
+    height: 70px;
+
+    .domain-div {
+      flex:1;
+      border-bottom: 1px solid ;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid rgba(130, 71, 230, 0.4);
+  
+      font-size: 12px;
+      width: 100%;
+
+      .logo-div {
+        margin-left: 10px;
+        width: 15px;
+        height: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+          border-radius: 3px;
+          width: 100%;
+        }
+      }
+
+      .domain-name {
+        margin: 0;
+        width: 145px;
+        margin-left: -3px;
+        font-size: 12px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        text-align: center;
+      }
+
+    
+    }
+
+    .userAddress {
+      flex: 1;
+    
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      border-radius: 0px;
+      width: 100%;
+
+      p {
+        width: 140px;
+        margin: 0;
+        font-size: 12px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+    }
+    
   }
 
   .login {
