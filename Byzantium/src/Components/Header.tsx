@@ -3,7 +3,8 @@ import styled from 'styled-components'
 import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import uauthModule from '@web3-onboard/uauth';
-
+import uauthBNCModule from '@uauth/web3-onboard'
+import UAuth from '@uauth/js'
 
 
 
@@ -15,39 +16,33 @@ import uauthModule from '@web3-onboard/uauth';
 
 function Header() {
 
-  const unstoppableClientID = import.meta.env.VITE_UNSTOPPABLE_DOMAIN_CLIENT_ID;
-
-  
-  // console.log('UNS client id sdf: ',unstoppableClientID);
-
-  // const [Connected, setConnected] = useState(false);
-  // const { address } = useAccount();
-
   const [userAddress, setUserAddress] = useState('');
   const [connected, setConnected] = useState(false);
   const [label, setLabel] = useState('');
 
+  const unstoppableClientID = import.meta.env.VITE_UNSTOPPABLE_DOMAIN_CLIENT_ID;
+  const alchemyId = import.meta.env.VITE_ALCHEMY_API_KEY;
 
-  const uauth = uauthModule({
-    clientID: `${unstoppableClientID}`,
-    redirectUri: 'http://localhost:5173',
-    scope: 'openid wallet email profile:optional social:optional',
-    shouldLoginWithRedirect: false,
-    qrcodeModalOptions: {
-      mobileLinks: ['rainbow', 'metamask', 'argent', 'trust', 'imtoken', 'pillar']
-    },
-    connectFirstChainId: true
-  });
-
-
-  const goerliUrl = 'https://eth-goerli.g.alchemy.com/v2/brR22a-IB4ZeKTD5Y8PaZ7AH8DL_nDDd';
+  const goerliUrl = `https://eth-goerli.g.alchemy.com/v2/${alchemyId}/`;
 
   const injected = injectedModule();
 
+  const uauth = new UAuth({
+    clientID: `${unstoppableClientID}`,
+    redirectUri: 'http://localhost:5173',
+    scope: 'openid wallet email profile:optional social:optional',
+  })
+
+  const uauthOptions = {
+    uauth: uauth
+  }
+
+  const uauthModule = uauthBNCModule(uauthOptions);
+
   const onboard = Onboard({
     wallets: [
-      uauth,
-      injected
+      injected,
+      uauthModule
     ],
     chains: [
       {
@@ -55,10 +50,9 @@ function Header() {
         token: 'ETH',
         label: 'Goerli Testnet',
         rpcUrl: goerliUrl
-      }
-    ]
+      },
+    ],
   })
-
 
   // login handler
   const loginHandler = async () => {
@@ -80,6 +74,12 @@ function Header() {
 
     if (label === 'Unstoppable') {
       uauth.logout()
+      // uauth.logout()
+        .then(() => {
+          setUserAddress('');
+          setLabel('');
+          setConnected(false);
+        });
     }
 
     await onboard.disconnectWallet({ label: label })
@@ -89,8 +89,6 @@ function Header() {
   }
 
 
-  // console.log('address : ', userAddress);
-  // console.log(('label : ', label));
   console.log('address length : ', userAddress.length);
 
 
