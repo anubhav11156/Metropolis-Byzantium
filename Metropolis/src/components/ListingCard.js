@@ -8,69 +8,71 @@ function ListingCard(props) {
   const [isHovering, setIsHovering] = useState(false);
 
   const price = props.price;
-  const royalty = (((props.royalty)*(10**18))/100).toFixed(0);
+  const royalty = (((props.royalty) * (10 ** 18)) / 100).toFixed(0);
 
 
-  const getMaticMarketRate = async() => {
-    const rate = await fetch('https://min-api.cryptocompare.com/data/price?fsym=MATIC&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}')
-    .then(response => response.json())
-    .then(result => setMaticRate((result.USD))?.toFixed(2))
+  const getMaticMarketRate = async () => {
+    const rate = await fetch('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}')
+      .then(response => response.json())
+      .then(result => setMaticRate((result.USD))?.toFixed(2))
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     getMaticMarketRate();
-  },[]);
+  }, []);
   // a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918  crypto-compare api key
 
-  let dollarValue = (maticRate*price).toFixed(2);
+  let dollarValue = (maticRate * price).toFixed(2);
 
-    return (
-        <Container>
-          <Card>
-            <div className="background-image">
-                <img src=""/>
-            </div>
-            <div className="image-div">
-              <img src={props.image}/>
+  return (
+    <Container>
+      <Card>
+        <div className="background-image">
+          <img src="" />
+        </div>
+        <div className="image-div">
+          <img src={props.image} />
 
+        </div>
+        <div className="detail-div">
+          <div className="detail-div-wrapper">
+            <div className="id-div">
+              {`# ${props.id}`}
             </div>
-              <div className="detail-div">
-                <div className="detail-div-wrapper">
-                  <div className="id-div">
-                    {`# ${props.id}`}
-                  </div>
-                  <div className="price-div">
-                    <div className="logo-div">
-                      <img src="/images/polygon-purple.png"/>
-                    </div>
-                    <div className="crypto-price">
-                      {price}
-                    </div>
-                    <div className="market-price">
-                      {`$${dollarValue}`}
-                    </div>
-                    <div className="royalty">
-                      <span>RI</span><p>{`${royalty} %`}</p>
-                    </div>
-                  </div>
-                  <div className="name-div">
-                    <p>{props.name}</p>
-                  </div>
-                </div>
-                <div className="icon-div">
-                  <div>
-                    <img src="/images/pattern1.png"/>
-                  </div>
-                </div>
+            <div className="price-div">
+              <div className="logo-div">
+                <img src="/images/ethereum-1.svg" />
               </div>
-          </Card>
-        </Container>
-    )
+              <div className="crypto-price">
+                {price}
+              </div>
+              <div className="market-price">
+                <p>
+                  {`$${dollarValue}`}
+                </p>
+              </div>
+              <div className="royalty">
+                <span>RI</span><p>{`${royalty} %`}</p>
+              </div>
+            </div>
+            <div className="name-div">
+              <p>{props.name}</p>
+            </div>
+          </div>
+          <div className="icon-div">
+            <div>
+              <img src="/images/pattern1.png" />
+            </div>
+          </div>
+        </div>
+      </Card>
+    </Container>
+  )
 }
 
 export default ListingCard
 
-const Container=styled.div`
+const Container = styled.div`
   height: 410px;
   width: 315px;
   display: inline-block;
@@ -98,7 +100,7 @@ const Container=styled.div`
   }
 `
 
-const Card=styled.div`
+const Card = styled.div`
   border-radius: 2px;
   display: flex;
   flex-direction: column;
@@ -186,8 +188,7 @@ const Card=styled.div`
         display: flex;
 
         .logo-div{
-          width: 20px;
-
+          width: 18px;
           display: flex;
           align-items: center;
           overflow: hidden;
@@ -201,32 +202,37 @@ const Card=styled.div`
         }
 
         .crypto-price {
-          flex:0.9;
+          flex:1;
           height: 24px;
-          width: 50px;
+
           margin-top: 1px;
-          margin-left: 7px;
-          font-size: 18px;
-          font-weight: 500;
+          margin-left: 4px;
+          font-size: 16px;
+          font-weight: 400;
           display:flex;
           align-items: center;
           color: rgba(0, 0, 0, 0.73);
         }
 
         .market-price {
-          width: 70px;
+          margin-left: 7px;
+          width: 100px;
           color: rgba(0, 0, 0, 0.73);
-          font-size: 15.5px;
+          font-size: 15px;
           display:flex;
           align-items: center;
-          margin-top: 2px;
+          justify-content: center;
+          margin-top: 1px;
+          p {
+            margin: 0px;
+          }
         }
 
         .royalty {
           flex: 1;
-
           font-size: 15.5px;
           display:flex;
+          justify-content: end;
           align-items: center;
           margin-top: 2px;
 

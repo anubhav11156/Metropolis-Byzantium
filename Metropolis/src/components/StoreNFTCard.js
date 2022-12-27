@@ -15,7 +15,7 @@ function StoreNFTCard(props) {
 
   const price = props.price;
   const tokenId = props.id;
-  const royalty = (((props.royalty)*(10**18))/100).toFixed(0);
+  const royalty = (((props.royalty) * (10 ** 18)) / 100).toFixed(0);
   // console.log('royalty is : ',royalty);
 
   const onMouseOverHandle = () => {
@@ -23,124 +23,126 @@ function StoreNFTCard(props) {
   }
 
   const onMouseOutHandle = () => {
-    if(isBuyClicked) {
+    if (isBuyClicked) {
       setIsHovering(true);
-    }else {
+    } else {
       setIsHovering(false);
     }
   }
 
 
 
-  const getMaticMarketRate = async() => {
+  const getMaticMarketRate = async () => {
     const rate = await fetch('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}')
-    .then(response => response.json())
-    .then(result => setMaticRate((result.USD))?.toFixed(2))
+      .then(response => response.json())
+      .then(result => setMaticRate((result.USD))?.toFixed(2))
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     getMaticMarketRate();
-  },[]);
+  }, []);
   // a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918  crypto-compare api key
-  let dollarValue = (maticRate*price).toFixed(2);
+  let dollarValue = (maticRate * price).toFixed(2);
 
   /*-------------code to Buy NFT-------------------*/
 
   const buyHandle = async () => {
     setIsBuyClicked(true);
 
-     const modal = new web3modal({
-         network: "goerli",
-         cacheProvider: true,
-     });
-     const connection = await modal.connect();
-     const provider = new ethers.providers.Web3Provider(connection);
-     const signer = provider.getSigner();
-     const contract = new ethers.Contract(
-         contractAddress,
-         contractAbi.abi,
-         signer
-     );
-     const nftPrice = ethers.utils.parseUnits(price.toString(), "ether");
-     const transaction = await contract.buyNft(tokenId, {
-         value: nftPrice,
-         gasLimit: 1000000,
-     });
-     await transaction.wait()
-     .then( () => {
-       toast.success("Transaction successful.", {
-       position: toast.POSITION.TOP_CENTER
-       });
-       setIsBuyClicked(false);
-     }).catch( () => {
-       toast.error("Transaction failed.", {
-         position: toast.POSITION.TOP_CENTER
-       });
+    const modal = new web3modal({
+      network: "goerli",
+      cacheProvider: true,
+    });
+    const connection = await modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      contractAddress,
+      contractAbi.abi,
+      signer
+    );
+    const nftPrice = ethers.utils.parseUnits(price.toString(), "ether");
+    const transaction = await contract.buyNft(tokenId, {
+      value: nftPrice,
+      gasLimit: 1000000,
+    });
+    await transaction.wait()
+      .then(() => {
+        toast.success("Transaction successful.", {
+          position: toast.POSITION.TOP_CENTER
+        });
         setIsBuyClicked(false);
-     })
+      }).catch(() => {
+        toast.error("Transaction failed.", {
+          position: toast.POSITION.TOP_CENTER
+        });
+        setIsBuyClicked(false);
+      })
   }
 
   /*-----------------------------------------------*/
-    return (
-        <Container onMouseOver={onMouseOverHandle} onMouseOut={onMouseOutHandle}>
-          <Card>
-            <div className="background-image">
-                <img src=""/>
-            </div>
-            <div className="image-div">
-              <img src={props.image}/>
-              {
-                isHovering && (
-                  <Fade bottom duration={350}>
-                    <div className="buy-div" onClick={buyHandle}>
-                      {
-                        isBuyClicked ? <ClipLoader
-                        color="rgba(255, 255, 255, 0.93)"
-                        size={14}
-                        /> : <p>Buy Now</p>
-                      }
-                    </div>
-                  </Fade>
-                )
-              }
-            </div>
-              <div className="detail-div">
-                <div className="detail-div-wrapper">
-                  <div className="id-div">
-                    {`# ${props.id}`}
-                  </div>
-                  <div className="price-div">
-                    <div className="logo-div">
-                      <img src="/images/ethereum-1.svg"/>
-                    </div>
-                    <div className="crypto-price">
-                      {price}
-                    </div>
-                    <div className="market-price">
-                      {`$${dollarValue}`}
-                    </div>
-                    <div className="royalty">
-                      <span>RI</span><p>{`${royalty} %`}</p>
-                    </div>
-                  </div>
-                  <div className="name-div">
-                    <p>{props.name}</p>
-                  </div>
+  return (
+    <Container onMouseOver={onMouseOverHandle} onMouseOut={onMouseOutHandle}>
+      <Card>
+        <div className="background-image">
+          <img src="" />
+        </div>
+        <div className="image-div">
+          <img src={props.image} />
+          {
+            isHovering && (
+              <Fade bottom duration={350}>
+                <div className="buy-div" onClick={buyHandle}>
+                  {
+                    isBuyClicked ? <ClipLoader
+                      color="rgba(255, 255, 255, 0.93)"
+                      size={14}
+                    /> : <p>Buy Now</p>
+                  }
                 </div>
-                <div className="icon-div">
-                  <div>
-                    <img src="/images/pattern1.png"/>
-                  </div>
-                </div>
+              </Fade>
+            )
+          }
+        </div>
+        <div className="detail-div">
+          <div className="detail-div-wrapper">
+            <div className="id-div">
+              {`# ${props.id}`}
+            </div>
+            <div className="price-div">
+              <div className="logo-div">
+                <img src="/images/ethereum-1.svg" />
               </div>
-          </Card>
-        </Container>
-    )
+              <div className="crypto-price">
+                {price}
+              </div>
+              <div className="market-price">
+                <p>
+                  {`$${dollarValue}`}
+                </p>
+              </div>
+              <div className="royalty">
+                <span>RI</span><p>{`${royalty} %`}</p>
+              </div>
+            </div>
+            <div className="name-div">
+              <p>{props.name}</p>
+            </div>
+          </div>
+          <div className="icon-div">
+            <div>
+              <img src="/images/pattern1.png" />
+            </div>
+          </div>
+        </div>
+      </Card>
+    </Container>
+  )
 }
 
 export default StoreNFTCard
 
-const Container=styled.div`
+const Container = styled.div`
   height: 410px;
   width: 315px;
   display: inline-block;
@@ -168,7 +170,7 @@ const Container=styled.div`
   }
 `
 
-const Card=styled.div`
+const Card = styled.div`
   border-radius: 2px;
   display: flex;
   flex-direction: column;
@@ -252,11 +254,11 @@ const Card=styled.div`
         width: 240px;
         max-height: 25px;
         margin-top: 5px;
-        display: flex;
+        display: flex;  
+  
 
         .logo-div{
-          width: 20px;
-
+          width: 18px;
           display: flex;
           align-items: center;
           overflow: hidden;
@@ -272,27 +274,34 @@ const Card=styled.div`
         .crypto-price {
           flex:1;
           height: 24px;
+
           margin-top: 1px;
-          margin-left: 7px;
-          font-size: 18px;
-          font-weight: 500;
+          margin-left: 4px;
+          font-size: 16px;
+          font-weight: 400;
           display:flex;
           align-items: center;
           color: rgba(0, 0, 0, 0.73);
         }
 
         .market-price {
+          margin-left: 7px;
           width: 100px;
           color: rgba(0, 0, 0, 0.73);
-          font-size: 15.5px;
+          font-size: 15px;
           display:flex;
           align-items: center;
-          margin-top: 2px;
+          justify-content: center;
+          margin-top: 1px;
+
+
+          p {
+            margin: 0px;
+          }
         }
 
         .royalty {
           flex: 1;
-
           font-size: 15.5px;
           display:flex;
           justify-content: end;
