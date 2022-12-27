@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/thermal-ice/Downloads/Web3/Coinbase-Hackathon/Metropolis-Byzantium/Metropolis/contracts/metropolis.sol": {
-      "lastModificationDate": 1672087199832,
-      "contentHash": "01762aed39549478eb2375c83a1e2c4c",
+      "lastModificationDate": 1672121664040,
+      "contentHash": "8078ba35396db272b9b7ae77a86cf6ec",
       "sourceName": "contracts/metropolis.sol",
       "solcConfig": {
         "version": "0.8.17",

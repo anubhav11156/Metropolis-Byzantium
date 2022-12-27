@@ -30,7 +30,7 @@ function Market() {
 
   const fetchNFTs = async () => {
 
-    const provider = new ethers.providers.AlchemyProvider("maticmum", alchemyId);
+    const provider = new ethers.providers.AlchemyProvider("goerli", alchemyId);
     const contract = new ethers.Contract(
       contractAddress,
       contractAbi.abi,

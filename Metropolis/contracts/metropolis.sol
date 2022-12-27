@@ -46,14 +46,7 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
   bytes32 private jobId;
   uint256 private fee;
   uint256 public ethUSDvalue;
-
-  /*
-     * MUMBAI Testnet details:
-     * Link Token: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB
-     * Oracle: 0x40193c8518BB267228Fc409a613bDbD8eC5a97b3
-     * jobId: ca98366cc7314957b8c012c72f05aeeb
-  */
-
+  
   /*
      * Goerli Testnet details:
      * Link Token: 0x326C977E6efc84E512bB9C30f76E30c160eD06FB
