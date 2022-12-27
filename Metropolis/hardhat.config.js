@@ -13,6 +13,7 @@ module.exports = {
   networks: {
     goerli: {
       url: `https://eth-goerli.g.alchemy.com/v2/${alchemyId}`,
+      // url: `https://goerli.ethereum.coinbasecloud.net`,
       accounts: deployerPrivateKey
     }
   }

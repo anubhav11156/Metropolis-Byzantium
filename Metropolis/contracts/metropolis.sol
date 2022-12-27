@@ -84,7 +84,7 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
 
   /*-----chainlink Any API call to get current usd value of ETH-----*/
 
-  function getMATICvalue() public payable returns(bytes32){
+  function getETHvalue() public payable returns(bytes32){
     Chainlink.Request memory req = buildChainlinkRequest(
             jobId,
             address(this),
@@ -130,13 +130,13 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
 
   // function to calculate royalty fee
   function getRoyaltyFee(uint256 _salePrice, uint256 royaltyFeeInBips) pure public returns(uint256) {
-    // require(_salePrice>100000000000000000,"Sale price is less than 0.1 MATIC");
+    // require(_salePrice>100000000000000000,"Sale price is less than 0.1");
     return (_salePrice/10000)*royaltyFeeInBips;
   }
 
   // fucntion to calculate commission fee
   function getCommissionFee(uint256 _salePrice) pure public returns(uint256){
-    // require(_salePrice>100000000000000000,"Sale price is less than 0.1 MATIC");
+    // require(_salePrice>100000000000000000,"Sale price is less than 0.1");
     return (_salePrice/10000)*300; // 3% commission
   }
 
@@ -149,7 +149,7 @@ contract Metropolis is ERC721URIStorage, ChainlinkClient, ERC2771Recipient {
   ) private {
     require(price > 0,"Price can't be zero.");
 
-    getMATICvalue();
+    getETHvalue();
 
     idToNFT[tokenId].tokenId = tokenId;
     idToNFT[tokenId].price = price;

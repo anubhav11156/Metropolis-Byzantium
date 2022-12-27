@@ -66,7 +66,7 @@ function MainSection() {
                   <div className="green"></div>
                 </div>
                 <div className="image-container">
-                  <img src="/public/images/bz-1.png" />
+                  <img src="/public/images/metro-1.png" />
                 </div>
               </Slide1>
             </Wrapper>
@@ -78,7 +78,7 @@ function MainSection() {
                   <div className="green"></div>
                 </div>
                 <div className="image-container">
-                  <img src="/public/images/bz-2.png" />
+                  <img src="/public/images/metro-2.png" />
                 </div>
               </Slide1>
             </Wrapper>
@@ -90,7 +90,7 @@ function MainSection() {
                   <div className="green"></div>
                 </div>
                 <div className="image-container">
-                  <img src="/public/images/bz-3.png" />
+                  <img src="/public/images/metro-3.png" />
                 </div>
               </Slide1>
             </Wrapper>

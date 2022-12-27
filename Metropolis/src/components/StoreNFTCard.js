@@ -50,7 +50,7 @@ function StoreNFTCard(props) {
     setIsBuyClicked(true);
 
      const modal = new web3modal({
-         network: "mumbai",
+         network: "goerli",
          cacheProvider: true,
      });
      const connection = await modal.connect();
