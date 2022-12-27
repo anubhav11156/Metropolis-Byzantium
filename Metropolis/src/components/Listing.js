@@ -3,25 +3,51 @@ import styled from 'styled-components'
 import ListingCard from './ListingCard'
 import {testing} from './Testing'
 import web3modal from "web3modal"
-import { ethers } from "ethers"
+import { ethers, Signer } from "ethers"
 import { contractAbi, contractAddress } from "../config";
 import axios from "axios";
 
 function Listing() {
+
+  const coinbaseApiUserName = process.env.REACT_APP_CB_USERNAME;
+  const coinbaseApiPassword = process.env.REACT_APP_CB_PASSWORD;
+  const baseUrl = "https://goerli.ethereum.coinbasecloud.net";
 
   const [loaded, setLoaded] = useState(false);
   const [nfts, setNfts] = useState([]);
 
   useEffect( ()=> {
     fetchListing();
-  },[])
+  },[]);
 
   const fetchListing = async () => {
+    // const modal = new web3modal();
+    // const connection = await modal.connect()
+    // const provider = new ethers.providers.Web3Provider(connection)
+    const alchemyId = process.env.REACT_APP_ALCHEMY_API_KEY;
+    const providerCB = new ethers.providers.JsonRpcProvider({
+      url: baseUrl,
+      user: coinbaseApiUserName,
+      password: coinbaseApiPassword
+    })
+
     const modal = new web3modal();
     const connection = await modal.connect()
     const provider = new ethers.providers.Web3Provider(connection)
+
+    // const provider = new ethers.providers.AlchemyProvider('goerli', alchemyId);
+    // const provider = new ethers.getDefaultProvider()
+    console.log('provider : ', provider)
     const signer = provider.getSigner();
-    const contract = new ethers.Contract(contractAddress, contractAbi.abi, signer)
+    // console.log(signer);
+
+    const contract = new ethers.Contract(
+      contractAddress,
+      contractAbi.abi,
+      signer
+    );
+
+
     const data = await contract.fetchMyListings();
     const items = await Promise.all(
       data.map(async (i) => {
@@ -45,6 +71,8 @@ function Listing() {
     setNfts(items);
     setLoaded(true);
   }
+
+  console.log('nfts : ',nfts);
   const cards = nfts.map( card => {
     return (
       <ListingCard

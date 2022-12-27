@@ -12,7 +12,7 @@ import web3modal from "web3modal"
 import { ethers } from "ethers"
 import { contractAbi, contractAddress } from "../config";
 import axios from "axios";
-import { LogDescription } from 'ethers/lib/utils';
+// import { LogDescription } from 'ethers/lib/utils';
 // import {testing} from './Testing'
 
 function Market() {
@@ -20,22 +20,44 @@ function Market() {
   const [loaded, setLoaded] = useState(false);
   const [nfts, setNfts] = useState([]);
 
+  const coinbaseApiUserName = process.env.REACT_APP_CB_USERNAME;
+  const coinbaseApiPassword = process.env.REACT_APP_CB_PASSWORD;
+  const baseUrl = "https://goerli.ethereum.coinbasecloud.net";
+
+/*--------Coinbase Node setup--------*/
+
+  // const coinbaseSettings = {
+  //   url:'https://goerli.ethereum.coinbasecloud.net',
+  //   apiUserName: `${coinbaseApiUserName}`,
+  //   apiPassword: `${coinbaseApiPassword}`,
+  // }
+
+  // const coinbasecloud = new CoinbaseCloud(coinbaseSettings);
+
+/*-----------------------------------*/
+
 
 /*-----------------Code to Fetch NFT from contract----------------*/
   useEffect( ()=> {
     fetchNFTs();
   },[])
 
-  const alchemyId = process.env.REACT_APP_ALCHEMY_API_KEY;
+ 
 
   const fetchNFTs = async () => {
 
-    const provider = new ethers.providers.AlchemyProvider("goerli", alchemyId);
+    const provider = new ethers.providers.JsonRpcProvider({
+      url: baseUrl,
+      user: coinbaseApiUserName,
+      password: coinbaseApiPassword
+    })
+
     const contract = new ethers.Contract(
       contractAddress,
       contractAbi.abi,
       provider
     );
+    
     const data = await contract.fetchMarket();
     const items = await Promise.all(
       data.map(async (i) => {
