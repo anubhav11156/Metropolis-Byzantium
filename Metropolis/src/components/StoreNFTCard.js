@@ -5,13 +5,29 @@ import { ToastContainer, toast } from 'react-toastify';
 import ClipLoader from "react-spinners/ClipLoader";
 import web3modal from "web3modal"
 import { ethers } from "ethers"
+import { useAccount } from 'wagmi';
+
 import { contractAbi, contractAddress } from "../config";
 
 function StoreNFTCard(props) {
 
-  const [maticRate, setMaticRate] = useState('');
+  const { address } = useAccount();
+
+
+  const [maticRate, setETHRate] = useState('');
   const [isHovering, setIsHovering] = useState(false);
   const [isBuyClicked, setIsBuyClicked] = useState(false);
+  const [wallectConnected, setIsWalletConnected] = useState(false);
+
+  useEffect(() => {
+    if(address){
+      setIsWalletConnected(true);
+    }else {
+      setIsWalletConnected(false);
+    }
+  },[address]);
+  
+  console.log('wallet connected : ', wallectConnected);
 
   const price = props.price;
   const tokenId = props.id;
@@ -32,21 +48,21 @@ function StoreNFTCard(props) {
 
 
 
-  const getMaticMarketRate = async () => {
+  const getETHMarketRate = async () => {
     const rate = await fetch('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}')
       .then(response => response.json())
-      .then(result => setMaticRate((result.USD))?.toFixed(2))
+      .then(result => setETHRate((result.USD))?.toFixed(2))
   }
 
   useEffect(() => {
-    getMaticMarketRate();
+    getETHMarketRate();
   }, []);
   // a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918  crypto-compare api key
   let dollarValue = (maticRate * price).toFixed(2);
 
   /*-------------code to Buy NFT-------------------*/
 
-  const buyHandle = async () => {
+  const buy = async () => {
     setIsBuyClicked(true);
 
     const modal = new web3modal({
@@ -72,6 +88,7 @@ function StoreNFTCard(props) {
           position: toast.POSITION.TOP_CENTER
         });
         setIsBuyClicked(false);
+        window.location.reload();
       }).catch(() => {
         toast.error("Transaction failed.", {
           position: toast.POSITION.TOP_CENTER
@@ -79,6 +96,19 @@ function StoreNFTCard(props) {
         setIsBuyClicked(false);
       })
   }
+
+  const buyHandle = () => {
+    if(wallectConnected){
+      buy();
+    }else{
+      toast.info("Login to buy", {
+        position: toast.POSITION.TOP_CENTER
+      });
+    }
+  }
+
+  
+  
 
   /*-----------------------------------------------*/
   return (
