@@ -12,7 +12,7 @@ function InventoryCard(props) {
   const [maticRate, setMaticRate] = useState('');
   const [isHovering, setIsHovering] = useState(false);
   const [isBuyClicked, setIsBuyClicked] = useState(false);
-  const [isPositive,setIsPositive] = useState(true);
+  const [isPositive, setIsPositive] = useState(true);
 
   const price = props.price;
   const tokenId = props.id;
@@ -22,159 +22,161 @@ function InventoryCard(props) {
   }
 
   const onMouseOutHandle = () => {
-    if(isBuyClicked) {
+    if (isBuyClicked) {
       setIsHovering(true);
-    }else {
+    } else {
       setIsHovering(false);
     }
   }
 
-const decimalPlaces = 18;
+  const decimalPlaces = 18;
 
   const resellHandle = async () => {
     setIsBuyClicked(true);
     const newPrice = window.prompt("Enter new price");
-     const modal = new web3modal({
-         network: "mumbai",
-         cacheProvider: true,
-     });
+    const modal = new web3modal({
+      network: "mumbai",
+      cacheProvider: true,
+    });
 
-     const connection = await modal.connect();
-     const provider = new ethers.providers.Web3Provider(connection);
-     const signer = provider.getSigner();
-     const contract = new ethers.Contract(
-         contractAddress,
-         contractAbi.abi,
-         signer
-     );
+    const connection = await modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      contractAddress,
+      contractAbi.abi,
+      signer
+    );
 
-     // const nftPrice = ethers.utils.parseUnits(price.toString(), "ether");
-     const nftPrice = ethers.utils.parseEther(newPrice);
-     const transaction = await contract.resellNFTs(tokenId, nftPrice, {
-         // value: newPrice,
-         gasLimit: 1000000,
-     });
-     await transaction.wait()
-     .then( () => {
-       toast.success("Transaction successful.", {
-       position: toast.POSITION.TOP_CENTER
-       });
-       setIsBuyClicked(false);
-     }).catch( () => {
-       toast.error("Transaction failed.", {
-         position: toast.POSITION.TOP_CENTER
-       });
+    // const nftPrice = ethers.utils.parseUnits(price.toString(), "ether");
+    const nftPrice = ethers.utils.parseEther(newPrice);
+    const transaction = await contract.resellNFTs(tokenId, nftPrice, {
+      // value: newPrice,
+      gasLimit: 1000000,
+    });
+    await transaction.wait()
+      .then(() => {
+        toast.success("Transaction successful.", {
+          position: toast.POSITION.TOP_CENTER
+        });
         setIsBuyClicked(false);
-     })
+      }).catch(() => {
+        toast.error("Transaction failed.", {
+          position: toast.POSITION.TOP_CENTER
+        });
+        setIsBuyClicked(false);
+      })
   }
 
-  const getMaticMarketRate = async() => {
-    const rate = await fetch('https://min-api.cryptocompare.com/data/price?fsym=MATIC&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}')
-    .then(response => response.json())
-    .then(result => setMaticRate((result.USD))?.toFixed(2))
+  const getMaticMarketRate = async () => {
+    const rate = await fetch('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,JPY,EUR&api_key={a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918}')
+      .then(response => response.json())
+      .then(result => setMaticRate((result.USD))?.toFixed(2))
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     getMaticMarketRate();
-  },[]);
+  }, []);
   // a0d31efdacea6a7974dada2b791a9a08e6b76a625c68d74328a6b6d5e6690918  crypto-compare api key
 
   /*-------Calculating the percentage change--------*/
-  let currentUsdValue = (maticRate*price).toFixed(3);
+  let currentUsdValue = (maticRate * price).toFixed(3);
   let orignalUsdValue = (props.usdValue);
 
-  let pctChange = (((currentUsdValue - orignalUsdValue)/orignalUsdValue)*100).toFixed(2);
+  let pctChange = (((currentUsdValue - orignalUsdValue) / orignalUsdValue) * 100).toFixed(2);
 
-  useEffect(()=> {
-    if(pctChange){
+  useEffect(() => {
+    if (pctChange) {
       setIsPositive(false);
     }
   })
 
   /*------------------------------------------------*/
 
-    return (
-        <Container onMouseOver={onMouseOverHandle} onMouseOut={onMouseOutHandle}>
-          <Card>
-            <div className="background-image">
-                <img src=""/>
-            </div>
-            <div className="image-div">
-              <img src={props.image}/>
-              {
-                isHovering && (
-                  <Fade bottom duration={350}>
-                    <div className="buy-div" onClick={resellHandle}>
-                      {
-                        isBuyClicked ? <ClipLoader
-                        color="rgba(255, 255, 255, 0.93)"
-                        size={14}
-                        /> : <p>Resell</p>
-                      }
-                    </div>
-                  </Fade>
-                )
-              }
-            </div>
-              <div className="detail-div">
-                <div className="detail-div-wrapper">
-                  <div className="id-div">
-                    {`# ${props.id}`}
-                  </div>
-                  <div className="price-div">
-                    <div className="logo-div">
-                      <img src="/images/polygon-purple.png"/>
-                    </div>
-                    <div className="crypto-price">
-                      {price}
-                    </div>
-                    <div className="market-price">
-                      {`$${currentUsdValue}`}
-                    </div>
-                    <div className="status">
-                      {
-                        isPositive &&
-                        <div className="pst">
-                          <div className="logo-container">
-                            <img src="/images/up.png"/>
-                          </div>
-                          <div className="decimal">
-                            <p>{pctChange} %</p>
-                          </div>
-                        </div>
-                      }
-                      {
-                        !isPositive &&
-                        <div className="ngt">
-                          <div className="logo-container">
-                            <img src="/images/down.png"/>
-                          </div>
-                          <div className="decimal">
-                            <p>{pctChange} %</p>
-                          </div>
-                        </div>
-                      }
-
-                    </div>
-                  </div>
-                  <div className="name-div">
-                    <p>{props.name}</p>
-                  </div>
+  return (
+    <Container onMouseOver={onMouseOverHandle} onMouseOut={onMouseOutHandle}>
+      <Card>
+        <div className="background-image">
+          <img src="" />
+        </div>
+        <div className="image-div">
+          <img src={props.image} />
+          {
+            isHovering && (
+              <Fade bottom duration={350}>
+                <div className="buy-div" onClick={resellHandle}>
+                  {
+                    isBuyClicked ? <ClipLoader
+                      color="rgba(255, 255, 255, 0.93)"
+                      size={14}
+                    /> : <p>Resell</p>
+                  }
                 </div>
-                <div className="icon-div">
-                  <div>
-                    <img src="/images/pattern1.png"/>
-                  </div>
-                </div>
+              </Fade>
+            )
+          }
+        </div>
+        <div className="detail-div">
+          <div className="detail-div-wrapper">
+            <div className="id-div">
+              {`# ${props.id}`}
+            </div>
+            <div className="price-div">
+              <div className="logo-div">
+                <img src="/images/ethereum-1.svg" />
               </div>
-          </Card>
-        </Container>
-    )
+              <div className="crypto-price">
+                {price}
+              </div>
+              <div className="market-price">
+                <p>
+                  {`$${currentUsdValue}`}
+                </p>
+              </div>
+              <div className="status">
+                {
+                  isPositive &&
+                  <div className="pst">
+                    <div className="logo-container">
+                      <img src="/images/up.png" />
+                    </div>
+                    <div className="decimal">
+                      <p>{pctChange} %</p>
+                    </div>
+                  </div>
+                }
+                {
+                  !isPositive &&
+                  <div className="ngt">
+                    <div className="logo-container">
+                      <img src="/images/down.png" />
+                    </div>
+                    <div className="decimal">
+                      <p>{pctChange} %</p>
+                    </div>
+                  </div>
+                }
+
+              </div>
+            </div>
+            <div className="name-div">
+              <p>{props.name}</p>
+            </div>
+          </div>
+          <div className="icon-div">
+            <div>
+              <img src="/images/pattern1.png" />
+            </div>
+          </div>
+        </div>
+      </Card>
+    </Container>
+  )
 }
 
 export default InventoryCard
 
-const Container=styled.div`
+const Container = styled.div`
   height: 410px;
   width: 315px;
   display: inline-block;
@@ -202,7 +204,7 @@ const Container=styled.div`
   }
 `
 
-const Card=styled.div`
+const Card = styled.div`
   border-radius: 2px;
   display: flex;
   flex-direction: column;
@@ -283,15 +285,14 @@ const Card=styled.div`
       }
 
       .price-div {
-        width: 240px;
+        width: 250px;
         max-height: 25px;
         margin-top: 5px;
 
         display: flex;
 
         .logo-div{
-          width: 20px;
-
+          width: 18px;
           display: flex;
           align-items: center;
           overflow: hidden;
@@ -301,33 +302,36 @@ const Card=styled.div`
             width: 17.8px;
             height: 17.8px;
           }
-
         }
 
         .crypto-price {
-          flex:0.9;
+          flex:0.8;
           height: 24px;
-          width: 50px;
           margin-top: 1px;
-          margin-left: 7px;
-          font-size: 18px;
-          font-weight: 500;
+          margin-left: 2px;
+          font-size: 15px;
+          font-weight: 400;
           display:flex;
           align-items: center;
           color: rgba(0, 0, 0, 0.73);
         }
 
         .market-price {
-          width: 70px;
+          width: 90px;
           color: rgba(255, 255, 255, 0.8);
-          font-size: 15.5px;
+          font-size: 14px;
           display:flex;
           align-items: center;
+          justify-content: center;
           margin-top: 2px;
+
+          p {
+            margin: 0px;
+          }
         }
 
         .status {
-          flex: 1;
+          flex: 1.2;
           .pst,
           .ngt {
             height: 100%;
@@ -338,14 +342,13 @@ const Card=styled.div`
             .logo-container {
               height: 100%;
               width: 20px;
-
               display: flex;
               justify-content: center;
               align-items: center;
 
               img {
                 transform: rotate(180deg);
-                width: 70%;
+                width: 68%;
               }
             }
 
@@ -357,7 +360,7 @@ const Card=styled.div`
               p {
                 margin: 0;
                 margin-top: 1px;
-                font-size: 14px;
+                font-size: 13px;
                 color: rgb(218, 0,0);
               }
             }
@@ -380,7 +383,7 @@ const Card=styled.div`
 
               img {
                 transform: rotate(0deg);
-                width: 70%;
+                width: 68%;
               }
             }
 
@@ -392,7 +395,7 @@ const Card=styled.div`
               p {
                 margin: 0;
                 margin-top: 1px;
-                font-size: 14px;
+                font-size: 13px;
                 color: rgb(1,213,39);
               }
             }
