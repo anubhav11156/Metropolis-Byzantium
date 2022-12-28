@@ -12,8 +12,7 @@ import web3modal from "web3modal"
 import { ethers } from "ethers"
 import { contractAbi, contractAddress } from "../config";
 import axios from "axios";
-// import { LogDescription } from 'ethers/lib/utils';
-// import {testing} from './Testing'
+
 
 function Market() {
 
@@ -51,7 +50,7 @@ function Market() {
       user: coinbaseApiUserName,
       password: coinbaseApiPassword
     })
-
+  
     const contract = new ethers.Contract(
       contractAddress,
       contractAbi.abi,
@@ -82,7 +81,17 @@ function Market() {
     setLoaded(true);
   }
 
+  useEffect( ()=> {
+    if(nfts.length != 0 ){
+      setLoaded(true);
+    }else{
+      setLoaded(false);
+    }
+  },[nfts.length])
+
   console.log('nfts are : ', nfts);
+  console.log('isLoaded : ', loaded);
+
   const cards = nfts.map( card => {
     return (
       <StoreNFTCard
@@ -113,9 +122,18 @@ function Market() {
                 Explore, Buy NFTs
               </p>
             </Element>
-            <div className="marketplace">
+            {
+              loaded &&
+              <div className="marketplace">
               {cards}
             </div>
+            }
+            {
+              !loaded &&
+              <div className='loading'>
+                <p>Loading NFTs...</p>
+              </div>
+            }
           </StoreSection>
 
         </Container >
@@ -187,6 +205,20 @@ const StoreSection=styled.div`
     grid-template-columns: 300px 300px 300px 300px;
     grid-column-gap: 69.5px;
     grid-row-gap: 46px;
+  }
+
+  .loading {
+    flex:1;
+    margin-right: 15rem;
+    margin-left: 15rem;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+
+    p {
+      margin-top: 120px;
+      font-size: 22px;
+    }
   }
 
 `

@@ -9,6 +9,8 @@ import axios from "axios";
 
 function Listing() {
 
+  const [nftCount, setNftCount] = useState(0);
+
   const coinbaseApiUserName = process.env.REACT_APP_CB_USERNAME;
   const coinbaseApiPassword = process.env.REACT_APP_CB_PASSWORD;
   const baseUrl = "https://goerli.ethereum.coinbasecloud.net";
@@ -24,12 +26,12 @@ function Listing() {
     // const modal = new web3modal();
     // const connection = await modal.connect()
     // const provider = new ethers.providers.Web3Provider(connection)
-    const alchemyId = process.env.REACT_APP_ALCHEMY_API_KEY;
-    const providerCB = new ethers.providers.JsonRpcProvider({
-      url: baseUrl,
-      user: coinbaseApiUserName,
-      password: coinbaseApiPassword
-    })
+    // const alchemyId = process.env.REACT_APP_ALCHEMY_API_KEY;
+    // const providerCB = new ethers.providers.JsonRpcProvider({
+    //   url: baseUrl,
+    //   user: coinbaseApiUserName,
+    //   password: coinbaseApiPassword
+    // })
 
     const modal = new web3modal();
     const connection = await modal.connect()
@@ -69,10 +71,17 @@ function Listing() {
       })
     );
     setNfts(items);
-    setLoaded(true);
   }
 
+  useEffect( ()=> {
+    if(nfts.length != 0 ){
+      setLoaded(true);
+      setNftCount(nfts.length);
+    }
+  },[nfts.length])
+
   console.log('nfts : ',nfts);
+  console.log('loaded : ', loaded);
   const cards = nfts.map( card => {
     return (
       <ListingCard
@@ -90,6 +99,7 @@ function Listing() {
         <Container>
           <Heading>
             <p>Your Creation</p>
+            <p className='nft-count'>{nftCount} NFT</p>
           </Heading>
           <MainSection>
             {cards}
@@ -118,7 +128,7 @@ const Heading=styled.div`
   -webkit-backdrop-filter: blur( 4px );
   box-shadow: 0px 5px 15px rgba(184, 184, 184, 0.1);
   border: 2px solid white;
-
+  
   p {
     margin: 0;
     padding: 6px;
@@ -128,6 +138,16 @@ const Heading=styled.div`
     color: #0D004D;
     opacity: 0.8;
   }
+
+  .nft-count {
+    margin-top: 12px;
+    margin-left:10px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #0D004D;
+    opacity: 0.8;
+  }
+
 `
 const MainSection=styled.div`
   padding-bottom: 50px;

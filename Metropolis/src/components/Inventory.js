@@ -7,7 +7,10 @@ import { ethers } from "ethers"
 import { contractAbi, contractAddress } from "../config";
 import axios from "axios";
 
-function Inventory() {
+function Inventory() {  
+
+  const [nftCount, setNftCount] = useState(0);
+
 
   const [loaded, setLoaded] = useState(false);
   const [nfts, setNfts] = useState([]);
@@ -45,8 +48,15 @@ function Inventory() {
       })
     );
     setNfts(items);
-    setLoaded(true);
   }
+
+  useEffect( ()=> {
+    if(nfts.length != 0 ){
+      setLoaded(true);
+      setNftCount(nfts.length);
+    }
+  },[nfts.length])
+
   const cards = nfts.map( card => {
     return (
       <InventoryCard
@@ -72,6 +82,7 @@ function Inventory() {
         <Container>
           <Heading>
             <p>NFTs Owned by you</p>
+            <p className='nft-count'>{nftCount} NFT</p>
           </Heading>
           <MainSection>
             {cards}
@@ -106,6 +117,16 @@ const Heading=styled.div`
     padding: 6px;
     margin-left: 10px;
     font-size: 2.2rem;
+    font-weight: 500;
+    color: #0D004D;
+    opacity: 
+    0.8;
+  }
+
+  .nft-count {
+    margin-top: 12px;
+    margin-left:10px;
+    font-size: 1rem;
     font-weight: 500;
     color: #0D004D;
     opacity: 0.8;
