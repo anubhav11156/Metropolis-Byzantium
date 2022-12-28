@@ -13,52 +13,11 @@ import { publicProvider } from 'wagmi/providers/public';
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import axios from "axios";
-
-// import { WagmiConfig, createClient, chain } from 'wagmi'
-// import { ConnectKitProvider, getDefaultClient } from "connectkit";
-import { SIWEProvider, SIWEConfig } from "connectkit";
-import { SiweMessage } from 'siwe';
-
 
 
 const container = document.getElementById('root');
 const root = createRoot(container);
 
-// const client = createClient({
-//   autoConnect: true,
-//   provider: getDefaultProvider(),
-// })
-
-
-/*----------------------------------wagmi connect kit + sign with ethereum----------------------------*/
-
-const siweConfig: SIWEConfig = {
-  getNonce: async () => fetch('/api/siwe/nonce').then((res) => res.text()),
-  createMessage: ({ nonce, address, chainId }) => new SiweMessage({
-    version: '1',
-    domain: window.location.host,
-    uri: window.location.origin,
-    address,
-    chainId,
-    nonce,
-    statement: 'Sign in With Ethereum.',
-  }).prepareMessage(),
-  verifyMessage: async ({ message, signature }) => axios.post('', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ message, signature }),
-  }).then((res) => res.ok)
-  .catch(function (error) {
-    console.log('error is : ', error);
-  }),
-  getSession: async () => fetch('/api/siwe/session').then((res) => res.ok ? res.json() : null),
-  signOut: async () => fetch('/api/siwe/logout').then((res) => res.ok),
-};
-
-/*------------------------------------------------------------------------------------------------------*/
 
 /*---------Wagmi configuration---------*/
 
@@ -73,13 +32,13 @@ const { chains, provider, webSocketProvider } = configureChains(
 const client = createClient({
   autoConnect: true,
   connectors: [
-    new MetaMaskConnector({ chains }),
     new CoinbaseWalletConnector({
       chains,
       options: {
         appName: 'Byzantium',
       },
     }),
+    new MetaMaskConnector({ chains }),
     new WalletConnectConnector({
       chains,
       options: {
@@ -93,28 +52,42 @@ const client = createClient({
 
 /*-------------------------------------*/
 
+/*----------------------------------wagmi connect kit + sign with ethereum----------------------------*/
 
-// const chains = [chain.mainnet, chain.polygon, chain.polygonMumbai];
-// const chains = [chain.goerli];
+// const siweConfig: SIWEConfig = {
+//   getNonce: async () => fetch('https://localhost:3000/api/siwe/nonce').then((res) => res.text()),
+//   createMessage: ({ nonce, address, chainId }) => new SiweMessage({
+//     version: '1',
+//     domain: window.location.host,
+//     uri: window.location.origin,
+//     address,
+//     chainId,
+//     nonce,
+//     statement: 'Sign to Metropolis.',
+//   }).prepareMessage(),
+//   verifyMessage: async ({ message, signature }) => await fetch('/api/siwe/verify', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({ message, signature }),
+//   }).then((res) => res.ok),
+//   getSession: async () => fetch('/api/siwe/session').then((res) => res.ok ? res.json() : null),
+//   signOut: async () => fetch('/api/siwe/logout').then((res) => res.ok)
+// };
 
+/*------------------------------------------------------------------------------------------------------*/
 
-// const client = createClient(
-//   getDefaultClient({
-//     appName: "Metropolis",
-//     alchemyId,
-//     chains,
-//   }),
-// );
 
 root.render(
   <React.StrictMode>
     <WagmiConfig client={client}>
         <Provider store={store}>
-          <SIWEProvider {...siweConfig}>
+     
           <ConnectKitProvider>
               <App />
           </ConnectKitProvider>
-          </SIWEProvider>
+
         </Provider>
     </WagmiConfig>
   </React.StrictMode>
