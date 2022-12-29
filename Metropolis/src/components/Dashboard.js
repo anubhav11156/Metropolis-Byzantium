@@ -63,7 +63,7 @@ function Dashboard() {
           <Upper></Upper>
           <BackgroundImage>
             <div className="right">
-              <img src="/images/bg-grad.jpg"/>
+              <img src="/images/bg-bg.jpg"/>
             </div>
           </BackgroundImage>
           <SideBar>

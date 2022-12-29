@@ -98,7 +98,7 @@ function Listing() {
     return (
         <Container>
           <Heading>
-            <p>Your Creation</p>
+            <p>Your listed NFT</p>
             <p className='nft-count'>{nftCount} NFT</p>
           </Heading>
           <MainSection>
