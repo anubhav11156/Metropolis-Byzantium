@@ -9,7 +9,7 @@ function Footer() {
              <p className="my-metropolis">Metropolis</p>
            </div>
          </div>
-         <a href="https://github.com/anubhav11156/metropolis"className="source-code-div" target="_blank">
+         <a href="https://github.com/anubhav11156/Metropolis-Byzantium"className="source-code-div" target="_blank">
            <div>
              <img src="/images/github-logo.png"/>
            </div>
@@ -39,13 +39,18 @@ function Footer() {
                   </a>
                 </div>
                 <div className="handles">
+                  <a href="https://github.com/anubhav11156" target="_blank">
+                    <img src="/images/github-logo.png" />
+                  </a>
+                </div>
+                <div className="handles">
                   <a href="https://www.linkedin.com/in/anubhav-kumar-8749871b8/" target="_blank">
                     <img src="/images/linkedin-logo.png" />
                   </a>
                 </div>
                 <div className="handles">
-                  <a href="https://github.com/anubhav11156" target="_blank">
-                    <img src="/images/github-logo.png" />
+                  <a href="https://twitter.com/meta_anubhav" target="_blank">
+                    <img src="/images/twitter.png" />
                   </a>
                 </div>
               </div>
@@ -161,7 +166,9 @@ const Container=styled.div`
        flex: 1;
        width: 100%;
        display: flex;
+       margin-left: 19px;
        justify-content: center;
+      
 
        .handles {
          margin-top: 40px;
