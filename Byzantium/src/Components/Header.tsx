@@ -24,7 +24,8 @@ function Header() {
 
   const uauth = new UAuth({
     clientID: `${unstoppableClientID}`,
-    redirectUri: 'http://localhost:5173',
+    // redirectUri: 'http://localhost:5173',
+    redirectUri: 'https://byzantiium.web.app/',
     scope: 'openid wallet email profile:optional social:optional',
   })
 

@@ -6,26 +6,6 @@ import "slick-carousel/slick/slick-theme.css";
 
 function MainSection() {
 
-  // window.onscroll = function (e) {
-  //   // setPixelScrolled(window.scrollY);
-  //   console.log(window.scrollY);
-  // }
-  
-
-  // Coinbase connector
-// 
-
-  // useEffect(()=>{
-    
-  // })
-
-  // this doesn't have option to login with wallets, only unstopable domain login is there
-  // const loginHandler = () => {
-  //   console.log('login handler clicked');
-  //   uauth
-  //     .loginWithPopup()
-  //     .then(setAuthorization)
-  // }
 
 
   const settings = {
@@ -49,7 +29,7 @@ function MainSection() {
               <div className="visit-metropolis">
                 <p>Visit Metropolis</p>
                 <div className="logo-div">
-                  <img src="public/images/long-white.png" />
+                  <img src="/images/long-white.png" />
                 </div>
               </div>
             </a>
@@ -66,7 +46,7 @@ function MainSection() {
                   <div className="green"></div>
                 </div>
                 <div className="image-container">
-                  <img src="/public/images/metro-1.png" />
+                  <img src="/images/metro-1.png" />
                 </div>
               </Slide1>
             </Wrapper>
@@ -78,7 +58,7 @@ function MainSection() {
                   <div className="green"></div>
                 </div>
                 <div className="image-container">
-                  <img src="/public/images/metro-2.png" />
+                  <img src="/images/metro-2.png" />
                 </div>
               </Slide1>
             </Wrapper>
@@ -90,7 +70,7 @@ function MainSection() {
                   <div className="green"></div>
                 </div>
                 <div className="image-container">
-                  <img src="/public/images/metro-3.png" />
+                  <img src="/images/metro-3.png" />
                 </div>
               </Slide1>
             </Wrapper>

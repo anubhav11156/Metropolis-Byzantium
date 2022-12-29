@@ -5,9 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [
     react(),
-    // vitePluginRequire.default()
   ],
-  // define: {
-  //   'process.env': {}
-  // },
+  build: {
+    chunkSizeWarningLimit:2500
+  }
 })
