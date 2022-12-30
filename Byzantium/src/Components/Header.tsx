@@ -4,7 +4,8 @@ import Onboard from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import uauthBNCModule from '@uauth/web3-onboard'
 import UAuth from '@uauth/js'
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function Header() {
@@ -59,6 +60,9 @@ function Header() {
         setLabel(response[0].label);
         if (response[0].accounts[0].address.length != 0) {
           setConnected(true);
+          toast.success("Logged In", {
+            position: toast.POSITION.TOP_CENTER
+          });
         }
       });
   }
@@ -77,6 +81,9 @@ function Header() {
           setConnected(false);
           setUserDomain('');
           setUNSLogin(false);
+          toast.success("Logged Out", {
+            position: toast.POSITION.TOP_CENTER
+          });
         });
     }
 
@@ -86,6 +93,9 @@ function Header() {
         setLabel('');
         setConnected(false);
         setUserDomain('');
+        toast.success("Logged Out", {
+          position: toast.POSITION.TOP_CENTER
+        });
       })
 
   }
@@ -198,6 +208,10 @@ function Header() {
 
         </LoginSection>
       </InsideContatiner>
+      <ToastContainer
+            autoClose={1000}
+            hideProgressBar={true}
+      />
     </Container>
   )
 }
@@ -214,6 +228,11 @@ const Container = styled.div`
   box-shadow: 0 0 0 1px rgb(0 0 0 / 8%);
   background-color: white;
   z-index: 1000;
+
+  .Toastify__toast {
+    border: 1px solid rgba(115, 55, 219, 0.468);
+  }
+
 `
 
 const InsideContatiner = styled.div`

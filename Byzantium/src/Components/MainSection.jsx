@@ -3,10 +3,10 @@ import styled from 'styled-components'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Loan from './Loan';
+
 
 function MainSection() {
-
-
 
   const settings = {
     dots: true,
@@ -77,9 +77,10 @@ function MainSection() {
           </SliderContainer>
         </div>
       </Metropolis>
-      <Loan>
+      <Loan />
+      {/* <Loan>
         
-      </Loan>
+      </Loan> */}
     </Container>
   )
 }
@@ -312,12 +313,3 @@ const Slide1 = styled.div`
   }
 `
 
-const Loan = styled.div`
-  margin-top: 0.6rem;
-  width: 70%;
-  flex:1;
-  border-radius: 20px;
-  border: 1px solid rgba(130, 71, 230, 0.4);
-  box-shadow: 0px 2px 10px rgba(111, 108, 108, 0.15);
-  overflow: hidden;
-`

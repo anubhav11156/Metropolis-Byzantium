@@ -26,6 +26,7 @@
     "react-scroll": "^1.8.9",
     "react-scroll-to-top": "^3.0.0",
     "react-slick": "^0.29.0",
+    "react-toastify": "^9.1.1",
     "slick-carousel": "^1.8.1",
     "styled-components": "^5.3.6",
     "wagmi": "^0.9.4"
