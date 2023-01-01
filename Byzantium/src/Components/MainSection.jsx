@@ -78,9 +78,6 @@ function MainSection() {
         </div>
       </Metropolis>
       <Loan />
-      {/* <Loan>
-        
-      </Loan> */}
     </Container>
   )
 }
@@ -93,7 +90,8 @@ const Container = styled.div`
   top: calc(102vh - 6.5rem);
   left: 0;
   right: 0;
-  height: 1500px;
+  height: auto;
+  min-height: 1100px;
   display: flex;
   flex-direction: column;
   align-items: center;
