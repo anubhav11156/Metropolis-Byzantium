@@ -10,8 +10,11 @@ import axios from "axios";
 
 export default function Loan() {
 
-  ;
-
+  
+  const [loanMenu, setLoanMenu] = useState(false);
+  const [depositMenu, setDepositMenu] = useState(false);
+  const [historyMenu, setHistoryMenu] = useState(false);
+  const [guideMenu, setGuideMenu] = useState(false);
   // fetch your nfts
   const [myNFts, setMyNfts] = useState([]);
 
@@ -60,24 +63,71 @@ export default function Loan() {
 
   // console.log('nfts are : ',myNFts);
 
+  const loanMenuButton = () => {
+    setLoanMenu(true);
+    setDepositMenu(false);
+    setHistoryMenu(false);
+    setGuideMenu(false);
+  }
+
+  const depositMenuButton = () => {
+    setLoanMenu(false);
+    setDepositMenu(true);
+    setHistoryMenu(false);
+    setGuideMenu(false);
+  }
+
+  const historyMenuButton = () => {
+    setLoanMenu(false);
+    setDepositMenu(false);
+    setHistoryMenu(true);
+    setGuideMenu(false);
+  }
+
+  const guideHandle = () => {
+    setLoanMenu(false);
+    setDepositMenu(false);
+    setHistoryMenu(false);
+    setGuideMenu(true);
+  }
+
   return (
     <Container>
 
       <SiderBar>
         <div className='menu'>
-          <div>
-            <img src="/images/take-loan.png"/>
+          <div className='loan-menu'>
+            <div className='image'>
+              <img src="/images/take-loan.png" onClick={loanMenuButton}/>
+            </div>
+            <div className='bar' style={{
+              backgroundColor: loanMenu ? "#ffffffae" : ""
+            }}></div>
           </div>
-          <div>
-            <img src="/images/deposit.png"/>
+          <div className='deposit-menu'>
+            <div className='image'>
+            <img src="/images/deposit.png" onClick={depositMenuButton}/>
+            </div>
+            <div className='bar' style={{
+              backgroundColor: depositMenu ? "#ffffffae" : ""
+            }}></div>
           </div>
-          <div>
-            <img src="/images/loan-history.png"/> 
+          <div className='history-menu'>
+            <div className='image'>
+            <img src="/images/loan-history.png" onClick={historyMenuButton}/>
+            </div>
+            <div className='bar' style={{
+              backgroundColor: historyMenu ? "#ffffffae" : ""
+            }}></div>
           </div>
-          <div>
-            <img src="/images/guide.png"/>
+          <div className='guide-menu'>
+            <div className='image'>
+            <img src="/images/guide.png" onClick={guideHandle}/>
+            </div>
+            <div className='bar' style={{
+              backgroundColor: guideMenu ? "#ffffffae" : ""
+            }}></div>
           </div>
-
         </div>
       </SiderBar>
       <LoanSection>
@@ -123,30 +173,156 @@ const SiderBar = styled.div`
   display: flex;
   justify-content: center;
 
-
   .menu {
     margin-top: 9rem;
-    height: 300px;
+    height: 17rem;
     width: 60px;
     display: flex;
     flex-direction: column;
-    
-    div {
+    align-items: center;
+    overflow: hidden;
+
+    .loan-menu {
       flex: 1;
+      width: 100%;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-  
 
-      img {
-        width: 42%;
-        opacity: 0.9;
-      cursor: pointer;
+      .image {
+        flex:1;
+        width: 45%;
+        display: flex;
+        align-items: end;
+        justify-content: center;
+        cursor: pointer;
+        transition: opacity 0.25s;
 
+        &:hover {
+          opacity: 0.8;
+        }
+
+        img {
+          width: 100%;
+          opacity: 0.9;
+        }
+
+       
+      }
+
+      .bar {
+        margin-top: 6px;
+        height: 0.2rem;
+        width: 45%;
+        border-radius: 10px;
       }
     }
-    
+
+    .deposit-menu {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      .image {
+        flex:1;
+        width: 45%;
+        display: flex;
+        align-items: end;
+        justify-content: center;
+        cursor: pointer;
+        transition: opacity 0.25s;
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        img {
+          width: 100%;
+          opacity: 0.9;
+
+        }
+      }
+
+      .bar {
+        margin-top: 6px;
+        height: 0.2rem;
+        width: 45%;
+        border-radius: 10px;        
+      }
+    }
+
+    .history-menu {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      .image {
+        flex:1;
+        width: 45%;
+        display: flex;
+        align-items: end;
+        justify-content: center;
+        cursor: pointer;
+        transition: opacity 0.25s;
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        img {
+          width: 100%;
+          opacity: 0.9;
+
+        }
+      }
+
+      .bar {
+        margin-top: 6px;
+        height: 0.2rem;
+        width: 45%;
+        border-radius: 10px;
+      }
+    }
+
+    .guide-menu {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      .image {
+        flex:1;
+        width: 45%;
+        display: flex;
+        align-items: end;
+        justify-content: center;
+        cursor: pointer;
+        transition: opacity 0.25s;
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        img {
+          width: 100%;
+          opacity: 0.9;
+        }
+      }
+
+      .bar {
+        margin-top: 6px;
+        height: 0.2rem;
+        width: 45%;
+        border-radius: 10px;  
+      }
+    }
   }
+
 `
 
 const LoanSection = styled.div`
