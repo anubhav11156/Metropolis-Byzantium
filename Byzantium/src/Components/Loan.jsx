@@ -4,13 +4,13 @@ import web3modal from "web3modal"
 import { ethers } from "ethers"
 import { contractAbi, contractAddress } from "../MetropolisConfig";
 import axios from "axios";
-
-
-
+import TakeLoan from './TakeLoan';
+import Deposit from './Deposit';
+import History from './History';
 
 export default function Loan() {
 
-  
+
   const [loanMenu, setLoanMenu] = useState(false);
   const [depositMenu, setDepositMenu] = useState(false);
   const [historyMenu, setHistoryMenu] = useState(false);
@@ -98,7 +98,7 @@ export default function Loan() {
         <div className='menu'>
           <div className='loan-menu'>
             <div className='image'>
-              <img src="/images/take-loan.png" onClick={loanMenuButton}/>
+              <img src="/images/take-loan.png" onClick={loanMenuButton} />
             </div>
             <div className='bar' style={{
               backgroundColor: loanMenu ? "#ffffffae" : ""
@@ -106,7 +106,7 @@ export default function Loan() {
           </div>
           <div className='deposit-menu'>
             <div className='image'>
-            <img src="/images/deposit.png" onClick={depositMenuButton}/>
+              <img src="/images/deposit.png" onClick={depositMenuButton} />
             </div>
             <div className='bar' style={{
               backgroundColor: depositMenu ? "#ffffffae" : ""
@@ -114,7 +114,7 @@ export default function Loan() {
           </div>
           <div className='history-menu'>
             <div className='image'>
-            <img src="/images/loan-history.png" onClick={historyMenuButton}/>
+              <img src="/images/loan-history.png" onClick={historyMenuButton} />
             </div>
             <div className='bar' style={{
               backgroundColor: historyMenu ? "#ffffffae" : ""
@@ -122,7 +122,7 @@ export default function Loan() {
           </div>
           <div className='guide-menu'>
             <div className='image'>
-            <img src="/images/guide.png" onClick={guideHandle}/>
+              <img src="/images/guide.png" onClick={guideHandle} />
             </div>
             <div className='bar' style={{
               backgroundColor: guideMenu ? "#ffffffae" : ""
@@ -140,8 +140,15 @@ export default function Loan() {
           </div>
         </div>
         <LoanContainer>
-
-
+          {loanMenu &&
+            <TakeLoan />
+          }
+          {depositMenu &&
+            <Deposit />
+          }
+          {historyMenu &&
+            <History />
+          }
         </LoanContainer>
         {/* <button onClick={() => {
           console.log('clicked');
