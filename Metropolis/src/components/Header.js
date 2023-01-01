@@ -10,8 +10,7 @@ import { useAccount } from 'wagmi';
 import { Network, Alchemy } from "alchemy-sdk";
 import { useDispatch, useSelector } from 'react-redux';
 import { accountAdded, selectAccount } from '../features/AccountDetailSlice';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 
 function Header() {
 
