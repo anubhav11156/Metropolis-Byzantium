@@ -83,11 +83,9 @@ root.render(
   <React.StrictMode>
     <WagmiConfig client={client}>
         <Provider store={store}>
-     
           <ConnectKitProvider>
               <App />
           </ConnectKitProvider>
-
         </Provider>
     </WagmiConfig>
   </React.StrictMode>

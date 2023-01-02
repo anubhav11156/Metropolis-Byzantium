@@ -6,9 +6,13 @@ import uauthBNCModule from '@uauth/web3-onboard'
 import UAuth from '@uauth/js'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { accountAdded } from '../features/AccountDetailSlice';
 
 
 function Header() {
+
+  const dispatch = useDispatch();
 
   const [userAddress, setUserAddress] = useState('');
   const [connected, setConnected] = useState(false);
@@ -56,7 +60,7 @@ function Header() {
 
     const wallets = await onboard.connectWallet()
       .then(response => {
-        setUserAddress(response[0].accounts[0].address);
+        setUserAddress(response[0].accounts[0].address);        
         setLabel(response[0].label);
         if (response[0].accounts[0].address.length != 0) {
           setConnected(true);
@@ -120,6 +124,18 @@ function Header() {
       })
   }, [userAddress]);
 
+  // send account data to redux store if user wallet is connected
+  useEffect(() => {
+    if(connected){
+      dispatch(
+        accountAdded(userAddress, connected)
+      )
+    }else{
+      dispatch(
+        accountAdded('', false)
+      );
+    }
+  },[connected]);
 
   const metropolisHandle = () => {
     window.scroll({

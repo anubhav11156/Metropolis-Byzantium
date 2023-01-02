@@ -8,9 +8,13 @@ import TakeLoan from './TakeLoan';
 import Deposit from './Deposit';
 import History from './History';
 import UserAccount from './UserAccount';
+import { selectAccount } from '../features/AccountDetailSlice';
+import { useSelector } from 'react-redux';
 
 export default function Loan() {
 
+  const getAccountDetail = useSelector(selectAccount);
+  console.log('account detail : ', getAccountDetail);
 
   const [loanMenu, setLoanMenu] = useState(false);
   const [depositMenu, setDepositMenu] = useState(false);
