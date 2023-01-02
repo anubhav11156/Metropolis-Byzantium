@@ -7,6 +7,7 @@ import axios from "axios";
 import TakeLoan from './TakeLoan';
 import Deposit from './Deposit';
 import History from './History';
+import UserAccount from './UserAccount';
 
 export default function Loan() {
 
@@ -15,6 +16,7 @@ export default function Loan() {
   const [depositMenu, setDepositMenu] = useState(false);
   const [historyMenu, setHistoryMenu] = useState(false);
   const [guideMenu, setGuideMenu] = useState(false);
+  const [userMenu, setUserMenu] = useState(true);
   // fetch your nfts
   const [myNFts, setMyNfts] = useState([]);
 
@@ -62,12 +64,20 @@ export default function Loan() {
   }
 
   // console.log('nfts are : ',myNFts);
+  const userMenuButton = () => {
+    setUserMenu(true);
+    setLoanMenu(false);
+    setDepositMenu(false);
+    setHistoryMenu(false);
+    setGuideMenu(false);
+  }
 
   const loanMenuButton = () => {
     setLoanMenu(true);
     setDepositMenu(false);
     setHistoryMenu(false);
     setGuideMenu(false);
+    setUserMenu(false);
   }
 
   const depositMenuButton = () => {
@@ -75,6 +85,7 @@ export default function Loan() {
     setDepositMenu(true);
     setHistoryMenu(false);
     setGuideMenu(false);
+    setUserMenu(false);
   }
 
   const historyMenuButton = () => {
@@ -82,6 +93,7 @@ export default function Loan() {
     setDepositMenu(false);
     setHistoryMenu(true);
     setGuideMenu(false);
+    setUserMenu(false);
   }
 
   const guideHandle = () => {
@@ -89,6 +101,7 @@ export default function Loan() {
     setDepositMenu(false);
     setHistoryMenu(false);
     setGuideMenu(true);
+    setUserMenu(false);
   }
 
   return (
@@ -96,12 +109,12 @@ export default function Loan() {
 
       <SiderBar>
         <div className='menu'>
-          <div className='loan-menu'>
+          <div className='user-menu'>
             <div className='image'>
-              <img src="/images/take-loan.png" onClick={loanMenuButton} />
+              <img src="/images/user.png" onClick={userMenuButton} />
             </div>
             <div className='bar' style={{
-              backgroundColor: loanMenu ? "#ffffffae" : ""
+              backgroundColor: userMenu ? "#ffffffae" : ""
             }}></div>
           </div>
           <div className='deposit-menu'>
@@ -110,6 +123,14 @@ export default function Loan() {
             </div>
             <div className='bar' style={{
               backgroundColor: depositMenu ? "#ffffffae" : ""
+            }}></div>
+          </div>
+          <div className='loan-menu'>
+            <div className='image'>
+              <img src="/images/take-loan.png" onClick={loanMenuButton} />
+            </div>
+            <div className='bar' style={{
+              backgroundColor: loanMenu ? "#ffffffae" : ""
             }}></div>
           </div>
           <div className='history-menu'>
@@ -136,10 +157,14 @@ export default function Loan() {
             <p>Take Secure & Private Loan</p>
           </div>
           <div className='loan-icon-div'>
-            <img src="/images/loan-1.png" />
+            <img src="https://res.cloudinary.com/polygontech/image/upload/f_auto,q_auto,dpr_2,w_48,h_48/Polygon_Nightfall_3f914447dc" />
           </div>
         </div>
         <LoanContainer>
+          { userMenu &&
+          <UserAccount />
+
+          }
           {loanMenu &&
             <TakeLoan />
           }
@@ -181,13 +206,49 @@ const SiderBar = styled.div`
   justify-content: center;
 
   .menu {
-    margin-top: 9rem;
-    height: 17rem;
+    margin-top: 6rem;
+    height: 21.5rem;
     width: 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow: hidden;
+
+    .user-menu {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .image {
+        flex:1;
+        width: 45%;
+        display: flex;
+        align-items: end;
+        justify-content: center;
+        cursor: pointer;
+        transition: opacity 0.25s;
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        img {
+          width: 100%;
+          opacity: 0.9;
+        }
+
+       
+      }
+
+      .bar {
+        margin-top: 6px;
+        height: 0.2rem;
+        width: 45%;
+        border-radius: 10px;
+      }
+    }
 
     .loan-menu {
       flex: 1;

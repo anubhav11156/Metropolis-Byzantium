@@ -12,7 +12,7 @@ function History() {
 export default History
 
 const Container = styled.div`
-    padding-left: 26px;
+    margin-left: 26px;
     padding-right: 26px;
     padding-top: 5px;
     width: 100%;
