@@ -10,11 +10,15 @@ import History from './History';
 import UserAccount from './UserAccount';
 import { selectAccount } from '../features/AccountDetailSlice';
 import { useSelector } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Loan() {
 
   const getAccountDetail = useSelector(selectAccount);
   console.log('account detail : ', getAccountDetail);
+
+  console.log(getAccountDetail.status);
 
   const [loanMenu, setLoanMenu] = useState(false);
   const [depositMenu, setDepositMenu] = useState(false);
@@ -108,6 +112,12 @@ export default function Loan() {
     setUserMenu(false);
   }
 
+  const connectWalletHandle = () => {
+    toast.info("Click on Login to connect wallet", {
+      position: toast.POSITION.TOP_CENTER
+    });
+  }
+
   return (
     <Container>
 
@@ -165,19 +175,36 @@ export default function Loan() {
           </div>
         </div>
         <LoanContainer>
-          { userMenu &&
-          <UserAccount />
+          {getAccountDetail.status &&
+            <>
+              {userMenu &&
+                <UserAccount />
 
+              }
+              {loanMenu &&
+                <TakeLoan />
+              }
+              {depositMenu &&
+                <Deposit />
+              }
+              {historyMenu &&
+                <History />
+              }
+            </>
           }
-          {loanMenu &&
-            <TakeLoan />
-          }
-          {depositMenu &&
-            <Deposit />
-          }
-          {historyMenu &&
-            <History />
-          }
+          <PlaceHolder>
+            <div className='div-1'>
+              <div className='text'>
+                <p>
+                  Instant Private Loan using Polygon NightFall
+                </p>
+              </div>
+              <div className='for-button'>
+                <div className='connect' onClick={connectWalletHandle}>Connect Wallet</div>
+              </div>
+            </div>
+          </PlaceHolder>
+
         </LoanContainer>
         {/* <button onClick={() => {
           console.log('clicked');
@@ -185,6 +212,10 @@ export default function Loan() {
         }}
         >fetch</button> */}
       </LoanSection>
+      <ToastContainer
+            autoClose={1000}
+            hideProgressBar={true}
+      />
     </Container>
   )
 }
@@ -199,6 +230,10 @@ const Container = styled.div`
   overflow: hidden;
   display: flex;
   overflow: hidden;
+
+  .Toastify__toast {
+    border: 1px solid rgba(115, 55, 219, 0.468);
+  }
 `
 
 const SiderBar = styled.div`
@@ -450,4 +485,76 @@ const LoanSection = styled.div`
 
 const LoanContainer = styled.div`
   flex: 1;
+`
+
+const PlaceHolder = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+
+  .div-1 {
+    /* border: 1px solid black; */
+    margin-left: 26px;
+    margin-right: 30px;
+    width: 70%;
+    height: 70%;
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='29' ry='29' stroke='%238347E5FF' stroke-width='3' stroke-dasharray='14' stroke-dashoffset='5' stroke-linecap='round'/%3e%3c/svg%3e");
+    border-radius: 29px;
+    background-color: rgba(129, 71, 230, 0.107);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    .text {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+
+      p {
+        margin-top: 8.3rem;
+        height: 4rem;
+        width: 20rem;
+        font-weight: 400;
+        font-size: 25px;
+        text-align: center;
+        color: rgb(121, 53, 239);
+      }
+    }
+
+    .for-button {
+      flex: 1;
+      display: flex;
+      align-items: start;
+
+      .connect {
+        margin-top: 10px;
+        width: 9rem;
+        height: 2.2rem;
+        background-color: rgb(130, 71, 229);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        cursor: pointer;
+        color: white;
+        font-size: 15px;
+
+        &:hover {
+          opacity: 0.9;
+        }
+
+        &:active {
+          opacity: 0.85;
+        }
+      }
+    }
+    
+  }
 `
