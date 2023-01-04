@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     address: '',
+    unsDomain: '',
     status: false
 };
 
@@ -12,12 +13,14 @@ export const accountDetailSlice = createSlice({
         accountAdded: {
             reducer(state, action) {
                 state.address = action.payload.userAddress;
+                state.unsDomain = action.payload.userDomain;
                 state.status = action.payload.connectionStatus;
             },
-            prepare(userAddress, connectionStatus) {
+            prepare(userAddress, userDomain, connectionStatus) {
                 return {
                     payload: {
                         userAddress,
+                        userDomain,
                         connectionStatus
                     }
                 }

@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dicebear/avatars": "^4.10.8",
+    "@dicebear/open-peeps": "^4.10.8",
     "@reduxjs/toolkit": "^1.9.1",
     "@uauth/js": "^2.4.0",
     "@uauth/web3-onboard": "^2.4.0",

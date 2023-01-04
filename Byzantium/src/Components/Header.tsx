@@ -128,11 +128,11 @@ function Header() {
   useEffect(() => {
     if(connected){
       dispatch(
-        accountAdded(userAddress, connected)
+        accountAdded(userAddress, userDomain, connected)
       )
     }else{
       dispatch(
-        accountAdded('', false)
+        accountAdded('', '', false)
       );
     }
   },[connected]);
