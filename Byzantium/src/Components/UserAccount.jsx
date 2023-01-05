@@ -5,6 +5,11 @@ import * as style from '@dicebear/open-peeps';
 import { useSelector } from 'react-redux';
 import { selectAccount } from '../features/AccountDetailSlice';
 import { Network, Alchemy } from "alchemy-sdk";
+import NFTCard from './NFTCard';
+import web3modal from "web3modal"
+import { ethers } from "ethers"
+import { contractAbi, contractAddress } from "../MetropolisConfig";
+import axios from "axios";
 
 
 function UserAccount() {
@@ -12,6 +17,66 @@ function UserAccount() {
     const getAccountDetail = useSelector(selectAccount);
     const [userBalances, setUserBalances] = useState({});
 
+
+    /*---------------------------Fetches user purchased NFTs-----------------------------*/
+    const [myNFts, setMyNfts] = useState([]);
+
+    useEffect(() => {
+        fetchMyPurchase();
+    }, []);
+
+    const fetchMyPurchase = async () => {
+
+        const modal = new web3modal();
+        const connection = await modal.connect()
+        const provider = new ethers.providers.Web3Provider(connection)
+
+        const signer = provider.getSigner()
+        const contract = new ethers.Contract(
+            contractAddress,
+            contractAbi.abi,
+            signer
+        )
+        console.log('signer is : ', signer)
+        const data = await contract.fetchMyNFTs();
+        const items = await Promise.all(
+            data.map(async (i) => {
+                //when the array of promises is resolved then map over each promise
+                const tokenUri = await contract.tokenURI(i.tokenId.toString());
+                const trimmedTokenUri = tokenUri.substring(7);
+                const finalUri = `https://ipfs.io/ipfs/${trimmedTokenUri}`;
+                const meta = await axios.get(finalUri);
+                let price = ethers.utils.formatEther(i.price);
+                let royalty = ethers.utils.formatEther(i.royaltyFeeInBips);
+                let usdValue = ethers.utils.formatEther(i.usdValue);
+                let item = {
+                    price,
+                    royalty,
+                    usdValue,
+                    name: meta.data.name,
+                    tokenId: i.tokenId.toNumber(),
+                    image: `https://ipfs.io/ipfs/${(meta.data.image).substring(7)}`,
+                };
+                return item;
+            })
+        );
+        console.log('nfts are : ', items)
+        setMyNfts(items);
+    }
+    /*----------------------------------------------------------------------------------*/
+
+    /*--------------Set NFTs to Cards--------------*/
+
+    const L1Cards = myNFts.map(card => {
+        return (
+            <NFTCard
+                id={card.tokenId}
+                image={card.image}
+            />
+        )
+    })
+
+    /*---------------------------------------------*/
 
     let userAvatar = createAvatar(style, {
         dataUri: true,
@@ -159,7 +224,7 @@ function UserAccount() {
                                     ERC 721
                                 </div>
                                 <div className='nfts-container'>
-
+                                    {L1Cards}
                                 </div>
                             </div>
                         </div>
@@ -506,6 +571,16 @@ const AccountDetail = styled.div`
 
                     .nfts-container {
                         flex:1;
+                        display: grid;
+                        grid-template-columns: 4rem 4rem 4rem 4rem 4rem; 
+                        grid-column-gap: 5px;
+                        grid-row-gap: 0px;
+                       
+                       
+                        /* .grid-box {
+                            display: flex;
+                            justify-content: center;
+                        } */
                     }
                 }
             }
