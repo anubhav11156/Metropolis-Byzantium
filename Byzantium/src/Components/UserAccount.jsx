@@ -18,10 +18,12 @@ function UserAccount() {
         seed: `${getAccountDetail.address}`,
     });
 
+
+
+
+    /*------------------Alchemy Setting-------------*/
     const alchemyId = import.meta.env.VITE_ALCHEMY_API_KEY;
 
-
-    /*------------------Alchemy Setting-----------*/
     const alchemySettings = {
         apiKey: `${alchemyId}`,
         network: Network.ETH_GOERLI,
@@ -29,7 +31,7 @@ function UserAccount() {
 
     const alchemy = new Alchemy(alchemySettings);
 
-    /*--------------------------------------------*/
+    /*----------------------------------------------*/
 
     /*------Function to convert hex into decimal------*/
     const hexToDecimal = (hex) => parseInt(hex, 16);
@@ -215,8 +217,9 @@ function UserAccount() {
 export default UserAccount
 
 const Container = styled.div`
+
     width: 100%;
-    height: 100%;
+  
     display: flex;
     flex-direction: column;
 
@@ -265,7 +268,7 @@ const AccountDetail = styled.div`
 
     padding-left: 26px;
     padding-right: 30px;
-    padding-top: 40px;
+    padding-top: 30px;
     padding-bottom: 20px;
     display: flex;
     flex-direction: column;

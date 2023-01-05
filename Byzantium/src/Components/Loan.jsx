@@ -179,7 +179,6 @@ export default function Loan() {
             <>
               {userMenu &&
                 <UserAccount />
-
               }
               {loanMenu &&
                 <TakeLoan />
@@ -192,18 +191,23 @@ export default function Loan() {
               }
             </>
           }
-          <PlaceHolder>
-            <div className='div-1'>
-              <div className='text'>
-                <p>
-                  Instant Private Loan using Polygon NightFall
-                </p>
+          <>
+            { !getAccountDetail.status &&
+              <PlaceHolder>
+              <div className='div-1'>
+                <div className='text'>
+                  <p>
+                    Instant Private Loan using Polygon NightFall
+                  </p>
+                </div>
+                <div className='for-button'>
+                  <div className='connect' onClick={connectWalletHandle}>Connect Wallet</div>
+                </div>
               </div>
-              <div className='for-button'>
-                <div className='connect' onClick={connectWalletHandle}>Connect Wallet</div>
-              </div>
-            </div>
-          </PlaceHolder>
+            </PlaceHolder>
+            }
+          </>
+          
 
         </LoanContainer>
         {/* <button onClick={() => {
@@ -485,6 +489,8 @@ const LoanSection = styled.div`
 
 const LoanContainer = styled.div`
   flex: 1;
+  display: flex;
+  
 `
 
 const PlaceHolder = styled.div`
