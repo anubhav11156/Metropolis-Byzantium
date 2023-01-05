@@ -8,6 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { accountAdded } from '../features/AccountDetailSlice';
+import { latest } from 'immer/dist/internal';
 
 
 function Header() {
@@ -22,6 +23,8 @@ function Header() {
 
   const unstoppableClientID = import.meta.env.VITE_UNSTOPPABLE_DOMAIN_CLIENT_ID;
   const alchemyId = import.meta.env.VITE_ALCHEMY_API_KEY;
+
+  
 
   const goerliUrl = `https://eth-goerli.g.alchemy.com/v2/${alchemyId}/`;
 
@@ -106,7 +109,7 @@ function Header() {
 
 
   // console.log('address length : ', userAddress.length);
-  // console.log('domain : ', userDomain);
+  console.log('domain : ', userDomain);
   // console.log('lable : ',label);
   // console.log('uns login : ', isUNSLogin);
 
@@ -124,6 +127,7 @@ function Header() {
       })
   }, [userAddress]);
 
+  
   // send account data to redux store if user wallet is connected
   useEffect(() => {
     if(connected){

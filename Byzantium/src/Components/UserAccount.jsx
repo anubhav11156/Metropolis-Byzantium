@@ -1,19 +1,72 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { createAvatar } from '@dicebear/avatars';
 import * as style from '@dicebear/open-peeps';
 import { useSelector } from 'react-redux';
 import { selectAccount } from '../features/AccountDetailSlice';
+import { Network, Alchemy } from "alchemy-sdk";
+
 
 function UserAccount() {
 
     const getAccountDetail = useSelector(selectAccount);
+    const [userBalances, setUserBalances] = useState({});
 
 
     let userAvatar = createAvatar(style, {
         dataUri: true,
         seed: `${getAccountDetail.address}`,
     });
+
+    const alchemyId = import.meta.env.VITE_ALCHEMY_API_KEY;
+
+
+    /*------------------Alchemy Setting-----------*/
+    const alchemySettings = {
+        apiKey: `${alchemyId}`,
+        network: Network.ETH_GOERLI,
+    }
+
+    const alchemy = new Alchemy(alchemySettings);
+
+    /*--------------------------------------------*/
+
+    /*------Function to convert hex into decimal------*/
+    const hexToDecimal = (hex) => parseInt(hex, 16);
+    /*------------------------------------------------*/
+
+
+    /*-----------get token balances------------*/
+
+
+    const getbalances = async () => {
+
+        let bal = {
+            eth: "",
+            usdc: "",
+            matic: ""
+        }
+
+        await alchemy.core.getBalance(getAccountDetail.address)
+            .then(response => {
+                bal.eth = `${(hexToDecimal(response._hex) / 10 ** 18).toFixed(3)}`
+            });
+
+        // usdc // matic
+        await alchemy.core.getTokenBalances(getAccountDetail.address, ["0x07865c6e87b9f70255377e024ace6630c1eaa37f", "0x499d11e0b6eac7c0593d8fb292dcbbf815fb29ae"])
+            .then(response => {
+                bal.usdc = `${(hexToDecimal(response.tokenBalances[0].tokenBalance) / 10 ** 6).toFixed(3)}`;
+                bal.matic = `${(hexToDecimal(response.tokenBalances[1].tokenBalance) / 10 ** 18).toFixed(3)}`;
+            })
+
+        setUserBalances(bal);
+    }
+
+    useEffect(() => {
+        getbalances();
+    }, [getAccountDetail.status]);
+    /*------------------------------------------*/
+
 
     return (
         <Container>
@@ -79,7 +132,7 @@ function UserAccount() {
                                         <img src="/images/ethereum-1.svg" />
                                     </div>
                                     <div className='amount'>
-                                        5
+                                        {userBalances.eth}
                                     </div>
                                 </div>
                                 <div className='matic'>
@@ -87,7 +140,7 @@ function UserAccount() {
                                         <img src="/images/polygon-purple.png" />
                                     </div>
                                     <div className='amount'>
-                                        89
+                                        {userBalances.matic}
                                     </div>
                                 </div>
                                 <div className='usdc'>
@@ -95,7 +148,7 @@ function UserAccount() {
                                         <img src="/images/usdc-logo.svg" />
                                     </div>
                                     <div className='amount'>
-                                        110
+                                        {userBalances.usdc}
                                     </div>
                                 </div>
                             </div>
@@ -114,7 +167,7 @@ function UserAccount() {
                             L2 Balance
                         </div>
                         <div className='balances'>
-                        <div className='erc20'>
+                            <div className='erc20'>
                                 <div className='erc-heading'>
                                     ERC 20
                                 </div>
