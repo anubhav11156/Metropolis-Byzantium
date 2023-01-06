@@ -124,7 +124,7 @@ function Market() {
             </Element>
             {
               loaded &&
-              <div className="marketplace">
+            <div className="marketplace">
               {cards}
             </div>
             }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { createAvatar } from '@dicebear/avatars';
-import * as style from '@dicebear/open-peeps';
+import * as style from '@dicebear/miniavs';
 import { useSelector } from 'react-redux';
 import { selectAccount } from '../features/AccountDetailSlice';
 import { Network, Alchemy } from "alchemy-sdk";
@@ -12,12 +12,24 @@ import { contractAbi, contractAddress } from "../MetropolisConfig";
 import axios from "axios";
 
 
+
+const clientApiUrl = "http://localhost:5173/";
+
 function UserAccount() {
 
     const getAccountDetail = useSelector(selectAccount);
     const [userBalances, setUserBalances] = useState({});
 
+    // const createUserFirstTime = async () => {
+    //     const nightfallUser = await UserFactory.create({
+    //         clientApiUrl,
+    //     });
+    //     console.log(nightfallUser);
+    // }
 
+    // createUserFirstTime();
+
+    // console.log('userFactory : ', UserFactory);
     /*---------------------------Fetches user purchased NFTs-----------------------------*/
     const [myNFts, setMyNfts] = useState([]);
 
@@ -80,14 +92,14 @@ function UserAccount() {
 
     let userAvatar = createAvatar(style, {
         dataUri: true,
-        seed: `${getAccountDetail.address}`,
+        seed: `MB${getAccountDetail.address}`,
     });
 
 
 
 
     /*------------------Alchemy Setting-------------*/
-    const alchemyId = import.meta.env.VITE_ALCHEMY_API_KEY;
+    const alchemyId = process.env.REACT_APP_ALCHEMY_API_KEY;
 
     const alchemySettings = {
         apiKey: `${alchemyId}`,
@@ -358,6 +370,15 @@ const AccountDetail = styled.div`
                 height: 9rem;
                 border: 1px solid rgba(130, 71, 230, 0.4);
                 background-color: rgba(129, 71, 230, 0.267);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+
+                img {
+                    padding-top: 10px;
+                    width: 95%;
+                }
             }
         }
 

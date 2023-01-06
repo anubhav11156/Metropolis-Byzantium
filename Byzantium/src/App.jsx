@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import Header from './Components/Header'
+import Header from './Components/Header.tsx'
 import Home from './Components/Home'
 import Footer from './Components/Footer'
 import ScrollToTop from "react-scroll-to-top";

@@ -8,7 +8,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { accountAdded } from '../features/AccountDetailSlice';
-import { latest } from 'immer/dist/internal';
 
 
 function Header() {
@@ -21,8 +20,8 @@ function Header() {
   const [isUNSLogin, setUNSLogin] = useState(false);
   const [label, setLabel] = useState('');
 
-  const unstoppableClientID = import.meta.env.VITE_UNSTOPPABLE_DOMAIN_CLIENT_ID;
-  const alchemyId = import.meta.env.VITE_ALCHEMY_API_KEY;
+  const unstoppableClientID = process.env.REACT_APP_UNSTOPPABLE_DOMAIN_CLIENT_ID;
+  const alchemyId = process.env.REACT_APP_ALCHEMY_API_KEY;
 
   
 
