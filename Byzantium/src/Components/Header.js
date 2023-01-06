@@ -23,7 +23,6 @@ function Header() {
   const unstoppableClientID = process.env.REACT_APP_UNSTOPPABLE_DOMAIN_CLIENT_ID;
   const alchemyId = process.env.REACT_APP_ALCHEMY_API_KEY;
 
-  
 
   const goerliUrl = `https://eth-goerli.g.alchemy.com/v2/${alchemyId}/`;
 

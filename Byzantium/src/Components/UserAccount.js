@@ -10,12 +10,14 @@ import web3modal from "web3modal"
 import { ethers } from "ethers"
 import { contractAbi, contractAddress } from "../MetropolisConfig";
 import axios from "axios";
+import { UserFactory } from 'nightfall-sdk';
 
 
-
-const clientApiUrl = "http://localhost:5173/";
+const clientApiUrl = "http://localhost:3000/";
 
 function UserAccount() {
+
+    console.log('UserAccount : ', UserFactory);
 
     const getAccountDetail = useSelector(selectAccount);
     const [userBalances, setUserBalances] = useState({});
