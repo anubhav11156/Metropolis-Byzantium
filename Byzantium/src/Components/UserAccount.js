@@ -13,25 +13,88 @@ import axios from "axios";
 import { UserFactory } from 'nightfall-sdk';
 
 
-const clientApiUrl = "http://localhost:3000/";
+const clientApiUrl = "http://localhost:8080";
 
 function UserAccount() {
 
-    console.log('UserAccount : ', UserFactory);
-
-    const getAccountDetail = useSelector(selectAccount);
-    const [userBalances, setUserBalances] = useState({});
-
+    const nightfallMnemonic = 'vacant ceiling pass kiss scheme mammal bonus possible digital icon exile call';
+    /*-------------Create user for the first time------------------*/
     // const createUserFirstTime = async () => {
     //     const nightfallUser = await UserFactory.create({
     //         clientApiUrl,
     //     });
-    //     console.log(nightfallUser);
+    //     console.log('nightfall user : ',nightfallUser);
     // }
 
     // createUserFirstTime();
+    /*------------------------------------------------------------*/
 
-    // console.log('userFactory : ', UserFactory);
+    /*---------------Create a user instance-----------------------*/
+
+    // const createNightuser = async () => {
+    //     const nightUser = await UserFactory.create({
+    //         clientApiUrl,
+    //         nightfallMnemonic
+    //     })
+
+    //     console.log('nightfall address : ', nightUser.getNightfallAddress());
+    //     const balances = await nightUser.checkNightfallBalances();
+    //     // u get an array here, then Object.keys give u the keys in an array
+    //     console.log('bal test : ', balances);
+
+    //     if(Object.keys(balances).length){
+    //         const balanceWei = Object.values(balances)[0][0].balance;
+    //         console.log('this is test : ', balanceWei);
+    //     }else{
+    //         console.log('failed to fetch balances')
+    //     }
+    // }
+
+    // createNightuser();
+
+    const makeDeposit = async () => {
+        try {
+            // Create a user to deposit funds
+            const nightfallUser = await UserFactory.create({
+                clientApiUrl,
+                nightfallMnemonic,
+            });
+
+            // Make a deposit for the user
+            const txReceipts = await nightfallUser.makeDeposit({
+                tokenContractAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',  // usdc testnet contract address
+                value: '1',
+            });
+            console.log('txreceipt : ', txReceipts);
+
+            const balances = await nightUser.checkNightfallBalances();
+                // u get an array here, then Object.keys give u the keys in an array
+                console.log('bal test : ', balances);
+        
+                if(Object.keys(balances).length){
+                    const balanceWei = Object.values(balances)[0][0].balance;
+                    console.log('this is test : ', balanceWei);
+                }else{
+                    console.log('failed to fetch balances')
+                }
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+
+    
+    
+
+
+
+    /*------------------------------------------------------------*/
+
+    const getAccountDetail = useSelector(selectAccount);
+    const [userBalances, setUserBalances] = useState({});
+
+
     /*---------------------------Fetches user purchased NFTs-----------------------------*/
     const [myNFts, setMyNfts] = useState([]);
 
@@ -51,7 +114,6 @@ function UserAccount() {
             contractAbi.abi,
             signer
         )
-        console.log('signer is : ', signer)
         const data = await contract.fetchMyNFTs();
         const items = await Promise.all(
             data.map(async (i) => {

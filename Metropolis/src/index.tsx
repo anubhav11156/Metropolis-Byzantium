@@ -50,34 +50,6 @@ const client = createClient({
   webSocketProvider,
 })
 
-/*-------------------------------------*/
-
-/*----------------------------------wagmi connect kit + sign with ethereum----------------------------*/
-
-// const siweConfig: SIWEConfig = {
-//   getNonce: async () => fetch('https://localhost:3000/api/siwe/nonce').then((res) => res.text()),
-//   createMessage: ({ nonce, address, chainId }) => new SiweMessage({
-//     version: '1',
-//     domain: window.location.host,
-//     uri: window.location.origin,
-//     address,
-//     chainId,
-//     nonce,
-//     statement: 'Sign to Metropolis.',
-//   }).prepareMessage(),
-//   verifyMessage: async ({ message, signature }) => await fetch('/api/siwe/verify', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify({ message, signature }),
-//   }).then((res) => res.ok),
-//   getSession: async () => fetch('/api/siwe/session').then((res) => res.ok ? res.json() : null),
-//   signOut: async () => fetch('/api/siwe/logout').then((res) => res.ok)
-// };
-
-/*------------------------------------------------------------------------------------------------------*/
-
 
 root.render(
   <React.StrictMode>
