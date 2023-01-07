@@ -31,26 +31,26 @@ function UserAccount() {
 
     /*---------------Create a user instance-----------------------*/
 
-    // const createNightuser = async () => {
-    //     const nightUser = await UserFactory.create({
-    //         clientApiUrl,
-    //         nightfallMnemonic
-    //     })
+    const createNightuser = async () => {
+        const nightUser = await UserFactory.create({
+            clientApiUrl,
+            nightfallMnemonic
+        })
 
-    //     console.log('nightfall address : ', nightUser.getNightfallAddress());
-    //     const balances = await nightUser.checkNightfallBalances();
-    //     // u get an array here, then Object.keys give u the keys in an array
-    //     console.log('bal test : ', balances);
+        console.log('nightfall address : ', nightUser.getNightfallAddress());
+        const balances = await nightUser.checkNightfallBalances();
+        // u get an array here, then Object.keys give u the keys in an array
+        console.log('bal test : ', balances);
 
-    //     if(Object.keys(balances).length){
-    //         const balanceWei = Object.values(balances)[0][0].balance;
-    //         console.log('this is test : ', balanceWei);
-    //     }else{
-    //         console.log('failed to fetch balances')
-    //     }
-    // }
+        if(Object.keys(balances).length){
+            const balanceWei = Object.values(balances)[0][0].balance;
+            console.log('this is test : ', balanceWei);
+        }else{
+            console.log('failed to fetch balances')
+        }
+    }
 
-    // createNightuser();
+    createNightuser();
 
     const makeDeposit = async () => {
         try {
@@ -84,7 +84,9 @@ function UserAccount() {
     }
 
 
-    
+    // useEffect( () => {
+    //     makeDeposit();
+    // },[])
     
 
 
