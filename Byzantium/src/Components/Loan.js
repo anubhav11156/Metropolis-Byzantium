@@ -17,10 +17,10 @@ export default function Loan() {
   // console.log(getAccountDetail.status);
 
   const [loanMenu, setLoanMenu] = useState(false);
-  const [depositMenu, setDepositMenu] = useState(false);
+  const [depositMenu, setDepositMenu] = useState(true);
   const [historyMenu, setHistoryMenu] = useState(false);
   const [guideMenu, setGuideMenu] = useState(false);
-  const [userMenu, setUserMenu] = useState(true);
+  const [userMenu, setUserMenu] = useState(false);
   
 
   // console.log('nfts are : ',myNFts);
@@ -127,7 +127,9 @@ export default function Loan() {
           </div>
         </div>
         <LoanContainer>
-          {getAccountDetail.status &&
+          {/* {getAccountDetail.status &&
+             */}
+          { true &&
             <>
               {userMenu &&
                 <UserAccount />
@@ -144,7 +146,7 @@ export default function Loan() {
             </>
           }
           <>
-            { !getAccountDetail.status &&
+            {/* { !getAccountDetail.status &&
               <PlaceHolder>
               <div className='div-1'>
                 <div className='text'>
@@ -157,7 +159,7 @@ export default function Loan() {
                 </div>
               </div>
             </PlaceHolder>
-            }
+            } */}
           </>
           
 

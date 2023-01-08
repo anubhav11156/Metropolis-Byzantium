@@ -4,20 +4,21 @@ const clientApiUrl = "http://localhost:8080"
 
 
 // Deposit ERC20 Token to your L2 account
-async function makeDeposit(e, nightfallMnemonic, tokenContractAddress, value) {
+async function makeDeposit(nightfallMnemonic, tokenContractAddress, value) {
   // Prevent default onClick behaviour that refreshes the page
-  e.preventDefault();
+//   e.preventDefault();
   try {
     // Create a user to deposit funds
     const nightUser = await UserFactory.create({
       clientApiUrl,
       nightfallMnemonic,
     });
-
+    const tokenErcStandard = 'ERC20';
     // Make a deposit for the user ERC20
     const txReceipts = await nightUser.makeDeposit({
-      tokenContractAddress,
-      value
+      tokenContractAddress ,
+      tokenErcStandard,
+      value,
     });
     return txReceipts;
   } catch (error) {
@@ -73,9 +74,8 @@ async function makeWithdrawal(e, nightfallMnemonic, tokenContractAddress, value)
 }
 
 // Deposit ERC721 NFT from L1 account to L2 account
-async function makeDepositERC721(e, nightfallMnemonic, erc721ContractAddress, tokenId) {
-  e.preventDefault();
-
+async function makeDepositERC721(nightfallMnemonic, tokenContractAddress, tokenId) {
+ 
   try {
     // Create a user to make a deposit
     const nightUser = await UserFactory.create({
@@ -84,7 +84,7 @@ async function makeDepositERC721(e, nightfallMnemonic, erc721ContractAddress, to
     });
     // Make an ERC721 deposit for the user
     const txReceipts = await nightUser.makeDeposit({
-      erc721ContractAddress,
+        tokenContractAddress,
       tokenId,
     });
 
@@ -152,10 +152,9 @@ async function checkBalances(nightfallMnemonic) {
 
     // Check the balances of the current user
     const balance = await nightUser.checkNightfallBalances();
-
+    console.log('bal test inside utils : ', balance);
     if (Object.keys(balance).length) {
       const balanceWei = Object.values(balance)[0][0].balance;
-      localStorage.setItem("nightfallBalances", balanceWei);
       return balanceWei;
     }
     return 0;
@@ -170,11 +169,40 @@ async function createUserFirstTime() {
     const nightUser = await UserFactory.create({
       clientApiUrl,
     });
+    console.log('in function')
     console.log(nightUser);
     return nightUser; // returns new of nightfall account information
   } catch (error) {
     console.log(error);
   }
+}
+
+
+// get nightfall address from user mnemonic
+async function getNightFallAccountAddress(nightfallMnemonic) {
+    try {
+        const nightUser = await UserFactory.create({
+            clientApiUrl,
+            nightfallMnemonic
+        });
+
+        const nightAddress = nightUser.getNightfallAddress();
+        return nightAddress;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function getMnemonic() {
+    try {
+        const nightUser = await UserFactory.create({
+            clientApiUrl,
+        });
+        const mnemonic = nightUser.getNightfallMnemonic();
+        return mnemonic
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 export {
@@ -186,4 +214,6 @@ export {
   makeWithdrawalERC721,
   createUserFirstTime,
   checkBalances,
+  getNightFallAccountAddress,
+  getMnemonic,
 };
