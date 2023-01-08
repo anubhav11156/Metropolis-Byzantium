@@ -1,4 +1,4 @@
-export const userMnemonicContractAddress = "0xa04436A72a8C542B32CB4f7C1bbb1BEeE3fB12aE";
+export const userMnemonicContractAddress = "0xfe80032A57Bbc604C9908C6d93286BFf463C292c";
 
 export const userMnemonicContractAbi = {
     "_format": "hh-sol-artifact-1",
@@ -7,6 +7,11 @@ export const userMnemonicContractAbi = {
     "abi": [
         {
             "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "ethAddress",
+                    "type": "string"
+                },
                 {
                     "internalType": "string",
                     "name": "nightFallMnemonic",
@@ -21,9 +26,9 @@ export const userMnemonicContractAbi = {
         {
             "inputs": [
                 {
-                    "internalType": "address",
+                    "internalType": "string",
                     "name": "ethAddress",
-                    "type": "address"
+                    "type": "string"
                 }
             ],
             "name": "getMnemonic",

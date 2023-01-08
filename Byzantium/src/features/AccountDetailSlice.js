@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     address: '',
     unsDomain: '',
+    nightfallMnemonic:'',
     status: false
 };
 
@@ -14,13 +15,15 @@ export const accountDetailSlice = createSlice({
             reducer(state, action) {
                 state.address = action.payload.userAddress;
                 state.unsDomain = action.payload.userDomain;
+                state.nightfallMnemonic = action.payload.userNightfallMnemonic;
                 state.status = action.payload.connectionStatus;
             },
-            prepare(userAddress, userDomain, connectionStatus) {
+            prepare(userAddress, userDomain, userNightfallMnemonic, connectionStatus) {
                 return {
                     payload: {
                         userAddress,
                         userDomain,
+                        userNightfallMnemonic,
                         connectionStatus
                     }
                 }

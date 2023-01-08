@@ -8,17 +8,27 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { accountAdded } from '../features/AccountDetailSlice';
-
+import { ethers } from "ethers";
+import web3modal from "web3modal";
+import { userMnemonicContractAddress, userMnemonicContractAbi } from '../config'
+import { createUserFirstTime } from './Utils';
 
 function Header() {
 
   const dispatch = useDispatch();
 
+  const coinbaseApiUserName = process.env.REACT_APP_CB_USERNAME;
+  const coinbaseApiPassword = process.env.REACT_APP_CB_PASSWORD;
+  const baseUrl = "https://goerli.ethereum.coinbasecloud.net";
+
   const [userAddress, setUserAddress] = useState('');
+  const [userNightFallMnemonic, setUserNightFallMnemonic] = useState('');
   const [connected, setConnected] = useState(false);
   const [userDomain, setUserDomain] = useState('');
   const [isUNSLogin, setUNSLogin] = useState(false);
   const [label, setLabel] = useState('');
+  const[ isLenghtZero, setIsLenghtZero] = useState(false);
+
 
   const unstoppableClientID = process.env.REACT_APP_UNSTOPPABLE_DOMAIN_CLIENT_ID;
   const alchemyId = process.env.REACT_APP_ALCHEMY_API_KEY;
@@ -61,7 +71,7 @@ function Header() {
 
     const wallets = await onboard.connectWallet()
       .then(response => {
-        setUserAddress(response[0].accounts[0].address);        
+        setUserAddress(response[0].accounts[0].address);
         setLabel(response[0].label);
         if (response[0].accounts[0].address.length != 0) {
           setConnected(true);
@@ -107,7 +117,7 @@ function Header() {
 
 
   // console.log('address length : ', userAddress.length);
-  console.log('domain : ', userDomain);
+  // console.log('domain : ', userDomain);
   // console.log('lable : ',label);
   // console.log('uns login : ', isUNSLogin);
 
@@ -125,19 +135,24 @@ function Header() {
       })
   }, [userAddress]);
 
-  
+
   // send account data to redux store if user wallet is connected
   useEffect(() => {
-    if(connected){
+    if (connected) {
+      getUserMnemonic();
+      // console.log('mne test if user exists : ', userNightFallMnemonic);
+      // dispatch(
+      //   accountAdded(userAddress, userDomain, connected)
+      // )
+    } else {
       dispatch(
-        accountAdded(userAddress, userDomain, connected)
-      )
-    }else{
-      dispatch(
-        accountAdded('', '', false)
+        accountAdded('', '', '', false)
       );
     }
-  },[connected]);
+  }, [connected]);
+
+
+
 
   const metropolisHandle = () => {
     window.scroll({
@@ -150,6 +165,76 @@ function Header() {
     window.scroll({
       top: 1085,
       behavior: 'smooth'
+    });
+  }
+
+  const getUserMnemonic = async () => {
+
+    const provider = new ethers.providers.JsonRpcProvider({
+      url: baseUrl,
+      user: coinbaseApiUserName,
+      password: coinbaseApiPassword
+    })
+
+    const contract = new ethers.Contract(
+      userMnemonicContractAddress,
+      userMnemonicContractAbi.abi,
+      provider
+    );
+
+    const data = await contract.getMnemonic(userAddress)
+    
+    console.log('data received is : ',data.length);
+    // if lenght is zero then create nightfall account else load mnemonic from the contract
+    if(!data.length){
+      createUserFirstTime()
+          .then((response) => {
+            setUserNightFallMnemonic(response.nightfallMnemonic);
+            setUserMnemonic(response.nightfallMnemonic);
+            dispatch(
+              accountAdded(userAddress, userDomain, response.nightfallMnemonic, connected)
+            )
+          });
+    }else {
+      setUserNightFallMnemonic(data);
+      dispatch(
+        accountAdded(userAddress, userDomain, data, connected)
+      )
+    }
+    return data;
+  }
+
+
+  // this should be called only when use don't have nightfall account
+  const setUserMnemonic = async (nightMnemonic) => {
+    const modal = new web3modal({
+      network: "goerli",
+      cacheProvider: true,
+    });
+    const connection = await modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      userMnemonicContractAddress,
+      userMnemonicContractAbi.abi,
+      signer
+    );
+
+    const tx = await contract.setMnemonic(userAddress,nightMnemonic, {
+      gasLimit: 1000000,
+    });
+
+    await tx.wait()
+    .then( () => {
+      console.log('written success');
+      toast.success("NightFall account created.", {
+        position: toast.POSITION.TOP_CENTER
+      });
+    }).catch( () => {
+      console.log('transaction failed')
+      toast.error("Failed to create NightFall account.", {
+        position: toast.POSITION.TOP_CENTER
+      });
     });
   }
 
@@ -227,8 +312,8 @@ function Header() {
         </LoginSection>
       </InsideContatiner>
       <ToastContainer
-            autoClose={1000}
-            hideProgressBar={true}
+        autoClose={1000}
+        hideProgressBar={true}
       />
     </Container>
   )

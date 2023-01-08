@@ -29,6 +29,7 @@ const clientApiUrl = "http://localhost:8080";
 function UserAccount() {
 
     const getAccountDetail = useSelector(selectAccount);
+    console.log('account detail : ', getAccountDetail);
     const [userBalances, setUserBalances] = useState({});
     const [flag, setFlag] = useState(0);
     // these all for testing purpose only 
@@ -67,7 +68,7 @@ function UserAccount() {
     // // const value = (2).toString();
     // const tokenErcStandard = "ERC20";
 
-
+    
     // useEffect(() => {
     //     console.log('this is test');
 
@@ -107,7 +108,10 @@ function UserAccount() {
     //     doDeposit(nightfallMnemonic, maticAddress, tokenErcStandard, value)
     // },[])
 
-
+    const createFirst = () => {
+        createUserFirstTime()
+        .then(response => console.log('this is test : ',response.nightfallMnemonic)) // promise
+    }
 
     /*---------------------------Fetches user purchased NFTs-----------------------------*/
     const [myNFts, setMyNfts] = useState([]);
@@ -361,6 +365,7 @@ function UserAccount() {
                                     <button onClick={doDeposit}>Deposit</button>
                                     <button onClick={getBalance}>NightFall Balances</button>
                                     <button onClick={transferNFT}>Nft Transfer</button>
+                                    <button onClick={createFirst}>Create</button>
                                 </div>
                             </div>
                         </div>

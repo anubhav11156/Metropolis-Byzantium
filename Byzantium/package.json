@@ -9,6 +9,7 @@
     "@dicebear/micah": "^4.10.8",
     "@dicebear/miniavs": "^4.10.8",
     "@dicebear/open-peeps": "^4.10.8",
+    "@openzeppelin/contracts": "^4.8.0",
     "@reduxjs/toolkit": "^1.9.1",
     "@uauth/js": "^2.4.0",
     "@uauth/web3-onboard": "^2.4.0",
@@ -34,7 +35,7 @@
     "slick-carousel": "^1.8.1",
     "styled-components": "^5.3.6",
     "wagmi": "^0.9.4",
-    "web3modal": "^1.9.10"
+    "web3modal": "^1.9.11"
   },
   "scripts": {
     "start": "webpack serve --config webpack.config.js",

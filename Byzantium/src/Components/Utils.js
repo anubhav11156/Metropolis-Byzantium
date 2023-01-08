@@ -169,8 +169,6 @@ async function createUserFirstTime() {
     const nightUser = await UserFactory.create({
       clientApiUrl,
     });
-    console.log('in function')
-    console.log(nightUser);
     return nightUser; // returns new of nightfall account information
   } catch (error) {
     console.log(error);
@@ -204,6 +202,19 @@ async function getMnemonic() {
         console.log(error);
     }
 }
+
+// async function checkClientStatus(){
+//     try{
+//         const nightUser = await UserFactory.create({
+//             clientApiUrl,
+//             nightfallMnemonic
+//         });
+
+//         const status = await nightUser.checkStatus();
+//     }catch (error) {
+//         console.log(error);
+//     }
+// }
 
 export {
   makeDeposit,
