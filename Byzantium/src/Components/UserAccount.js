@@ -26,92 +26,15 @@ import { UserFactory } from 'nightfall-sdk';
 
 const clientApiUrl = "http://localhost:8080";
 
-function UserAccount() {
+function UserAccount(props) {
 
     const getAccountDetail = useSelector(selectAccount);
     console.log('account detail : ', getAccountDetail);
     const [userBalances, setUserBalances] = useState({});
-    const [flag, setFlag] = useState(0);
     // these all for testing purpose only 
 
     const [nightfallAddress, setNightfallAddress] = useState('');
 
-    // this is for testing pupose only, mnemoni will be stored on-chain in byzantium conatract
-    const nightfallMnemonicBraveCoinbase = 'vacant ceiling pass kiss scheme mammal bonus possible digital icon exile call';
-    //nightfallMnemonic
-    // this mnemonic is of my main coinbase wallet
-    const nightfallMnemonic = ('usage flavor liquid pig citizen amazing steel patrol unfold yard timber giant').toString();
-    console.log('type of : ', typeof (nightfallMnemonic));
-
-    const mnemoniNightBraveMetaMask = 'tape solution little gesture pioneer maze route until can match film hurdle';
-
-    const mnemoniGanache = "dress shed found dwarf gravity grocery address hip toe business sail sunny";
-    // getMnemonic()
-    // .then(response => console.log('test : ',response));
-    // // getNightFallAccountAddress(mnemonic).
-    // then(response => setNightfallAddress(response) );
-
-    // console.log('NightFall Address : ',nightfallAddress);
-
-    // check NightFall Balances
-    const getBalance = () => {
-        checkBalances(nightfallMnemonic)
-        .then(response => console.log('bal', response));
-    }
-    
-    // createUserFirstTime();
-
-    const usdcAddress = '0x07865c6e87b9f70255377e024ace6630c1eaa37f'
-    // const maticAddress = '0x499d11e0b6eac7c0593d8fb292dcbbf815fb29ae'
-    // const erc20address = "0x7F68ba0dB1D62fB166758Fe5Ef10853537F8DFc5"
-    const value = (2).toString();
-    // // const value = (2).toString();
-    // const tokenErcStandard = "ERC20";
-
-    
-    // useEffect(() => {
-    //     console.log('this is test');
-
-    //     // console.log('tx receipt : ',txReceipts)
-    // }, [])
-
-    const doDeposit = () => {
-        makeDeposit(nightfallMnemonic, usdcAddress, value.toString())
-            .then(response => console.log('response is : ', response))
-    }
-
-    const conatractAddress = "0xB389ad3206dFc7E3F4B55Bb8470Aa48b04155281";
-    const tokenId = "2";
-
-    const transferNFT = () => {
-        makeDepositERC721(nightfallMnemonic, conatractAddress, tokenId )
-        .then(response => console.log('nft transer response : ', response))
-    }
-    // const doDeposit = async (nightfallMnemonic, usdcAddress, tokenErcStandard, value) => {
-    //     const nightUser = await UserFactory.create({
-    //         clientApiUrl,
-    //         nightfallMnemonic
-    //     })
-
-    //     console.log('user : ', nightUser);
-
-    //     const txReceipts = await nightUser.makeDeposit({
-    //         usdcAddress,
-    //         tokenErcStandard,
-    //         value
-    //     })
-
-    //     console.log('response : ', txReceipts);
-    // }
-
-    // useEffect( () => {
-    //     doDeposit(nightfallMnemonic, maticAddress, tokenErcStandard, value)
-    // },[])
-
-    const createFirst = () => {
-        createUserFirstTime()
-        .then(response => console.log('this is test : ',response.nightfallMnemonic)) // promise
-    }
 
     /*---------------------------Fetches user purchased NFTs-----------------------------*/
     const [myNFts, setMyNfts] = useState([]);
@@ -269,10 +192,18 @@ function UserAccount() {
                                     UNS Domain
                                 </div>
                                 <div className='text'>
-                                    {(getAccountDetail.unsDomain).length == 0 &&
-                                        <p>N/A</p>
-                                    }
-                                    <p>{getAccountDetail.unsDomain}</p>
+                                    <>
+                                        {(props.unsDomain)  != null &&
+                                            <p>{props.unsDomain}</p>
+                                        }
+                                    </>
+                                    <>
+                                        {(props.unsDomain) == null &&
+                                            <p>N/A</p>
+                                        }
+
+                                    </>
+
                                 </div>
                             </div>
                         </div>
@@ -362,10 +293,7 @@ function UserAccount() {
                                     ERC 721
                                 </div>
                                 <div className='nfts-container'>
-                                    <button onClick={doDeposit}>Deposit</button>
-                                    <button onClick={getBalance}>NightFall Balances</button>
-                                    <button onClick={transferNFT}>Nft Transfer</button>
-                                    <button onClick={createFirst}>Create</button>
+                                    erc721
                                 </div>
                             </div>
                         </div>
