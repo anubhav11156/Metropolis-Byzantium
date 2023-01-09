@@ -2,43 +2,24 @@ import { React, useState, useEffect } from 'react';
 import styled from 'styled-components'
 import { useSelector } from 'react-redux';
 import { selectAccount } from '../features/AccountDetailSlice';
-import {
-  makeDeposit,
-  makeTransfer,
-  makeWithdrawal,
-  makeDepositERC721,
-  makeTransferERC721,
-  makeWithdrawalERC721,
-  createUserFirstTime,
-  checkBalances,
-  getNightFallAccountAddress,
-  getMnemonic,
-} from './Utils';
-
+import { makeDeposit, makeDepositERC721 } from './Utils';
 
 function Deposit() {
 
   const getAccountDetail = useSelector(selectAccount);
 
-
   const [isEthClicked, setIsEthClicked] = useState(false);
   const [isMaticClicked, setIsMaticClicked] = useState(false);
   const [isUsdcClicked, setIsUsdcClicked] = useState(false);
-
   const [amount, setAmount] = useState();
   const [tokenId, setTokenId] = useState('');
-
   const [tokenContractAddress, setTokenContractAddress] = useState('');
-
 
 
   const gETHContractAddress = "";
   const usdcContractAddress = "0x07865c6e87b9f70255377e024ace6630c1eaa37f";
   const maticContractAddress = "0x499d11e0b6eac7c0593d8fb292dcbbf815fb29ae";
   const metropolisContractAddress = "0xB389ad3206dFc7E3F4B55Bb8470Aa48b04155281";
-
-  console.log('amount : ', amount);
-  console.log('type : ', typeof(amount))
 
   const ethHandler = () => {
     setIsEthClicked(true);
@@ -52,7 +33,6 @@ function Deposit() {
     setIsMaticClicked(true);
     setIsUsdcClicked(false);
     setTokenContractAddress(maticContractAddress);
-    value = (amount * (10**18)).toString();
   }
 
   const usdcHandler = () => {
@@ -63,7 +43,6 @@ function Deposit() {
   }
 
   
-
   const depositERC20Handle = () => {
     
     makeDeposit(getAccountDetail.nightfallMnemonic, tokenContractAddress, amount)
@@ -78,10 +57,7 @@ function Deposit() {
     inputBox.value = '';
   }
 
-  // useEffect( () => {
-
-  // },[])
-
+  
   const depositERC721Handle = () => {
     makeDepositERC721(getAccountDetail.nightfallMnemonic, metropolisContractAddress, tokenId)
     .then(response => console.log(response));
