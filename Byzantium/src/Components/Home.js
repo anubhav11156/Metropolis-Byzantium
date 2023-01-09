@@ -17,7 +17,7 @@ export default Home
 
 const Container=styled.div`
   background-color: white;
-  min-height: 3000px;
+  min-height: 2100px;
   height: auto;
   position: relative;
 `

@@ -1,4 +1,4 @@
-export const userMnemonicContractAddress = "0xd3A008480eAc146e33d15B23D92793DE72c1bb75";
+export const userMnemonicContractAddress = "0x077aB6356227ecDc2DA7610b34d9DFd5E905acD9";
 
 export const userMnemonicContractAbi = {
     "_format": "hh-sol-artifact-1",

@@ -31,6 +31,9 @@ function UserAccount(props) {
     const [nightFallAddress, setNightFallAddress] = useState(''); // L1 Balances
    
 
+    const nfts  = props.nfts;
+    console.log('nft : ', nfts);
+
     /*-------------get nightfall address----------------*/
 
     getNightFallAccountAddress(getAccountDetail.nightfallMnemonic)
@@ -48,54 +51,54 @@ function UserAccount(props) {
 
 
     /*---------------------------Fetches user purchased NFTs-----------------------------*/
-    const [myNFts, setMyNfts] = useState([]);
+    // const [myNFts, setMyNfts] = useState([]);
 
-    useEffect(() => {
-        fetchMyPurchase();
-    }, []);
+    // useEffect(() => {
+    //     fetchMyPurchase();
+    // }, []);
 
-    const fetchMyPurchase = async () => {
+    // const fetchMyPurchase = async () => {
 
-        const modal = new web3modal();
-        const connection = await modal.connect()
-        const provider = new ethers.providers.Web3Provider(connection)
+    //     const modal = new web3modal();
+    //     const connection = await modal.connect()
+    //     const provider = new ethers.providers.Web3Provider(connection)
 
-        const signer = provider.getSigner()
-        const contract = new ethers.Contract(
-            contractAddress,
-            contractAbi.abi,
-            signer
-        )
-        const data = await contract.fetchMyNFTs();
-        const items = await Promise.all(
-            data.map(async (i) => {
-                //when the array of promises is resolved then map over each promise
-                const tokenUri = await contract.tokenURI(i.tokenId.toString());
-                const trimmedTokenUri = tokenUri.substring(7);
-                const finalUri = `https://ipfs.io/ipfs/${trimmedTokenUri}`;
-                const meta = await axios.get(finalUri);
-                let price = ethers.utils.formatEther(i.price);
-                let royalty = ethers.utils.formatEther(i.royaltyFeeInBips);
-                let usdValue = ethers.utils.formatEther(i.usdValue);
-                let item = {
-                    price,
-                    royalty,
-                    usdValue,
-                    name: meta.data.name,
-                    tokenId: i.tokenId.toNumber(),
-                    image: `https://ipfs.io/ipfs/${(meta.data.image).substring(7)}`,
-                };
-                return item;
-            })
-        );
-        console.log('nfts are : ', items)
-        setMyNfts(items);
-    }
+    //     const signer = provider.getSigner()
+    //     const contract = new ethers.Contract(
+    //         contractAddress,
+    //         contractAbi.abi,
+    //         signer
+    //     )
+    //     const data = await contract.fetchMyNFTs();
+    //     const items = await Promise.all(
+    //         data.map(async (i) => {
+    //             //when the array of promises is resolved then map over each promise
+    //             const tokenUri = await contract.tokenURI(i.tokenId.toString());
+    //             const trimmedTokenUri = tokenUri.substring(7);
+    //             const finalUri = `https://ipfs.io/ipfs/${trimmedTokenUri}`;
+    //             const meta = await axios.get(finalUri);
+    //             let price = ethers.utils.formatEther(i.price);
+    //             let royalty = ethers.utils.formatEther(i.royaltyFeeInBips);
+    //             let usdValue = ethers.utils.formatEther(i.usdValue);
+    //             let item = {
+    //                 price,
+    //                 royalty,
+    //                 usdValue,
+    //                 name: meta.data.name,
+    //                 tokenId: i.tokenId.toNumber(),
+    //                 image: `https://ipfs.io/ipfs/${(meta.data.image).substring(7)}`,
+    //             };
+    //             return item;
+    //         })
+    //     );
+    //     console.log('nfts are : ', items)
+    //     setMyNfts(items);
+    // }
     /*----------------------------------------------------------------------------------*/
 
     /*--------------Set NFTs to Cards--------------*/
 
-    const L1Cards = myNFts.map(card => {
+    const L1Cards = nfts.map(card => {
         return (
             <NFTCard
                 id={card.tokenId}
@@ -279,7 +282,7 @@ function UserAccount(props) {
                                         <img src="/images/ethereum-1.svg" />
                                     </div>
                                     <div className='amount'>
-                                        78
+                                        ---
                                     </div>
                                 </div>
                                 <div className='matic'>
@@ -287,7 +290,7 @@ function UserAccount(props) {
                                         <img src="/images/polygon-purple.png" />
                                     </div>
                                     <div className='amount'>
-                                        1190
+                                        ---
                                     </div>
                                 </div>
                                 <div className='usdc'>
@@ -295,7 +298,7 @@ function UserAccount(props) {
                                         <img src="/images/usdc-logo.svg" />
                                     </div>
                                     <div className='amount'>
-                                        7897
+                                        ---
                                     </div>
                                 </div>
                             </div>

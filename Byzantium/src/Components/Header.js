@@ -247,12 +247,12 @@ function Header() {
               <img src="/images/right-arrow-black.png" />
             </div>
           </div>
-          <div className="insusrance">
+          {/* <div className="insusrance">
             <p>P2P Insusrance</p>
             <div className="logo-container">
               <img src="/images/right-arrow-black.png" />
             </div>
-          </div>
+          </div> */}
         </Menu>
         <LoginSection>
 

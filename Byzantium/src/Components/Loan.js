@@ -9,17 +9,24 @@ import { useSelector } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Resolution from "@unstoppabledomains/resolution";
+import { contractAbi, contractAddress } from "../MetropolisConfig";
+import web3modal from "web3modal"
+import { ethers } from "ethers"
+import axios from "axios";
+
 
 export default function Loan() {
 
   const getAccountDetail = useSelector(selectAccount);
 
   const [loanMenu, setLoanMenu] = useState(false);
-  const [depositMenu, setDepositMenu] = useState(true);
+  const [depositMenu, setDepositMenu] = useState(false);
   const [historyMenu, setHistoryMenu] = useState(false);
   const [guideMenu, setGuideMenu] = useState(false);
-  const [userMenu, setUserMenu] = useState(false);
+  const [userMenu, setUserMenu] = useState(true);
   const [unsDomain, setUnsDomain] = useState('');
+  const [myNFts, setMyNfts] = useState([]);
+
 
   /*--------------use unstopable domain resolution APIs to fetch domain name-------------*/
 
@@ -37,6 +44,52 @@ export default function Loan() {
   }
   
   /*-------------------------------------------------------------------------------------*/
+
+  /*--------------Fetch User NFTs on L1-----------------*/
+
+
+  useEffect(() => {
+      fetchMyPurchase();
+  }, [getAccountDetail.status]);
+
+  const fetchMyPurchase = async () => {
+
+      const modal = new web3modal();
+      const connection = await modal.connect()
+      const provider = new ethers.providers.Web3Provider(connection)
+
+      const signer = provider.getSigner()
+      const contract = new ethers.Contract(
+          contractAddress,
+          contractAbi.abi,
+          signer
+      )
+      const data = await contract.fetchMyNFTs();
+      const items = await Promise.all(
+          data.map(async (i) => {
+              //when the array of promises is resolved then map over each promise
+              const tokenUri = await contract.tokenURI(i.tokenId.toString());
+              const trimmedTokenUri = tokenUri.substring(7);
+              const finalUri = `https://ipfs.io/ipfs/${trimmedTokenUri}`;
+              const meta = await axios.get(finalUri);
+              let price = ethers.utils.formatEther(i.price);
+              let royalty = ethers.utils.formatEther(i.royaltyFeeInBips);
+              let usdValue = ethers.utils.formatEther(i.usdValue);
+              let item = {
+                  price,
+                  royalty,
+                  usdValue,
+                  name: meta.data.name,
+                  tokenId: i.tokenId.toNumber(),
+                  image: `https://ipfs.io/ipfs/${(meta.data.image).substring(7)}`,
+              };
+              return item;
+          })
+      );
+      console.log('nfts are : ', items)
+      setMyNfts(items);
+  }
+  /*----------------------------------------------------*/
 
 
   const userMenuButton = () => {
@@ -142,17 +195,19 @@ export default function Loan() {
           </div>
         </div>
         <LoanContainer>
-          {/* { getAccountDetail.status && */}
-
-          { true &&
+          { getAccountDetail.status &&
             <>
               {userMenu &&
                 <UserAccount 
                   unsDomain={unsDomain}
+                  nfts={myNFts}
                 />
               }
               {loanMenu &&
-                <TakeLoan />
+                <TakeLoan
+                  unsDomain={unsDomain}
+                  nfts={myNFts}
+                />
               }
               {depositMenu &&
                 <Deposit />
@@ -163,7 +218,7 @@ export default function Loan() {
             </>
           }
           <>
-            {/* { !getAccountDetail.status &&
+            { !getAccountDetail.status &&
               <PlaceHolder>
               <div className='div-1'>
                 <div className='text'>
@@ -176,7 +231,7 @@ export default function Loan() {
                 </div>
               </div>
             </PlaceHolder>
-            } */}
+            }
           </>
 
 
