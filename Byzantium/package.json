@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^1.9.1",
     "@uauth/js": "^2.4.0",
     "@uauth/web3-onboard": "^2.4.0",
+    "@unstoppabledomains/resolution": "^8.3.3",
     "@web3-onboard/core": "^2.12.1",
     "@web3-onboard/injected-wallets": "^2.4.0",
     "@web3-onboard/uauth": "^2.0.1",

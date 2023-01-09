@@ -27,7 +27,7 @@ function Header() {
   const [userDomain, setUserDomain] = useState('');
   const [isUNSLogin, setUNSLogin] = useState(false);
   const [label, setLabel] = useState('');
-  const[ isLenghtZero, setIsLenghtZero] = useState(false);
+
 
 
   const unstoppableClientID = process.env.REACT_APP_UNSTOPPABLE_DOMAIN_CLIENT_ID;
@@ -40,7 +40,6 @@ function Header() {
 
   const uauth = new UAuth({
     clientID: `${unstoppableClientID}`,
-    // redirectUri: 'http://localhost:5173',
     redirectUri: 'https://byzantiium.web.app/',
     scope: 'openid wallet email profile:optional social:optional',
   })
@@ -108,21 +107,15 @@ function Header() {
         setLabel('');
         setConnected(false);
         setUserDomain('');
+        dispatch(
+          accountAdded('','','', false)
+        )
         toast.success("Logged Out", {
           position: toast.POSITION.TOP_CENTER
         });
       })
 
   }
-
-
-  // console.log('address length : ', userAddress.length);
-  // console.log('domain : ', userDomain);
-  // console.log('lable : ',label);
-  // console.log('uns login : ', isUNSLogin);
-
-
-
 
   // to get the domain name when user login with his/her UNS domain.
   useEffect(() => {
@@ -140,10 +133,6 @@ function Header() {
   useEffect(() => {
     if (connected) {
       getUserMnemonic();
-      // console.log('mne test if user exists : ', userNightFallMnemonic);
-      // dispatch(
-      //   accountAdded(userAddress, userDomain, connected)
-      // )
     } else {
       dispatch(
         accountAdded('', '', '', false)
@@ -168,6 +157,7 @@ function Header() {
     });
   }
 
+  // get User mnemonic from contract
   const getUserMnemonic = async () => {
 
     const provider = new ethers.providers.JsonRpcProvider({
@@ -246,7 +236,6 @@ function Header() {
         </div>
         <Menu>
           <div className="metropolis" onClick={metropolisHandle}>
-            {/* <a href="https://metropolis-694d1.web.app/" target="_blank">Metropolis</a> */}
             <p>Metropolis</p>
             <div className="logo-container">
               <img src="/images/right-arrow-black.png" />

@@ -8,22 +8,37 @@ import { selectAccount } from '../features/AccountDetailSlice';
 import { useSelector } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Resolution from "@unstoppabledomains/resolution";
 
 export default function Loan() {
 
   const getAccountDetail = useSelector(selectAccount);
-  // console.log('account detail : ', getAccountDetail);
-
-  // console.log(getAccountDetail.status);
 
   const [loanMenu, setLoanMenu] = useState(false);
   const [depositMenu, setDepositMenu] = useState(true);
   const [historyMenu, setHistoryMenu] = useState(false);
   const [guideMenu, setGuideMenu] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
-  
+  const [unsDomain, setUnsDomain] = useState('');
 
-  // console.log('nfts are : ',myNFts);
+  /*--------------use unstopable domain resolution APIs to fetch domain name-------------*/
+
+  useEffect( () => {
+    reverseUrl(getAccountDetail.address);
+  },[getAccountDetail.status]);
+
+  const resolution = new Resolution();
+
+  function reverseUrl(address) {
+    resolution
+      .reverse(address, { location: 'UNSLayer2' })
+      .then((domain) => setUnsDomain(domain))
+      .catch(console.error);
+  }
+  
+  /*-------------------------------------------------------------------------------------*/
+
+
   const userMenuButton = () => {
     setUserMenu(true);
     setLoanMenu(false);
@@ -129,7 +144,7 @@ export default function Loan() {
         <LoanContainer>
           {/* {getAccountDetail.status &&
              */}
-          { true &&
+          {true &&
             <>
               {userMenu &&
                 <UserAccount />
@@ -161,7 +176,7 @@ export default function Loan() {
             </PlaceHolder>
             } */}
           </>
-          
+
 
         </LoanContainer>
         {/* <button onClick={() => {
@@ -171,8 +186,8 @@ export default function Loan() {
         >fetch</button> */}
       </LoanSection>
       <ToastContainer
-            autoClose={1000}
-            hideProgressBar={true}
+        autoClose={1000}
+        hideProgressBar={true}
       />
     </Container>
   )
