@@ -1,5 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import styled from 'styled-components'
+import { useSelector } from 'react-redux';
+import { selectAccount } from '../features/AccountDetailSlice';
 import {
   makeDeposit,
   makeTransfer,
@@ -16,21 +18,24 @@ import {
 
 function Deposit() {
 
+  const getAccountDetail = useSelector(selectAccount);
+
+
   const [isEthClicked, setIsEthClicked] = useState(false);
   const [isMaticClicked, setIsMaticClicked] = useState(false);
   const [isUsdcClicked, setIsUsdcClicked] = useState(false);
 
   const [amount, setAmount] = useState();
-  // const [value, setValue] = useSate('');
+  const [tokenId, setTokenId] = useState('');
+
   const [tokenContractAddress, setTokenContractAddress] = useState('');
 
-
-  const mnemonic = '';
 
 
   const gETHContractAddress = "";
   const usdcContractAddress = "0x07865c6e87b9f70255377e024ace6630c1eaa37f";
   const maticContractAddress = "0x499d11e0b6eac7c0593d8fb292dcbbf815fb29ae";
+  const metropolisContractAddress = "0xB389ad3206dFc7E3F4B55Bb8470Aa48b04155281";
 
   console.log('amount : ', amount);
   console.log('type : ', typeof(amount))
@@ -59,10 +64,11 @@ function Deposit() {
 
   
 
-  const depositHandle = () => {
+  const depositERC20Handle = () => {
     
-    // makeDeposit(mnemonic, tokenContractAddress, amount)
-    // .then(response => console.log(response));
+    makeDeposit(getAccountDetail.nightfallMnemonic, tokenContractAddress, amount)
+    .then(response => console.log(response));
+
     setIsEthClicked(false);
     setIsMaticClicked(false);
     setIsUsdcClicked(false);
@@ -72,9 +78,16 @@ function Deposit() {
     inputBox.value = '';
   }
 
-  useEffect( () => {
+  // useEffect( () => {
 
-  },[])
+  // },[])
+
+  const depositERC721Handle = () => {
+    makeDepositERC721(getAccountDetail.nightfallMnemonic, metropolisContractAddress, tokenId)
+    .then(response => console.log(response));
+    const inputBox = document.getElementById('tokenId-input');
+    inputBox.value = '';
+  }
 
   return (
     <Container>
@@ -114,17 +127,19 @@ function Deposit() {
                 let value = (props.target.value)*(10 ** 18);
                 setAmount(value.toString())
               } else if (isMaticClicked){
-                let value = (props.target.value)*(10 ** 18);
+                // let value = (props.target.value)*(10 ** 18);
+                let value = (props.target.value);
                 setAmount(value.toString())
               } else if(isUsdcClicked){
-                let value = (props.target.value)*(10 ** 6);
+                // let value = (props.target.value)*(10 ** 6);
+                let value = (props.target.value);
                 setAmount(value.toString())
               }  
             }}
             />
           </div>
           <div className='deposit'>
-            <div className='button' onClick={depositHandle}>
+            <div className='button' onClick={depositERC20Handle}>
               Deposit to L2
             </div>
           </div>
@@ -132,6 +147,20 @@ function Deposit() {
         <div className='right'>
           <div className='title'>
             <p>ERC 721</p>
+          </div>
+          <div className='not-title'>
+            <div className='input-box'>
+              <input type="text" placeholder='Token Id' id="tokenId-input"
+                onChange={ (props) => {
+                  setTokenId(props.target.value);
+                }}
+              />
+            </div>
+            <div className='deposit'>
+              <div className='button' onClick={depositERC721Handle}>
+                Deposit to L2
+              </div>
+          </div>
           </div>
         </div>
       </DepositSection>
@@ -327,6 +356,7 @@ const DepositSection = styled.div`
     .right {
       flex: 1;
       height: 70%;
+      display: flex;
       flex-direction: column;
 
       border: 1px solid rgba(130, 71, 230, 0.4);
@@ -346,5 +376,67 @@ const DepositSection = styled.div`
           font-weight: 500;
         }
       }
+
+      .not-title {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        .input-box {
+          margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 2rem;
+
+
+        input {
+          border: 1px black solid;
+          width: 24.5rem;
+          height: 100%;
+          border: 1px solid rgba(130, 71, 230, 0.4);
+          border-radius: 3px;
+          padding-left: 10px;
+          color: rgba(92, 12, 231, 0.806);
+          font-weight: 500;
+          font-size: 17px;
+        }
+        }
+
+        
+
+      }
+
+      .deposit {
+          margin-top: 1.5rem;
+          width: 100%;
+          height: 3rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+
+          .button {
+            width: 25.1rem;
+            
+            height: 85%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 4px;
+            color: white;
+            background-color: rgb(130, 71, 229);
+            cursor: pointer;
+            transition: opacity 0.15s;
+
+              &:hover {
+                opacity: 0.95;
+              }
+            }
+        }
+
     }
 `

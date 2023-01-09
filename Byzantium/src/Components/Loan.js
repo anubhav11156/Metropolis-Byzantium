@@ -142,9 +142,9 @@ export default function Loan() {
           </div>
         </div>
         <LoanContainer>
-          {/* {getAccountDetail.status &&
-             */}
-          {true &&
+          {/* { getAccountDetail.status && */}
+
+          { true &&
             <>
               {userMenu &&
                 <UserAccount 

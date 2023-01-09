@@ -22,18 +22,29 @@ import {
     getNightFallAccountAddress,
     getMnemonic,
 } from './Utils';
-import { UserFactory } from 'nightfall-sdk';
 
-const clientApiUrl = "http://localhost:8080";
 
 function UserAccount(props) {
 
     const getAccountDetail = useSelector(selectAccount);
-    console.log('account detail : ', getAccountDetail);
     const [userBalances, setUserBalances] = useState({});
-    // these all for testing purpose only 
+    const [nightFallAddress, setNightFallAddress] = useState(''); // L1 Balances
+   
 
-    const [nightfallAddress, setNightfallAddress] = useState('');
+    /*-------------get nightfall address----------------*/
+
+    getNightFallAccountAddress(getAccountDetail.nightfallMnemonic)
+    .then(response => setNightFallAddress(response));
+
+    /*---------------------------------------------------*/
+
+
+    /*------------get NighFall L2 Balances---------------*/
+
+    checkBalances(getAccountDetail.nightfallMnemonic)
+    .then(response => console.log('balances : ',response))
+
+    /*---------------------------------------------------*/
 
 
     /*---------------------------Fetches user purchased NFTs-----------------------------*/
@@ -184,7 +195,7 @@ function UserAccount(props) {
                                     NightFall Address
                                 </div>
                                 <div className='text'>
-                                    <p>{getAccountDetail.address}</p>
+                                    <p>{nightFallAddress}</p>
                                 </div>
                             </div>
                             <div className='user-adrresses'>

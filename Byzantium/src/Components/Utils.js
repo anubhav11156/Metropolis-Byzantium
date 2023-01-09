@@ -1,4 +1,6 @@
 import { UserFactory } from "nightfall-sdk";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const clientApiUrl = "http://localhost:8080"
 
@@ -20,16 +22,20 @@ async function makeDeposit(nightfallMnemonic, tokenContractAddress, value) {
       tokenErcStandard,
       value,
     });
+    toast.success("Transaction Successful.", {
+        position: toast.POSITION.TOP_CENTER
+    });
     return txReceipts;
   } catch (error) {
+    toast.error("Transaction Failed.", {
+        position: toast.POSITION.TOP_CENTER
+    });
     console.log(error);
   }
 }
 
 // transfer ER20 Token from user L2 account to receiver L2 account
-async function makeTransfer(e, nightfallMnemonic, tokenContractAddress, value, recipientNightfallAddress) {
-  e.preventDefault();
-
+async function makeTransfer(nightfallMnemonic, tokenContractAddress, value, recipientNightfallAddress) {
   try {
     // Create a user that will transfer funds
     const nightUser = await UserFactory.create({
@@ -85,11 +91,16 @@ async function makeDepositERC721(nightfallMnemonic, tokenContractAddress, tokenI
     // Make an ERC721 deposit for the user
     const txReceipts = await nightUser.makeDeposit({
         tokenContractAddress,
-      tokenId,
+        tokenId,
     });
-
+    toast.success("Transaction Successful.", {
+        position: toast.POSITION.TOP_CENTER
+    });
     return txReceipts;
   } catch (error) {
+    toast.error("Transaction Failed.", {
+        position: toast.POSITION.TOP_CENTER
+    });
     console.log(error);
   }
 }
@@ -215,6 +226,10 @@ async function getMnemonic() {
 //         console.log(error);
 //     }
 // }
+<ToastContainer
+        autoClose={1000}
+        hideProgressBar={true}
+/>
 
 export {
   makeDeposit,
